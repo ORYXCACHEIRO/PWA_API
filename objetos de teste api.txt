@@ -1,0 +1,31 @@
+//hotel
+
+{
+    "name": "Hotel do hotel",
+    "descricao": "muito adelio",
+    "categoria": 3,
+    "morada": "rua do adelio",
+    "cpostal": "4780-122",
+    "local": "santo tirso",
+    "local_gmaps": "iframe",
+    "imagem_principal": "caminhooooooooo",
+    "sobre_hotel": "é umm hotel mano",
+    "comodidades": [{
+        "_id": "618002b0b3e89d872e382774"
+    }, {
+        "_id": "61"
+    }],
+    "idiomas": [{
+        "_id": "617ffc539a87a95d83d87135"
+    },
+    {
+        "_id": "3245af"
+    }],
+    "visivel": 1
+}
+
+//login
+{
+    "email": "teste@gmail.com",
+    "password": 
+}

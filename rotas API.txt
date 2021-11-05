@@ -1,0 +1,38 @@
+ROTAS:
+
+// rotas que até agr pensei (muito improvavel isto estar completo)
+// se nas rotas do frontend conter #, é porque também consta no backend (ou pelo menos faz sentido têla lá)
+
+// F R O N T - E N D
+
+#/login - feito
+/register - feito
+#/logout 
+#/profile 
+/profile/avaliacoes
+/profile/reservas
+#/profile/settings 
+/rec_password 
+#/hotel/all  - feito
+#/hotel/:h_id - feito
+#/hotel/:h_id/avaliacoes - feito
+#/hotel/:h_id/galeria
+#/hotel/:h_id/quartos - feito
+#/hotel/:h_id/quartos/:q_id/
+#/hotel/:h_id/quartos/:q_id/galeria 
+#/hotel/:h_id/quartos/:q_id/reservas/
+
+// B A C K - E N D - cenas que nao convém o utilizador normal ver
+
+/avaliacoes/all
+/avaliacoes/:id_av
+/galeria/all
+""""""""""""/galeria/:id_img"""""""""""
+/reservas/all
+/reservas/:id_res
+/comodidades/all - feito
+/comodidades/:id_com - feito
+/idiomas/all - feito
+/idiomas/:id_idom - feito
+/users/all
+/users/:id_user

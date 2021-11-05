@@ -1,0 +1,86 @@
+//sempre que entre () quer dizer que a tabela indicada depende da tabela onde esta inserida
+// [] - array de categorias ou "outras coisas"
+// #"exemplo"# - funcionalidades
+// %% - não é tabela
+
+%registro%:
+nome
+email
+password
+rewritepassword
+role 0
+
+%alt passowr%
+pass_at
+pass_nova1
+repetir_pass
+
+%recuperação de passowod (nodemailer)%
+
+rec_pass_keys:
+key
+id_user
+data_expira
+
+user:
+nome
+ult_nome
+email
+password
+role
+
+%sorts%:
+encontrar quartos entre prec min e max
+encontrar hoteis por categoria
+encontrar hoteis por localização
+
+hotel:
+(quartos)
+nome
+descricao
+(avaliacoes)
+(galeria)
+(idiomas) - []
+categoria
+localizacao
+localizacao_gmaps
+imagem_principal
+sobre_hotel
+(comodidades) - []
+
+quartos:
+nome
+id_hotel
+preco_noite
+descricao
+(reservas)
+(galeria)
+(comodidades) - []
+
+galeria:
+caminho
+id_hotel - 0/id_hotel
+id_quarto - 0/id_quarto
+
+reservas:
+id_user
+id_quarto
+data_ini
+data_final
+
+idiomas:
+nome
+
+comodidades:
+nome
+gratis: 0/1
+tipo: 0 - hotel, 1 quarto
+
+avaliacoes:
+id_hotel
+id_user
+avalicao:int
+coment - opcional
+data_av
+
+
