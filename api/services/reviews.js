@@ -1,11 +1,11 @@
-function avaliaService(Model) {
+function reviewService(Model) {
 
     let service = {
         create,
         findAll,
-        findAvById,
-        findAvsByHotelId,
-        findAvsByUserId
+        findRevsById,
+        findRevsByHotelId,
+        findRevsByUserId
     };
 
     function findAll() {
@@ -18,7 +18,7 @@ function avaliaService(Model) {
         });
     }
 
-    function findAvById(value){
+    function findRevsById(value){
         //let model = Model(value);
         return new Promise(function (resolve, reject) {
             Model.findOne({_id:value }, function (err, avaliacao) {
@@ -29,7 +29,7 @@ function avaliaService(Model) {
         });
     }
 
-    function findAvsByHotelId(value){
+    function findRevsByHotelId(value){
         //let model = Model(value);
         return new Promise(function (resolve, reject) {
             Model.find({id_hotel:value }, function (err, avaliacoes) {
@@ -40,7 +40,7 @@ function avaliaService(Model) {
         });
     }
 
-    function findAvsByUserId(value){
+    function findRevsByUserId(value){
         //let model = Model(value);
         return new Promise(function (resolve, reject) {
             Model.find({ id_user:value }, function (err, avaliacoes) {
@@ -66,4 +66,4 @@ function avaliaService(Model) {
 
 }
 
-module.exports = avaliaService;
+module.exports = reviewService;

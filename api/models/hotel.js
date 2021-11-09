@@ -3,24 +3,25 @@ let Schema = mongoose.Schema;
 
 let hotelSchema = new Schema({
     name: { type: String, required: true, unique: true},
-    descricao: { type: String, required: true },
+    description: { type: String, required: true },
     // 1 estrela, 2 estrelas...
-    categoria: { type: Number, required: true },
-    morada: { type: String, required: true },
-    cpostal: { type: String, required: true },
-    local: { type: String, required: true },
+    category: { type: Number, required: true },
+    adress: { type: String, required: true },
+    postalc: { type: String, required: true },
+    city: { type: String, required: true },
     //iframe
-    local_gmaps: { type:String, required: true },
+    city_gmaps: { type:String, required: true },
     //caminho para a imagem
-    imagem_principal: { type: String, required: true},
-    sobre_hotel: { type: String, required: true},
+    main_image: { type: String, required: true},
+    about_hotel: { type: String, required: true},
     //valor que decide se o hotel é visivel ou nao no frontend 0 - nao visivel, 1 - visivel
-    comodidades: { type: Array, default: []},
-    idiomas: {type: Array, default: []},
-    visivel: {type: Number, default: 1}
+    comodaties: { type: Array, default: []},
+    languages: {type: Array, default: []},
+    //0 - nao visivel ao publico
+    state: {type: Number, default: 0}
    
 });
 
-let hotel = mongoose.model('hoteis', hotelSchema);
+let hotel = mongoose.model('hotels', hotelSchema);
 
 module.exports = hotel;

@@ -1,5 +1,5 @@
 const express = require('express');
-const idiomas = require('../controllers/idioma');
+const langs = require('../controllers/langs');
 
 function idiomaRouter() {
     let router = express();
@@ -9,7 +9,7 @@ function idiomaRouter() {
 
     router.route('/all').get(function (req, res, next) {
 
-        idiomas.findAll().then((idiomas) => {
+        langs.findAll().then((idiomas) => {
             res.send(idiomas);
             res.end();
             next();
@@ -26,7 +26,7 @@ function idiomaRouter() {
             
             let id = req.params.idiom;
 
-            idiomas.findById(id).then((idi) => {
+            langs.findById(id).then((idi) => {
                 res.send(idi);
                 res.end();
                 next();
@@ -46,7 +46,7 @@ function idiomaRouter() {
 
         if(typeof body.name=='string' && body.name.trim()!==""){
             
-            idiomas.create(body).then(() => {
+            langs.create(body).then(() => {
                 res.status(200);
                 //res.send(body);
                 res.end();

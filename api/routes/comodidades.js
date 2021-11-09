@@ -1,5 +1,5 @@
 const express = require('express');
-const comodidades = require('../controllers/comodidades');
+const comodities = require('../controllers/comodities');
 
 function comoRouter() {
     let router = express();
@@ -9,7 +9,7 @@ function comoRouter() {
 
     router.route('/all').get(function (req, res, next) { 
 
-        comodidades.findAll().then((comodidades) => {
+        comodities.findAll().then((comodidades) => {
             res.send(comodidades);
             res.end();
             next();
@@ -26,7 +26,7 @@ function comoRouter() {
             
             let id = req.params.com;
 
-            comodidades.findComById(id).then((com) => {
+            comodities.findComById(id).then((com) => {
                 res.send(com);
                 res.end();
                 next();
@@ -46,7 +46,7 @@ function comoRouter() {
 
         if((typeof body.name=='string' && body.name.trim()!=="") && (body.free===0 || body.free===1) && body.type>=0){
             
-            comodidades.create(body).then(() => {
+            comodities.create(body).then(() => {
                 res.status(200);
                 //res.send(body);
                 res.end();

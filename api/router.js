@@ -2,7 +2,7 @@ const express = require('express');
 let regAPI = require('./routes/register');
 let comtAPI = require('./routes/comodidades');
 let hotelAPI = require('./routes/hotel');
-let idiomasAPI = require('./routes/idiomas');
+let langsAPI = require('./routes/langs');
 let loginAPI = require('./routes/login');
 
 function initialize(){
@@ -12,7 +12,7 @@ function initialize(){
     api.use('/register', regAPI());
     api.use('/comodidades', comtAPI());
     api.use('/hotel', hotelAPI());
-    api.use('/idiomas', idiomasAPI());
+    api.use('/idiomas', langsAPI());
     api.use('/login', loginAPI());
 
     return api;

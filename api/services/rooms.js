@@ -17,10 +17,10 @@ function quartoService(Model) {
         });
     }
 
-    function findQuartById(value){
+    function findQuartById(id){
         //let model = Model(value);
         return new Promise(function (resolve, reject) {
-            Model.findOne({_id:value }, function (err, quartos) {
+            Model.findById(id, function (err, quartos) {
                 if (err) reject(err);
 
                 resolve(quartos);
@@ -28,10 +28,10 @@ function quartoService(Model) {
         });
     }
 
-    function findByHotelId(value){
+    function findByHotelId(id){
         //let model = Model(value);
         return new Promise(function (resolve, reject) {
-            Model.find({id_hotel:value }, function (err, quartos) {
+            Model.findById(id, function (err, quartos) {
                 if (err) reject(err);
 
                 resolve(quartos);

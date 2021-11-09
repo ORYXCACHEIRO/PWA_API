@@ -1,11 +1,31 @@
+const rooms = require('../controllers/rooms');
+const reviews = require('../controllers/reviews');
+
 function hotelService(Model) {
 
     let service = {
         create,
         findAll,
         findAllWithStatus,
-        findOneById
+        findOneById,
+        updateById,
+        removeById,
+        findQuartoByHotelId,
+        findAllReviews,
+        createReview
     };
+
+    function createReview(values){
+        return reviews.create(values);
+    }
+
+    function findAllReviews(id){
+        return reviews.findRevsByHotelId(id);
+    }
+
+    function findQuartoByHotelId(id){
+        return rooms.findByHotelId(id);
+    }
 
     function findAll() {
         return new Promise(function (resolve, reject) {
@@ -24,6 +44,26 @@ function hotelService(Model) {
 
                 resolve(hotel);
             }).select("-visivel -__v");
+        });
+    }
+
+    function updateById(id, values){
+        return new Promise(function (resolve, reject) {
+            Model.findByIdAndUpdate(id,values, {new: true}, function (err, hotel) {
+                if (err) reject(err);
+
+                resolve(hotel);
+            }).select("-__v");
+        });
+    }
+
+    function removeById(id){
+        return new Promise(function (resolve, reject) {
+            Model.findByIdAndRemove(id, function (err) {
+                if (err) reject(err);
+
+                resolve();
+            });
         });
     }
 
