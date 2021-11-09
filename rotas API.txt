@@ -18,7 +18,7 @@ ROTAS:
 #/hotel/:h_id/languages
 #/hotel/:h_id/comodities
 #/hotel/:h_id/avaliacoes - feito
-#/hotel/:h_id/galeria
+#/hotel/:h_id/galeria 
 #/hotel/:h_id/quartos - feito
 #/hotel/:h_id/quartos/:q_id/
 #/hotel/:h_id/quartos/:q_id/galeria 
@@ -36,5 +36,5 @@ ROTAS:
 /comodidades/:id_com - feito
 /idiomas/all - feito
 /idiomas/:id_idom - feito
-/users/all
-/users/:id_user
+/users/all - feito
+/users/:id_user - fwito

@@ -10,10 +10,14 @@ function hotelService(Model) {
         findOneById,
         updateById,
         removeById,
-        findQuartoByHotelId,
+        findRooms,
         findAllReviews,
-        createReview
+        createReview,
+        removeRoom,
+        createRoom
     };
+
+    //------------------Reviews----------------
 
     function createReview(values){
         return reviews.create(values);
@@ -23,10 +27,21 @@ function hotelService(Model) {
         return reviews.findRevsByHotelId(id);
     }
 
-    function findQuartoByHotelId(id){
+    //--------------Quarto-------------------------
+
+    function findRooms(id){
         return rooms.findByHotelId(id);
     }
 
+    function removeRoom(id){
+        return rooms.removeById(id);
+    }
+
+    function createRoom(values){
+        return rooms.create(values);
+    }
+
+    //-----------------------Hotel--------------------------
     function findAll() {
         return new Promise(function (resolve, reject) {
             Model.find({}, function (err, hoteis) {

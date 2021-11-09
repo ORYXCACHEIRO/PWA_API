@@ -63,6 +63,41 @@ function comoRouter() {
 
         }
 
+    }).put(function (req, res, next) { 
+
+        let body = req.body;
+
+        if((typeof body.name=='string' && body.name.trim()!=="") && (body.free===0 || body.free===1) && body.type>=0){
+
+            let id = req.params.com;
+
+            comodities.updateCom(id, body).then((com) => {
+                res.send(com);
+                res.end();
+                next();
+            }).catch((err) => {
+                console.log(err);
+                res.end();
+                next();
+            });
+
+        }
+    
+    }).delete(function (req, res, next) { 
+        
+        let id = req.params.com;
+
+        comodities.removeById(id).then(() => {
+            res.status(200);
+            res.end();
+            next();
+        }).catch((err) => {
+            console.log(err);
+            res.status(404);
+            res.end();
+            next();
+        });
+
     });
 
     return router;

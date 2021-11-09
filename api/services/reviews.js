@@ -3,9 +3,10 @@ function reviewService(Model) {
     let service = {
         create,
         findAll,
-        findRevsById,
+        findRevById,
         findRevsByHotelId,
-        findRevsByUserId
+        findRevsByUserId,
+        removeByRevId
     };
 
     function findAll() {
@@ -18,7 +19,17 @@ function reviewService(Model) {
         });
     }
 
-    function findRevsById(value){
+    function removeByRevId(id){
+        return new Promise(function (resolve, reject) {
+            Model.findByIdAndRemove(id, function (err) {
+                if (err) reject(err);
+
+                resolve();
+            });
+        });
+    }
+
+    function findRevById(value){
         //let model = Model(value);
         return new Promise(function (resolve, reject) {
             Model.findOne({_id:value }, function (err, avaliacao) {

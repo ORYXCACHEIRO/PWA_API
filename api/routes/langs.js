@@ -63,6 +63,41 @@ function idiomaRouter() {
 
         }
 
+    }).put(function (req, res, next) { 
+
+        let body = req.body;
+        let id = req.params.idiom;
+            
+        langs.updateLang(id,body).then((lang) => {
+            res.status(200);
+            res.send(lang);
+            res.end();
+            next();
+        }).catch((err) => {
+            //console.log(err);
+            err.status = err.status || 500;
+            res.status(401);
+            res.end();
+            next();
+        });
+            
+
+    }).delete(function (req, res, next) { 
+
+        let id = req.params.idiom;
+
+        langs.removeById(id).then(() => {
+            res.status(200);
+            res.end();
+            next();
+        }).catch((err) => {
+            //console.log(err);
+            err.status = err.status || 500;
+            res.status(401);
+            res.end();
+            next();
+        });
+
     });
 
     return router;

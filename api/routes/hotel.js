@@ -90,7 +90,7 @@ function hotelSettingsRouter() {
         let id = req.params.hotelid;
         let body = req.body;
 
-        if (typeof id == 'string' && id.trim() !== "") {
+        if  ((typeof id == 'string' && id.trim() !== "")) {
 
             hotel.updateById(id, body).then((hotel) => {
                 res.status(200);
@@ -144,7 +144,7 @@ function hotelSettingsRouter() {
 
         if (typeof id == 'string' && id.trim() !== "") {
 
-            hotel.findQuartoByHotelId(id).then((quartos) => {
+            hotel.findRooms(id).then((quartos) => {
                 res.status(200);
                 res.send(quartos);
                 res.end();
@@ -164,7 +164,33 @@ function hotelSettingsRouter() {
         }
 
     }).post(function (req, res, next) {
-        //TODO POST
+        
+        let id = req.params.hotelid;
+        let body = req.body;
+
+        if (typeof id == 'string' && id.trim() !== "") {
+
+            body.id_hotel = id;
+
+            hotel.createRoom(body).then((room) => {
+                res.status(200);
+                res.send(room);
+                res.end();
+                next();
+            }).catch((err) => {
+                //console.log(err);
+                err.status = err.status || 500;
+                res.status(401);
+                res.end();
+                next();
+            });
+
+        } else {
+            res.status(401);
+            res.end();
+            next();
+        }
+
     });
 
     router.route('/:hotelid/avalicao').get(function (req, res, next) {
@@ -176,10 +202,12 @@ function hotelSettingsRouter() {
 
             hotel.findAllReviews(id).then((avs) => {
                 res.send(avs);
+                res.status(200);
                 res.end();
                 next();
             }).catch((err) => {
                 //console.log(err);
+                res.status(401);
                 res.end();
                 next();
             });

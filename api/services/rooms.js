@@ -4,7 +4,9 @@ function quartoService(Model) {
         create,
         findAll,
         findQuartById,
-        findByHotelId
+        findByHotelId,
+        removeById,
+        updateById
     };
 
     function findAll() {
@@ -24,6 +26,26 @@ function quartoService(Model) {
                 if (err) reject(err);
 
                 resolve(quartos);
+            }).select("-__v");
+        });
+    }
+
+    function removeById(id){
+        return new Promise(function (resolve, reject) {
+            Model.findByIdAndRemove(id, function (err) {
+                if (err) reject(err);
+
+                resolve();
+            });
+        });
+    }
+
+    function updateById(id, values){
+        return new Promise(function (resolve, reject) {
+            Model.findByIdAndUpdate(id,values, {new: true}, function (err, room) {
+                if (err) reject(err);
+
+                resolve(room);
             }).select("-__v");
         });
     }

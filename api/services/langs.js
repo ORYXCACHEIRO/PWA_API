@@ -3,7 +3,9 @@ function idiomaService(Model) {
     let service = {
         create,
         findAll,
-        findById
+        findById,
+        removeById,
+        updateLang
     };
 
     function findAll() {
@@ -24,6 +26,26 @@ function idiomaService(Model) {
 
                 resolve(comodidades);
             }).select("-__v");
+        });
+    }
+
+    function updateLang(id, values){
+        return new Promise(function (resolve, reject) {
+            Model.findByIdAndUpdate(id,values, {new: true}, function (err, language) {
+                if (err) reject(err);
+
+                resolve(language);
+            }).select("-__v");
+        });
+    }
+
+    function removeById(id){
+        return new Promise(function (resolve, reject) {
+            Model.findByIdAndRemove(id, function (err) {
+                if (err) reject(err);
+
+                resolve();
+            });
         });
     }
 

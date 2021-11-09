@@ -3,7 +3,9 @@ function comodidadesService(Model) {
     let service = {
         create,
         findAll,
-        findComById
+        findComById,
+        updateCom,
+        removeById
     };
 
     function findAll() {
@@ -24,6 +26,26 @@ function comodidadesService(Model) {
 
                 resolve(comodidades);
             }).select("-__v");
+        });
+    }
+
+    function updateCom(id, values){
+        return new Promise(function (resolve, reject) {
+            Model.findByIdAndUpdate(id,values, {new: true}, function (err, comodidade) {
+                if (err) reject(err);
+
+                resolve(comodidade);
+            }).select("-__v");
+        });
+    }
+
+    function removeById(id){
+        return new Promise(function (resolve, reject) {
+            Model.findByIdAndRemove(id, function (err) {
+                if (err) reject(err);
+
+                resolve();
+            });
         });
     }
 
