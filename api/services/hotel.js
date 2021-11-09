@@ -48,7 +48,7 @@ function hotelService(Model) {
                 if (err) reject(err);
 
                 resolve(hoteis);
-            }).select("-visivel -__v");
+            }).select("-status -__v");
         });
     }
 
@@ -58,7 +58,7 @@ function hotelService(Model) {
                 if (err) reject(err);
 
                 resolve(hotel);
-            }).select("-visivel -__v");
+            }).select("-status -__v");
         });
     }
 
