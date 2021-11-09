@@ -18,29 +18,7 @@ function comoRouter() {
             next();
         });
 
-    });
-
-    router.route('/:com').get(function (req, res, next) { 
-
-        if(req.params.com && typeof req.params.com=="string"){
-            
-            let id = req.params.com;
-
-            comodities.findComById(id).then((com) => {
-                res.send(com);
-                res.end();
-                next();
-            }).catch((err) => {
-                console.log(err);
-                res.end();
-                next();
-            });
-
-        }
-
-    });
-
-    router.route('/create').post(function (req, res, next) { 
+    }).post(function (req, res, next) { 
 
         let body = req.body;
 
@@ -63,6 +41,26 @@ function comoRouter() {
             res.status(401);
             res.end();
             next();
+        }
+
+    });
+
+    router.route('/:com').get(function (req, res, next) { 
+
+        if(req.params.com && typeof req.params.com=="string"){
+            
+            let id = req.params.com;
+
+            comodities.findComById(id).then((com) => {
+                res.send(com);
+                res.end();
+                next();
+            }).catch((err) => {
+                console.log(err);
+                res.end();
+                next();
+            });
+
         }
 
     });

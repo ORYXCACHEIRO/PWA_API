@@ -18,29 +18,7 @@ function idiomaRouter() {
             next();
         });
 
-    });
-
-    router.route('/:idiom').get(function (req, res, next) { 
-
-        if(req.params.idiom && typeof req.params.idiom=="string"){
-            
-            let id = req.params.idiom;
-
-            langs.findById(id).then((idi) => {
-                res.send(idi);
-                res.end();
-                next();
-            }).catch((err) => {
-                console.log(err);
-                res.end();
-                next();
-            });
-
-        }
-
-    });
-
-    router.route('/create').post(function (req, res, next) {
+    }).post(function (req, res, next) {
 
         let body = req.body;
 
@@ -63,6 +41,26 @@ function idiomaRouter() {
             res.status(401);
             res.end();
             next();
+        }
+
+    });
+
+    router.route('/:idiom').get(function (req, res, next) { 
+
+        if(req.params.idiom && typeof req.params.idiom=="string"){
+            
+            let id = req.params.idiom;
+
+            langs.findById(id).then((idi) => {
+                res.send(idi);
+                res.end();
+                next();
+            }).catch((err) => {
+                console.log(err);
+                res.end();
+                next();
+            });
+
         }
 
     });

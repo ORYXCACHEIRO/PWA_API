@@ -1,6 +1,6 @@
 const express = require('express');
 let regAPI = require('./routes/register');
-let comtAPI = require('./routes/comodidades');
+let comAPI = require('./routes/comodities');
 let hotelAPI = require('./routes/hotel');
 let langsAPI = require('./routes/langs');
 let loginAPI = require('./routes/login');
@@ -10,9 +10,9 @@ function initialize(){
     
     
     api.use('/register', regAPI());
-    api.use('/comodidades', comtAPI());
+    api.use('/comodities', comAPI());
     api.use('/hotel', hotelAPI());
-    api.use('/idiomas', langsAPI());
+    api.use('/langs', langsAPI());
     api.use('/login', loginAPI());
 
     return api;
