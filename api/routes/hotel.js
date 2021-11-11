@@ -12,10 +12,12 @@ function hotelSettingsRouter() {
 
         hotel.findAll().then((hotel) => {
             res.send(hotel);
+            res.status(200);
             res.end();
             next();
         }).catch((err) => {
             //console.log(err);
+            res.status(401);
             res.end();
             next();
         });
@@ -117,9 +119,8 @@ function hotelSettingsRouter() {
 
         if (typeof id == 'string' && id.trim() !== "") {
 
-            hotel.removeById(id).then((hotel) => {
+            hotel.removeById(id).then(() => {
                 res.status(200);
-                res.send(hotel);
                 res.end();
                 next();
             }).catch((err) => {
@@ -138,13 +139,100 @@ function hotelSettingsRouter() {
 
     });
 
+    router.route('/:hotelid/languages').get(function (req, res, next) {
+
+        let id = req.params.hotelid;
+
+        if (typeof id == 'string' && id.trim() !== "") {
+
+            hotel.findHotelLangs(id).then((langs) => {
+                res.status(200);
+                res.send(langs)
+                res.end();
+                next();
+            }).catch((err) => {
+                //console.log(err);
+                err.status = err.status || 500;
+                res.status(401);
+                res.end();
+                next();
+            });
+
+        } else {
+            res.status(401);
+            res.end();
+            next();
+        }
+
+    }).put(function (req, res, next) {
+
+        let id = req.params.hotelid;
+        let body  = req.body;
+
+        if (typeof id == 'string' && id.trim() !== "") {
+
+            hotel.findHotelLangs(id).then((langs) => {
+
+                let newArray = [];
+                
+                for(let i = 0; i<body.length; i++){
+                    if (langs.languages.filter(function(e) { return e.language === body[i].language; }).length == 0 && newArray.filter(function(e) { return e.language === body[i].language; }).length == 0) {
+
+                        let obj = new Object({
+                            language: body[i].language
+                        });
+                        
+                        newArray.push(obj); 
+                    }
+                }
+
+                if(newArray.length>0){
+
+                    hotel.updateHotelLangs(id, newArray).then((langs) => {
+                        res.status(200);
+                        res.send(langs)
+                        res.end();
+                        next();
+                    }).catch((err) => {
+                        //console.log(err);
+                        err.status = err.status || 500;
+                        res.status(401);
+                        res.end();
+                        next();
+                    });
+
+                } else {
+                    res.status(401);
+                    res.send("Language/s is already present at the Hotel");
+                    res.end();
+                    next();
+                }
+                
+            }).catch((err) => {
+                //console.log(err);
+                err.status = err.status || 500;
+                res.status(401);
+                res.end();
+                next();
+            });
+
+        } else {
+            res.status(401);
+            res.end();
+            next();
+        }
+
+    }).delete(function (req, res, next) {
+
+    });
+
     router.route('/:hotelid/quartos').get(function (req, res, next) {
 
         let id = req.params.hotelid;
 
         if (typeof id == 'string' && id.trim() !== "") {
 
-            hotel.findRooms(id).then((quartos) => {
+            hotel.findAllRooms(id).then((quartos) => {
                 res.status(200);
                 res.send(quartos);
                 res.end();
@@ -175,6 +263,59 @@ function hotelSettingsRouter() {
             hotel.createRoom(body).then((room) => {
                 res.status(200);
                 res.send(room);
+                res.end();
+                next();
+            }).catch((err) => {
+                //console.log(err);
+                err.status = err.status || 500;
+                res.status(401);
+                res.end();
+                next();
+            });
+
+        } else {
+            res.status(401);
+            res.end();
+            next();
+        }
+
+    });
+
+    router.route('/:hotelid/quartos/:quartoid').get(function (req, res, next) {
+
+        let idhotel = req.params.hotelid;
+        let idroom = req.params.quartoid;
+
+        if ((typeof idhotel == 'string' && idhotel.trim() !== "") && (typeof idroom == 'string' && idroom.trim() !== "")) {
+
+            hotel.findOneRoom(idroom).then((quarto) => {
+                res.status(200);
+                res.send(quarto);
+                res.end();
+                next();
+            }).catch((err) => {
+                //console.log(err);
+                err.status = err.status || 500;
+                res.status(401);
+                res.end();
+                next();
+            });
+
+        } else {
+            res.status(401);
+            res.end();
+            next();
+        }
+
+    }).delete(function (req, res, next) { 
+
+        let idhotel = req.params.hotelid;
+        let idroom = req.params.quartoid;
+
+        if ((typeof idhotel == 'string' && idhotel.trim() !== "") && (typeof idroom == 'string' && idroom.trim() !== "")) {
+
+            hotel.removeRoom(idroom).then(() => {
+                res.status(200);
                 res.end();
                 next();
             }).catch((err) => {

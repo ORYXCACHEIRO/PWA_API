@@ -27,3 +27,10 @@
     "free": 1,
     "type": 1
 }
+
+//update a languages do hotel em array de objectos
+[
+    {
+        "language": "618a8bf58f9d5eada5f34c5ff"
+    }
+]

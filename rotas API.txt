@@ -20,14 +20,16 @@ ROTAS:
 #/hotel/:h_id/avaliacoes - feito
 #/hotel/:h_id/galeria 
 #/hotel/:h_id/quartos - feito
-#/hotel/:h_id/quartos/:q_id/
+#/hotel/:h_id/quartos/:q_id - feito
+#/hotel/:h_id/quartos/:q_id/languages
+#/hotel/:h_id/quartos/:q_id/comodities
 #/hotel/:h_id/quartos/:q_id/galeria 
-#/hotel/:h_id/quartos/:q_id/reservas/
+#/hotel/:h_id/quartos/:q_id/reservas
 
 // B A C K - E N D - cenas que nao convém o utilizador normal ver
 
-/avaliacoes/all
-/avaliacoes/:id_av
+/avaliacoes/all - "feito"
+/avaliacoes/:id_av - feito
 /galeria/all
 """"""""""""/galeria/:id_img"""""""""""
 /reservas/all

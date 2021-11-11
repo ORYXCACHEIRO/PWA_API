@@ -4,7 +4,9 @@ function userService(Model) {
         create,
         findAll,
         findByEmail,
-        findById
+        findById,
+        removeById,
+        updateById
     };
 
     function findAll() {
@@ -13,7 +15,7 @@ function userService(Model) {
                 if (err) reject(err);
 
                 resolve(users);
-            }).select("-password");
+            }).select("-password -role");
         });
     }
 
@@ -34,6 +36,26 @@ function userService(Model) {
 
                 resolve(user);
             }).select("-role");
+        });
+    }
+
+    function removeById(id){
+        return new Promise(function (resolve, reject) {
+            Model.findByIdAndRemove(id, function (err) {
+                if (err) reject(err);
+
+                resolve();
+            });
+        });
+    }
+
+    function updateById(id, values){
+        return new Promise(function (resolve, reject) {
+            Model.findByIdAndUpdate(id,values, {new: true}, function (err, user) {
+                if (err) reject(err);
+
+                resolve(user);
+            }).select("-__v");
         });
     }
 

@@ -10,11 +10,14 @@ function hotelService(Model) {
         findOneById,
         updateById,
         removeById,
-        findRooms,
+        findAllRooms,
         findAllReviews,
         createReview,
         removeRoom,
-        createRoom
+        createRoom,
+        findOneRoom,
+        findHotelLangs,
+        updateHotelLangs
     };
 
     //------------------Reviews----------------
@@ -29,8 +32,12 @@ function hotelService(Model) {
 
     //--------------Quarto-------------------------
 
-    function findRooms(id){
+    function findAllRooms(id){
         return rooms.findByHotelId(id);
+    }
+
+    function findOneRoom(id){
+        return rooms.findQuartById(id);
     }
 
     function removeRoom(id){
@@ -52,15 +59,16 @@ function hotelService(Model) {
         });
     }
 
-    function findOneById(values){
+    function findOneById(id){
         return new Promise(function (resolve, reject) {
-            Model.findOne({_id:values}, function (err, hotel) {
+            Model.findById(id, function (err, hotel) {
                 if (err) reject(err);
 
                 resolve(hotel);
             }).select("-status -__v");
         });
     }
+    
 
     function updateById(id, values){
         return new Promise(function (resolve, reject) {
@@ -79,6 +87,25 @@ function hotelService(Model) {
 
                 resolve();
             });
+        });
+    }
+
+    function findHotelLangs(id){
+        return new Promise(function (resolve, reject) {
+        Model.findById(id, 'languages', function (err, langs) {
+                if (err) reject(err);
+                resolve(langs);
+            }).select("-_id");
+        });
+    }
+
+    function updateHotelLangs(id, values){
+        return new Promise(function (resolve, reject) {
+            Model.findByIdAndUpdate(id, { $push: { languages:{ $each: values } } }, {new: true}, function (err, hotel) {
+                if (err) reject(err);
+
+                resolve(hotel);
+            }).select("-__v");
         });
     }
 

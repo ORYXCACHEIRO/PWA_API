@@ -7,7 +7,7 @@ function idiomaRouter() {
     router.use(express.json({ limit: '100mb' }));
     router.use(express.urlencoded({ limit: '100mb', extended: true }));
 
-    router.route('/all').get(function (req, res, next) {
+    router.route('/').get(function (req, res, next) {
 
         langs.findAll().then((idiomas) => {
             res.send(idiomas);
