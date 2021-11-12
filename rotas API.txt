@@ -7,12 +7,11 @@ ROTAS:
 
 #/login - feito
 /register - feito
-#/logout 
-#/profile 
-/profile/avaliacoes
+#/profile <ADELIO
+/profile/avaliacoes <ADELIO
 /profile/reservas
-#/profile/settings 
-/rec_password 
+#/profile/settings <ADELIO
+/rec_password <ADELIO
 #/hotel/all  - feito
 #/hotel/:h_id - feito
 #/hotel/:h_id/languages - feito
