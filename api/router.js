@@ -2,7 +2,7 @@ const express = require('express');
 let comAPI = require('./routes/comodities');
 let hotelAPI = require('./routes/hotel');
 let langsAPI = require('./routes/langs');
-let usersAPI = require('./routes/users');
+let usersAPI = require('./routes/user');
 let authAPI = require('./routes/auth');
 
 function initialize(){
