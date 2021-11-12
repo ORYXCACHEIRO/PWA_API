@@ -8,7 +8,7 @@ function hotelSettingsRouter() {
     router.use(express.urlencoded({ limit: '100mb', extended: true }));
 
 
-    router.route('/all').get(function (req, res, next) {
+    router.route('/').get(function (req, res, next) {
 
         hotel.findAll().then((hotel) => {
             res.send(hotel);
@@ -223,6 +223,30 @@ function hotelSettingsRouter() {
         }
 
     }).delete(function (req, res, next) {
+
+        let id = req.params.hotelid;
+        let body  = req.body;
+
+        if (typeof id == 'string' && id.trim() !== "") {
+
+            hotel.removeHotelLangs(id, body.language).then((langs) => {
+                res.status(200);
+                res.send(langs);
+                res.end();
+                next();
+            }).catch((err) => {
+                //console.log(err);
+                err.status = err.status || 500;
+                res.status(401);
+                res.end();
+                next();
+            });       
+
+        } else {
+            res.status(401);
+            res.end();
+            next();
+        }
 
     });
 

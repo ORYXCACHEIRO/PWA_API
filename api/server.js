@@ -1,7 +1,9 @@
 const http = require('http');
 const express = require('express');
 let router = require('./router');
-require('./config/db').connect();
+const config = require('./config/db');
+const mongoose = require('mongoose');
+
 
 const host = '127.0.0.1';
 const port = process.env.PORT || 3000;
@@ -20,6 +22,8 @@ app.use(function (req, res, next) {
 
 app.use(router.initialize());
 const server = http.Server(app);
+
+mongoose.connect(config.db).then(()=> console.log('Connection successfull!')).catch((err) => console.log(err));
 
 server.listen(port, host, () => {
     console.log(`Server running at  http://${host}:${port}/`);

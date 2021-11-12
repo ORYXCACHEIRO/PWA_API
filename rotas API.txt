@@ -15,7 +15,7 @@ ROTAS:
 /rec_password 
 #/hotel/all  - feito
 #/hotel/:h_id - feito
-#/hotel/:h_id/languages
+#/hotel/:h_id/languages - feito
 #/hotel/:h_id/comodities
 #/hotel/:h_id/avaliacoes - feito
 #/hotel/:h_id/galeria 

@@ -1,3 +1,7 @@
+const jwt = require('jsonwebtoken');
+const config = require('../config/db');
+const bcrypt = require ('bcrypt');
+
 function userService(Model) {
 
     let service = {
@@ -6,7 +10,9 @@ function userService(Model) {
         findByEmail,
         findById,
         removeById,
-        updateById
+        updateById,
+        createToken,
+        verifyToken
     };
 
     function findAll() {
@@ -25,18 +31,52 @@ function userService(Model) {
                 if (err) reject(err);
 
                 resolve(user);
-            }).select("-role");
+            });
         });
     }
 
-    function findByEmail(values){
+    function findByEmail({email, password}){
         return new Promise(function (resolve, reject) {
-            Model.findOne({ email: values }, function (err, user) {
+            Model.findOne({ email }, function (err, user) {
                 if (err) reject(err);
 
                 resolve(user);
-            }).select("-role");
+            });
+        }).then((user) => {
+            return comparePassword(password, user.password).then((match) => {
+
+                if(!match) return Promise.reject("User is not valid");
+
+                return Promise.resolve(user);
+
+            });
         });
+    }
+
+    function createToken(user){
+        let token = jwt.sign({id: user._id, email: user.email}, config.secret, {
+            expiresIn: config.expiresPassword
+        });
+
+        return {auth: true, token}
+    }
+
+    function verifyToken(token){
+        return new Promise(function (resolve, reject) { 
+            jwt.verify(token, config.secret, (err, decoded) => {
+                if(err) reject()
+
+                return resolve(decoded);
+            });
+        });   
+    }
+
+    function hashPassword(user){
+        return bcrypt.hash(user.password, config.saltRounds);
+    }
+
+    function comparePassword(password, hash){
+        return bcrypt.compare(password, hash);
     }
 
     function removeById(id){
@@ -60,12 +100,30 @@ function userService(Model) {
     }
 
     function create(values) {
-        let newUser = Model(values);
+        return hashPassword(values).then((hashpass, err) => {
+
+            if(err){
+                return Promise.reject("Not saved");
+            }
+            
+            console.log(values);
+
+            let newUserWithPassword = {
+                ...values,
+                password: hashpass
+            }
+
+            let newUser = Model(newUserWithPassword);
+            return save(newUser);
+        });
+    }
+
+    function save(newUser) {
         return new Promise(function (resolve, reject) {
             newUser.save(function (err) {
                 if (err) reject(err);
 
-                resolve();
+                resolve('User created!!');
             });
         });
     }
