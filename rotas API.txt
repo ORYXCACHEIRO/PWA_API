@@ -9,7 +9,7 @@ ROTAS:
 /register - feito
 #/profile <ADELIO
 /profile/avaliacoes <ADELIO
-/profile/reservas
+/profile/reservas <Adelio
 #/profile/settings <ADELIO
 /rec_password <ADELIO
 #/hotel/all  - feito

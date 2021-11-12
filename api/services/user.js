@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const config = require('../config/db');
-const bcrypt = require ('bcrypt');
+const bcrypt = require('bcrypt');
 
 function userService(Model) {
 
@@ -25,7 +25,7 @@ function userService(Model) {
         });
     }
 
-    function findById(values){
+    function findById(values) {
         return new Promise(function (resolve, reject) {
             Model.findOne({ _id: values }, function (err, user) {
                 if (err) reject(err);
@@ -35,7 +35,7 @@ function userService(Model) {
         });
     }
 
-    function findByEmail({email, password}){
+    function findByEmail({ email, password }) {
         return new Promise(function (resolve, reject) {
             Model.findOne({ email }, function (err, user) {
                 if (err) reject(err);
@@ -45,7 +45,7 @@ function userService(Model) {
         }).then((user) => {
             return comparePassword(password, user.password).then((match) => {
 
-                if(!match) return Promise.reject("User is not valid");
+                if (!match) return Promise.reject("User is not valid");
 
                 return Promise.resolve(user);
 
@@ -53,33 +53,33 @@ function userService(Model) {
         });
     }
 
-    function createToken(user){
-        let token = jwt.sign({id: user._id, email: user.email}, config.secret, {
+    function createToken(user) {
+        let token = jwt.sign({ id: user._id, email: user.email, role: user.role }, config.secret, {
             expiresIn: config.expiresPassword
         });
 
-        return {auth: true, token}
+        return { auth: true, token }
     }
 
-    function verifyToken(token){
-        return new Promise(function (resolve, reject) { 
+    function verifyToken(token) {
+        return new Promise(function (resolve, reject) {
             jwt.verify(token, config.secret, (err, decoded) => {
-                if(err) reject()
+                if (err) reject()
 
                 return resolve(decoded);
             });
-        });   
+        });
     }
 
-    function hashPassword(user){
+    function hashPassword(user) {
         return bcrypt.hash(user.password, config.saltRounds);
     }
 
-    function comparePassword(password, hash){
+    function comparePassword(password, hash) {
         return bcrypt.compare(password, hash);
     }
 
-    function removeById(id){
+    function removeById(id) {
         return new Promise(function (resolve, reject) {
             Model.findByIdAndRemove(id, function (err) {
                 if (err) reject(err);
@@ -89,9 +89,9 @@ function userService(Model) {
         });
     }
 
-    function updateById(id, values){
+    function updateById(id, values) {
         return new Promise(function (resolve, reject) {
-            Model.findByIdAndUpdate(id,values, {new: true}, function (err, user) {
+            Model.findByIdAndUpdate(id, values, { new: true }, function (err, user) {
                 if (err) reject(err);
 
                 resolve(user);
@@ -102,10 +102,10 @@ function userService(Model) {
     function create(values) {
         return hashPassword(values).then((hashpass, err) => {
 
-            if(err){
+            if (err) {
                 return Promise.reject("Not saved");
             }
-            
+
             console.log(values);
 
             let newUserWithPassword = {

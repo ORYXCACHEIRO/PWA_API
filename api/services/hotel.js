@@ -18,7 +18,9 @@ function hotelService(Model) {
         findOneRoom,
         findHotelLangs,
         updateHotelLangs,
-        removeHotelLangs
+        removeHotelLangs,
+        findHotelComs,
+        updateHotelComs
     };
 
     //------------------Reviews----------------
@@ -113,6 +115,25 @@ function hotelService(Model) {
     function removeHotelLangs(id, value){
         return new Promise(function (resolve, reject) {
             Model.findByIdAndUpdate(id, { $pull: { languages:{ language: value } } }, {new: true}, function (err, hotel) {
+                if (err) reject(err);
+
+                resolve(hotel);
+            }).select("-__v");
+        });
+    }
+
+    function findHotelComs(id){
+        return new Promise(function (resolve, reject) {
+        Model.findById(id, 'comodities', function (err, langs) {
+                if (err) reject(err);
+                resolve(langs);
+            }).select("-_id");
+        });
+    }
+
+    function updateHotelComs(id, values){
+        return new Promise(function (resolve, reject) {
+            Model.findByIdAndUpdate(id, { $push: { comodities:{ $each: values } } }, 'comodities', {new: true}, function (err, hotel) {
                 if (err) reject(err);
 
                 resolve(hotel);
