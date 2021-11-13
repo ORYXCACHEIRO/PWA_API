@@ -18,9 +18,10 @@ function hotelService(Model) {
         findOneRoom,
         findHotelLangs,
         updateHotelLangs,
-        removeHotelLangs,
+        removeHotelLang,
         findHotelComs,
-        updateHotelComs
+        updateHotelComs,
+        removeHotelComs
     };
 
     //------------------Reviews----------------
@@ -104,20 +105,20 @@ function hotelService(Model) {
 
     function updateHotelLangs(id, values){
         return new Promise(function (resolve, reject) {
-            Model.findByIdAndUpdate(id, { $push: { languages:{ $each: values } } }, 'languages', {new: true}, function (err, hotel) {
+            Model.findByIdAndUpdate(id, { $push: { languages:{ $each: values } } }, {new: true}, function (err, hotel) {
                 if (err) reject(err);
 
-                resolve(hotel);
+                resolve(hotel.languages);
             }).select("-__v");
         });
     }
 
-    function removeHotelLangs(id, value){
+    function removeHotelLang(id, value){
         return new Promise(function (resolve, reject) {
             Model.findByIdAndUpdate(id, { $pull: { languages:{ language: value } } }, {new: true}, function (err, hotel) {
                 if (err) reject(err);
 
-                resolve(hotel);
+                resolve(hotel.languages);
             }).select("-__v");
         });
     }
@@ -133,10 +134,20 @@ function hotelService(Model) {
 
     function updateHotelComs(id, values){
         return new Promise(function (resolve, reject) {
-            Model.findByIdAndUpdate(id, { $push: { comodities:{ $each: values } } }, 'comodities', {new: true}, function (err, hotel) {
+            Model.findByIdAndUpdate(id, { $push: { comodities:{ $each: values } } }, {new: true}, function (err, hotel) {
                 if (err) reject(err);
 
-                resolve(hotel);
+                resolve(hotel.comodities);
+            }).select("-__v");
+        });
+    }
+
+    function removeHotelComs(id, value){
+        return new Promise(function (resolve, reject) {
+            Model.findByIdAndUpdate(id, { $pull: { comodities:{ comodity: value } } }, {new: true}, function (err, hotel) {
+                if (err) reject(err);
+
+                resolve(hotel.comodities);
             }).select("-__v");
         });
     }

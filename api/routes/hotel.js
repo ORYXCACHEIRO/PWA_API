@@ -138,6 +138,121 @@ function hotelSettingsRouter() {
         }
 
     });
+    
+    router.route('/:hotelid/comodities').get(function (req, res, next) {
+
+        let id = req.params.hotelid;
+
+        if (typeof id == 'string' && id.trim() !== "") {
+
+            hotel.findHotelComs(id).then((coms) => {
+                res.status(200);
+                res.send(coms)
+                res.end();
+                next();
+            }).catch((err) => {
+                //console.log(err);
+                err.status = err.status || 500;
+                res.status(401);
+                res.end();
+                next();
+            });
+
+        } else {
+            res.status(401);
+            res.end();
+            next();
+        }
+        
+    }).put(function (req, res, next) {
+
+        let id = req.params.hotelid;
+        let body  = req.body;
+
+        if (typeof id == 'string' && id.trim() !== "") {
+
+            hotel.findHotelComs(id).then((coms) => {
+
+                let newArray = [];
+
+                
+                
+                for(let i = 0; i<body.length; i++){
+                    if (coms.comodities.filter(function(e) { return e.comodity === body[i].comodity; }).length == 0 && newArray.filter(function(e) { return e.comodity === body[i].comodity; }).length == 0) {
+
+                        let obj = new Object({
+                            comodity: body[i].comodity
+                        });
+                        
+                        newArray.push(obj); 
+                    }
+                }
+
+                if(newArray.length>0){
+                   
+                    hotel.updateHotelComs(id, newArray).then((hotel) => {
+                        res.status(200);
+                        res.send(hotel)
+                        res.end();
+                        next();
+                    }).catch((err) => {
+                        console.log(err);
+                        err.status = err.status || 500;
+                        res.status(401);
+                        res.end();
+                        next();
+                    });
+
+                } else {
+                    res.status(401);
+                    res.send("Language/s is already present at the Hotel");
+                    res.end();
+                    next();
+                }
+                
+            }).catch((err) => {
+                //console.log(err);
+                err.status = err.status || 500;
+                res.status(401);
+                res.end();
+                next();
+            });
+
+        } else {
+            res.status(401);
+            res.end();
+            next();
+        }
+
+    });
+
+    router.route('/:hotelid/comodities/:comid').put(function (req, res, next) { 
+
+        let idhotel = req.params.hotelid;
+        let idcom= req.params.comid;
+
+        if ((typeof idhotel == 'string' && idhotel.trim() !== "") && (typeof idcom == 'string' && idcom.trim() !== "")) {
+
+            hotel.removeHotelLang(idhotel, idcom).then((langs) => {
+                res.status(200);
+                res.send(langs);
+                res.end();
+                next();
+            }).catch((err) => {
+                //console.log(err);
+                err.status = err.status || 500;
+                res.status(401);
+                res.end();
+                next();
+            });       
+
+        } else {
+            res.status(401);
+            res.end();
+            next();
+        }
+
+    });
 
     router.route('/:hotelid/languages').get(function (req, res, next) {
 
@@ -222,14 +337,16 @@ function hotelSettingsRouter() {
             next();
         }
 
-    }).delete(function (req, res, next) {
+    });
 
-        let id = req.params.hotelid;
-        let body  = req.body;
+    router.route('/:hotelid/languages/:langid').put(function (req, res, next) { 
 
-        if (typeof id == 'string' && id.trim() !== "") {
+        let idhotel = req.params.hotelid;
+        let idlang = req.params.langid;
 
-            hotel.removeHotelLangs(id, body.language).then((langs) => {
+        if ((typeof idhotel == 'string' && idhotel.trim() !== "") && (typeof idlang == 'string' && idlang.trim() !== "")) {
+
+            hotel.removeHotelLang(idhotel, idlang).then((langs) => {
                 res.status(200);
                 res.send(langs);
                 res.end();
