@@ -1,27 +1,33 @@
 const rooms = require('../controllers/rooms');
 const reviews = require('../controllers/reviews');
+const gallery = require('../controllers/gallery');
 
 function hotelService(Model) {
 
     let service = {
         create,
         findAll,
-        findAllWithStatus,
         findOneById,
         updateById,
         removeById,
         findAllRooms,
         findAllReviews,
         createReview,
+        deleteReview,
+        checkReview,
         removeRoom,
         createRoom,
         findOneRoom,
+        updateRoom,
         findHotelLangs,
         updateHotelLangs,
         removeHotelLang,
         findHotelComs,
         updateHotelComs,
-        removeHotelComs
+        removeHotelComs,
+        addPhoto,
+        deletePhoto
+        
     };
 
     //------------------Reviews----------------
@@ -34,6 +40,14 @@ function hotelService(Model) {
         return reviews.findRevsByHotelId(id);
     }
 
+    function deleteReview(id){
+        return reviews.removeByRevId(id);
+    }
+
+    function checkReview(idhotel, iduser){
+        return reviews.checkReviews(idhotel,iduser);
+    }
+
     //--------------Quarto-------------------------
 
     function findAllRooms(id){
@@ -41,15 +55,33 @@ function hotelService(Model) {
     }
 
     function findOneRoom(id){
-        return rooms.findQuartById(id);
+        return rooms.findById(id);
     }
 
     function removeRoom(id){
         return rooms.removeById(id);
     }
 
+    function updateRoom(id, room){
+        return rooms.updateById(id, room);
+    }
+
     function createRoom(values){
         return rooms.create(values);
+    }
+
+    //--------------Galeria-------------------------
+
+    function addPhoto(values){
+        return gallery.createForHotel(values);
+    }
+
+    function deletePhoto(id){
+        return gallery.removeById(id);
+    }
+
+    function updatePhoto(values){
+
     }
 
     //-----------------------Hotel--------------------------
@@ -149,16 +181,6 @@ function hotelService(Model) {
 
                 resolve(hotel.comodities);
             }).select("-__v");
-        });
-    }
-
-    function findAllWithStatus() {
-        return new Promise(function (resolve, reject) {
-            Model.find({}, function (err, hoteis) {
-                if (err) reject(err);
-
-                resolve(hoteis);
-            });
         });
     }
 

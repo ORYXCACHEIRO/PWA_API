@@ -2,30 +2,19 @@ function quartoService(Model) {
 
     let service = {
         create,
-        findAll,
-        findQuartById,
+        findById,
         findByHotelId,
         removeById,
         updateById
     };
 
-    function findAll() {
-        return new Promise(function (resolve, reject) {
-            Model.find({}, function (err, quartos) {
-                if (err) reject(err);
-
-                resolve(quartos);
-            });
-        });
-    }
-
-    function findQuartById(id){
+    function findById(id){
         //let model = Model(value);
         return new Promise(function (resolve, reject) {
-            Model.findById(id, function (err, quartos) {
+            Model.findById(id, function (err, quarto) {
                 if (err) reject(err);
 
-                resolve(quartos);
+                resolve(quarto);
             }).select("-__v");
         });
     }
@@ -53,7 +42,7 @@ function quartoService(Model) {
     function findByHotelId(id){
         //let model = Model(value);
         return new Promise(function (resolve, reject) {
-            Model.findById(id, function (err, quartos) {
+            Model.find({id_hotel: id}, function (err, quartos) {
                 if (err) reject(err);
 
                 resolve(quartos);

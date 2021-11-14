@@ -14,22 +14,20 @@ ROTAS:
 /rec_password <ADELIO
 #/hotel/all  - feito
 #/hotel/:h_id - feito
-#/hotel/:h_id/languages - feito
-#/hotel/:h_id/comodities
+#/hotel/:h_id/languages - feito (/hotel/:h_id/languages/:idlang - put)
+#/hotel/:h_id/comodities - feito (/hotel/:h_id/comodities/:idcom - put)
 #/hotel/:h_id/avaliacoes - feito
+#/hotel/:h_id/avaliacoes/:id_av - feito
 #/hotel/:h_id/galeria 
+ """""""""""""/hotel/:h_id/galeria/:id_foto""""""""""""""" 
 #/hotel/:h_id/quartos - feito
 #/hotel/:h_id/quartos/:q_id - feito
-#/hotel/:h_id/quartos/:q_id/languages
 #/hotel/:h_id/quartos/:q_id/comodities
 #/hotel/:h_id/quartos/:q_id/galeria 
 #/hotel/:h_id/quartos/:q_id/reservas
 
 // B A C K - E N D - cenas que nao convém o utilizador normal ver
 
-/avaliacoes/all - "feito"
-/avaliacoes/:id_av - feito
-/galeria/all
 """"""""""""/galeria/:id_img"""""""""""
 /reservas/all
 /reservas/:id_res

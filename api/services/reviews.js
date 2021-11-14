@@ -2,22 +2,13 @@ function reviewService(Model) {
 
     let service = {
         create,
-        findAll,
         findRevById,
         findRevsByHotelId,
         findRevsByUserId,
-        removeByRevId
+        removeByRevId,
+        checkReviews
     };
 
-    function findAll() {
-        return new Promise(function (resolve, reject) {
-            Model.find({}, function (err, avaliacoes) {
-                if (err) reject(err);
-
-                resolve(avaliacoes);
-            });
-        });
-    }
 
     function removeByRevId(id){
         return new Promise(function (resolve, reject) {
@@ -29,14 +20,25 @@ function reviewService(Model) {
         });
     }
 
-    function findRevById(value){
+    function findRevById(id){
         //let model = Model(value);
         return new Promise(function (resolve, reject) {
-            Model.findOne({_id:value }, function (err, avaliacao) {
+            Model.findById(id, function (err, avaliacao) {
                 if (err) reject(err);
 
                 resolve(avaliacao);
             }).select("-__v");
+        });
+    }
+
+    //Ve se o utilziador ja tem uma reviw no hotel, e no caso de ja ter retorna true
+    function checkReviews(idhotel, iduser){
+        return new Promise(function (resolve, reject) {
+            Model.find({id_hotel:idhotel, id_user: iduser}, function (err, review) {
+                if (err) reject(err);
+
+                resolve(review);
+            });
         });
     }
 

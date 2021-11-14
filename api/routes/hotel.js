@@ -1,7 +1,7 @@
 const express = require('express');
 const hotel = require('../controllers/hotel');
 
-function hotelSettingsRouter() {
+function hotelRouter() {
     let router = express();
 
     router.use(express.json({ limit: '100mb' }));
@@ -367,15 +367,15 @@ function hotelSettingsRouter() {
 
     });
 
-    router.route('/:hotelid/quartos').get(function (req, res, next) {
+    router.route('/:hotelid/rooms').get(function (req, res, next) {
 
         let id = req.params.hotelid;
 
         if (typeof id == 'string' && id.trim() !== "") {
 
-            hotel.findAllRooms(id).then((quartos) => {
+            hotel.findAllRooms(id).then((rooms) => {
                 res.status(200);
-                res.send(quartos);
+                res.send(rooms);
                 res.end();
                 next();
             }).catch((err) => {
@@ -407,7 +407,7 @@ function hotelSettingsRouter() {
                 res.end();
                 next();
             }).catch((err) => {
-                //console.log(err);
+                console.log(err);
                 err.status = err.status || 500;
                 res.status(401);
                 res.end();
@@ -422,10 +422,10 @@ function hotelSettingsRouter() {
 
     });
 
-    router.route('/:hotelid/quartos/:quartoid').get(function (req, res, next) {
+    router.route('/:hotelid/rooms/:roomid').get(function (req, res, next) {
 
         let idhotel = req.params.hotelid;
-        let idroom = req.params.quartoid;
+        let idroom = req.params.roomid;
 
         if ((typeof idhotel == 'string' && idhotel.trim() !== "") && (typeof idroom == 'string' && idroom.trim() !== "")) {
 
@@ -448,10 +448,37 @@ function hotelSettingsRouter() {
             next();
         }
 
+    }).put(function (req, res, next) { 
+
+        let idhotel = req.params.hotelid;
+        let idroom = req.params.roomid;
+        let body = req.body;
+
+        if ((typeof idhotel == 'string' && idhotel.trim() !== "") && (typeof idroom == 'string' && idroom.trim() !== "")) {
+
+            hotel.updateRoom(idroom, body).then((room) => {
+                res.status(200);
+                res.send(room);
+                res.end();
+                next();
+            }).catch((err) => {
+                //console.log(err);
+                err.status = err.status || 500;
+                res.status(401);
+                res.end();
+                next();
+            });
+
+        } else {
+            res.status(401);
+            res.end();
+            next();
+        }
+
     }).delete(function (req, res, next) { 
 
         let idhotel = req.params.hotelid;
-        let idroom = req.params.quartoid;
+        let idroom = req.params.roomid;
 
         if ((typeof idhotel == 'string' && idhotel.trim() !== "") && (typeof idroom == 'string' && idroom.trim() !== "")) {
 
@@ -475,12 +502,11 @@ function hotelSettingsRouter() {
 
     });
 
-    router.route('/:hotelid/avalicao').get(function (req, res, next) {
+    router.route('/:hotelid/reviews').get(function (req, res, next) {
 
         if (req.params.hotelid && typeof req.params.hotelid == "string") {
 
             let id = req.params.hotelid;
-
 
             hotel.findAllReviews(id).then((avs) => {
                 res.send(avs);
@@ -503,17 +529,68 @@ function hotelSettingsRouter() {
         //TODO: Mudar forma como obtenho o id depois de implementar o sistema de login
 
         if (
-            (body.coment.length > 0 && typeof body.coment == 'string' && body.coment.trim() !== "" || body.coment.trim().length == 0)
+            (body.coment && body.coment.length > 0 && typeof body.coment == 'string' && body.coment.trim() !== "" || !body.coment)
             && (typeof body.id_user == 'string' && body.id_user.trim() !== "")
             && (typeof body.review == 'number' && (body.review >= 0 && body.review <= 10))
             && (req.params.hotelid && typeof req.params.hotelid == "string")
         ) {
 
-            body.id_hotel = req.params.hotelid;
+            let id = req.params.hotelid;
+            body.id_hotel = id;
+            
+            hotel.checkReview(id, body.id_user).then((result) => {
 
-            hotel.createReview(body).then(() => {
+                if(result.length>0){
+                    res.status(401);
+                    res.end();
+                    next();
+                }
+
+                body.id_hotel = req.params.hotelid;
+
+                if(!body.coment){
+                    body.coment = "";
+                }
+
+                hotel.createReview(body).then(() => {
+                    res.status(200);
+                    res.send(body);
+                    res.end();
+                    next();
+                }).catch((err) => {
+                    //console.log(err);
+                    err.status = err.status || 500;
+                    res.status(401);
+                    res.end();
+                    next();
+                });
+
+            }).catch((err) => {
+                //console.log(err);
+                err.status = err.status || 500;
+                res.status(401);
+                res.end();
+                next();
+            });
+
+            
+
+        } else {
+            res.status(401);
+            res.end();
+            next();
+        }
+
+    });
+
+    router.route('/:hotelid/reviews/:reviewId').get(function (req, res, next) { 
+
+        if(req.params.reviewId && typeof req.params.reviewId=="string"){
+
+            let id = req.params.reviewId;
+
+            reviews.removeByRevId(id).then(() => {
                 res.status(200);
-                res.send(body);
                 res.end();
                 next();
             }).catch((err) => {
@@ -524,7 +601,7 @@ function hotelSettingsRouter() {
                 next();
             });
 
-        } else {
+        }  else {
             res.status(401);
             res.end();
             next();
@@ -535,4 +612,4 @@ function hotelSettingsRouter() {
     return router;
 }
 
-module.exports = hotelSettingsRouter;
+module.exports = hotelRouter;

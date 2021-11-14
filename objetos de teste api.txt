@@ -34,3 +34,10 @@
         "language": "618a8bf58f9d5eada5f34c5ff"
     }
 ]
+
+//quarto 
+{
+    "name": "adelio",
+    "descrption": "adelio",
+    "price_per_night": 50
+}
