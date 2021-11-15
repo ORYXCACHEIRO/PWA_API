@@ -1,3 +1,5 @@
+const hotel = require('../controllers/hotel');
+
 function comodidadesService(Model) {
 
     let service = {
@@ -5,8 +7,17 @@ function comodidadesService(Model) {
         findAll,
         findComById,
         updateCom,
-        removeById
+        removeById,
+        removeComsFromHotel
     };
+
+    //type 0 - hotel, 1 - quarto
+
+    //free 0 - não, 1 - sim
+
+    function removeComsFromHotel(value){
+        return hotel.removeHotelComsAll(value);
+    }
 
     function findAll() {
         return new Promise(function (resolve, reject) {

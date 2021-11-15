@@ -174,8 +174,6 @@ function hotelRouter() {
             hotel.findHotelComs(id).then((coms) => {
 
                 let newArray = [];
-
-                
                 
                 for(let i = 0; i<body.length; i++){
                     if (coms.comodities.filter(function(e) { return e.comodity === body[i].comodity; }).length == 0 && newArray.filter(function(e) { return e.comodity === body[i].comodity; }).length == 0) {
@@ -233,9 +231,9 @@ function hotelRouter() {
 
         if ((typeof idhotel == 'string' && idhotel.trim() !== "") && (typeof idcom == 'string' && idcom.trim() !== "")) {
 
-            hotel.removeHotelLang(idhotel, idcom).then((langs) => {
+            hotel.removeHotelComs(idhotel, idcom).then((coms) => {
                 res.status(200);
-                res.send(langs);
+                res.send(coms);
                 res.end();
                 next();
             }).catch((err) => {
@@ -520,6 +518,10 @@ function hotelRouter() {
                 next();
             });
 
+        } else {
+            res.status(401);
+            res.end();
+            next();
         }
 
     }).post(async (req, res, next) => {
@@ -583,13 +585,13 @@ function hotelRouter() {
 
     });
 
-    router.route('/:hotelid/reviews/:reviewId').get(function (req, res, next) { 
+    router.route('/:hotelid/reviews/:reviewId').delete(function (req, res, next) { 
 
         if(req.params.reviewId && typeof req.params.reviewId=="string"){
 
             let id = req.params.reviewId;
 
-            reviews.removeByRevId(id).then(() => {
+            hotel.deleteReview(id).then(() => {
                 res.status(200);
                 res.end();
                 next();
@@ -606,6 +608,105 @@ function hotelRouter() {
             res.end();
             next();
         }
+
+    });
+
+    router.route('/:hotelid/gallery').get(function (req, res, next) { 
+
+        if (req.params.hotelid && typeof req.params.hotelid == "string") {
+
+            let id = req.params.hotelid;
+
+            hotel.findPhotos(id).then((photos) => {
+                res.send(photos);
+                res.status(200);
+                res.end();
+                next();
+            }).catch((err) => {
+                //console.log(err);
+                res.status(401);
+                res.end();
+                next();
+            });
+
+        } else {
+            res.status(401);
+            res.end();
+            next();
+        }
+
+    }).post(function (req, res, next) { 
+
+        let body = req.body;
+
+        if (req.params.hotelid && typeof req.params.hotelid == "string") {
+
+            let id = req.params.hotelid;
+            
+            body.id_room = "";
+            body.id_hotel = id;
+
+            hotel.addPhoto(body).then(() => {
+                res.status(200);
+                res.end();
+                next();
+            }).catch((err) => {
+                //console.log(err);
+                res.status(401);
+                res.end();
+                next();
+            });
+
+        } else {
+            res.status(401);
+            res.end();
+            next();
+        }
+
+    });
+
+    router.route('/:hotelid/gallery/:photoid').delete(function (req, res, next) { 
+
+        if ((req.params.hotelid && typeof req.params.hotelid == "string") && (req.params.photoid && typeof req.params.photoid == "string")) {
+
+            let photoid = req.params.photoid;
+
+            hotel.deletePhoto(photoid).then(() => {
+                res.status(200);
+                res.end();
+                next();
+            }).catch((err) => {
+                //console.log(err);
+                err.status = err.status || 500;
+                res.status(401);
+                res.end();
+                next();
+            });
+
+        } else {
+            res.status(401);
+            res.end();
+            next();
+        }
+
+    });
+
+    router.route('/:hotelid/teste').get(function (req, res, next) {  
+
+        let coisa = "618a8939f070f6773851fa1"
+
+        hotel.checkComsFromHotels(coisa).then((teste) => {
+            res.send(teste)
+            res.status(200);
+            res.end();
+            next();
+        }).catch((err) => {
+            console.log(err);
+            err.status = err.status || 500;
+            res.status(401);
+            res.end();
+            next();
+        });
 
     });
 

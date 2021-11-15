@@ -18,8 +18,8 @@ ROTAS:
 #/hotel/:h_id/comodities - feito (/hotel/:h_id/comodities/:idcom - put)
 #/hotel/:h_id/avaliacoes - feito
 #/hotel/:h_id/avaliacoes/:id_av - feito
-#/hotel/:h_id/galeria 
- """""""""""""/hotel/:h_id/galeria/:id_foto""""""""""""""" 
+#/hotel/:h_id/galeria - feito
+#/hotel/:h_id/galeria/:id_foto - feito
 #/hotel/:h_id/quartos - feito
 #/hotel/:h_id/quartos/:q_id - feito
 #/hotel/:h_id/quartos/:q_id/comodities

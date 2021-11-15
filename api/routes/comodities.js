@@ -7,7 +7,7 @@ function comoRouter() {
     router.use(express.json({ limit: '100mb' }));
     router.use(express.urlencoded({ limit: '100mb', extended: true }));
 
-    router.route('/all').get(function (req, res, next) { 
+    router.route('/').get(function (req, res, next) { 
 
         comodities.findAll().then((comodidades) => {
             res.send(comodidades);
@@ -85,15 +85,17 @@ function comoRouter() {
     
     }).delete(function (req, res, next) { 
         
-        let id = req.params.com;
+        let idcom = req.params.com;
 
-        comodities.removeById(id).then(() => {
+        comodities.removeComsFromHotel(idcom).then(() => comodities.removeById(idcom))
+        .then(() => {
             res.status(200);
             res.end();
             next();
         }).catch((err) => {
             console.log(err);
-            res.status(404);
+            err.status = err.status || 500;
+            res.status(401);
             res.end();
             next();
         });

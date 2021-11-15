@@ -21,6 +21,14 @@
     "password": 
 }
 
+//register
+{
+    "name": "Jota",
+    "lastName": "Moura",
+    "email": "jota@gmail.com",
+    "password": "12345"
+}
+
 //comodaties
 {
     "name": "Wifi",
@@ -35,9 +43,23 @@
     }
 ]
 
+//update a comodities do hotel em array de objectos
+[
+    {
+        "comodity": "618a8bf58f9d5eada5f34c5ff"
+    }
+]
+
 //quarto 
 {
     "name": "adelio",
     "descrption": "adelio",
     "price_per_night": 50
+}
+
+//avaliacoes
+{
+    "review": 9,
+    "id_user": "617fe4de333ecb8b25d63df0",
+    "coment": ""
 }

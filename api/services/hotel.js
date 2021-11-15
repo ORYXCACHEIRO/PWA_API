@@ -1,6 +1,7 @@
 const rooms = require('../controllers/rooms');
 const reviews = require('../controllers/reviews');
 const gallery = require('../controllers/gallery');
+const comodities = require('../controllers/comodities');
 
 function hotelService(Model) {
 
@@ -25,9 +26,11 @@ function hotelService(Model) {
         findHotelComs,
         updateHotelComs,
         removeHotelComs,
+        checkComodity,
+        removeHotelComsAll,
         addPhoto,
-        deletePhoto
-        
+        deletePhoto,
+        findPhotos
     };
 
     //------------------Reviews----------------
@@ -73,15 +76,93 @@ function hotelService(Model) {
     //--------------Galeria-------------------------
 
     function addPhoto(values){
-        return gallery.createForHotel(values);
+        return gallery.create(values);
+    }
+
+    function findPhotos(id){
+        return gallery.findAllByHotel(id);
     }
 
     function deletePhoto(id){
         return gallery.removeById(id);
     }
 
-    function updatePhoto(values){
+    //---------------------Comodities---------------------------
 
+    function findHotelComs(id){
+        return new Promise(function (resolve, reject) {
+        Model.findById(id, 'comodities', function (err, langs) {
+                if (err) reject(err);
+                resolve(langs);
+            }).select("-_id");
+        });
+    }
+
+    function updateHotelComs(id, values){
+        return new Promise(function (resolve, reject) {
+            Model.findByIdAndUpdate(id, { $push: { comodities:{ $each: values } } }, {new: true}, function (err, hotel) {
+                if (err) reject(err);
+
+                resolve(hotel.comodities);
+            }).select("-__v");
+        });
+    }
+
+    //remove hotel em especifico
+    function removeHotelComs(id, value){
+        return new Promise(function (resolve, reject) {
+            Model.findByIdAndUpdate(id, { $pull: { comodities:{ comodity: value } } }, {new: true}, function (err, hotel) {
+                if (err) reject(err);
+
+                resolve(hotel.comodities);
+            }).select("-__v");
+        });
+    }
+
+    //remove de todos os hoteis
+    function removeHotelComsAll(value){
+        return new Promise(function (resolve, reject) {
+            Model.updateMany({}, { $pull: { comodities:{ comodity: value } } }, {new: true}, function (err) {
+                if (err) reject(err);
+
+                resolve();
+            }).select("-__v");
+        });
+    }
+
+    function checkComodity(id){
+        return comodities.findComById(id);
+    }
+
+    //--------------------Languages------------------------------
+
+    function findHotelLangs(id){
+        return new Promise(function (resolve, reject) {
+        Model.findById(id, 'languages', function (err, langs) {
+                if (err) reject(err);
+                resolve(langs);
+            }).select("-_id");
+        });
+    }
+
+    function updateHotelLangs(id, values){
+        return new Promise(function (resolve, reject) {
+            Model.findByIdAndUpdate(id, { $push: { languages:{ $each: values } } }, {new: true}, function (err, hotel) {
+                if (err) reject(err);
+
+                resolve(hotel.languages);
+            }).select("-__v");
+        });
+    }
+
+    function removeHotelLang(id, value){
+        return new Promise(function (resolve, reject) {
+            Model.findByIdAndUpdate(id, { $pull: { languages:{ language: value } } }, {new: true}, function (err, hotel) {
+                if (err) reject(err);
+
+                resolve(hotel.languages);
+            }).select("-__v");
+        });
     }
 
     //-----------------------Hotel--------------------------
@@ -125,65 +206,6 @@ function hotelService(Model) {
             });
         });
     }
-
-    function findHotelLangs(id){
-        return new Promise(function (resolve, reject) {
-        Model.findById(id, 'languages', function (err, langs) {
-                if (err) reject(err);
-                resolve(langs);
-            }).select("-_id");
-        });
-    }
-
-    function updateHotelLangs(id, values){
-        return new Promise(function (resolve, reject) {
-            Model.findByIdAndUpdate(id, { $push: { languages:{ $each: values } } }, {new: true}, function (err, hotel) {
-                if (err) reject(err);
-
-                resolve(hotel.languages);
-            }).select("-__v");
-        });
-    }
-
-    function removeHotelLang(id, value){
-        return new Promise(function (resolve, reject) {
-            Model.findByIdAndUpdate(id, { $pull: { languages:{ language: value } } }, {new: true}, function (err, hotel) {
-                if (err) reject(err);
-
-                resolve(hotel.languages);
-            }).select("-__v");
-        });
-    }
-
-    function findHotelComs(id){
-        return new Promise(function (resolve, reject) {
-        Model.findById(id, 'comodities', function (err, langs) {
-                if (err) reject(err);
-                resolve(langs);
-            }).select("-_id");
-        });
-    }
-
-    function updateHotelComs(id, values){
-        return new Promise(function (resolve, reject) {
-            Model.findByIdAndUpdate(id, { $push: { comodities:{ $each: values } } }, {new: true}, function (err, hotel) {
-                if (err) reject(err);
-
-                resolve(hotel.comodities);
-            }).select("-__v");
-        });
-    }
-
-    function removeHotelComs(id, value){
-        return new Promise(function (resolve, reject) {
-            Model.findByIdAndUpdate(id, { $pull: { comodities:{ comodity: value } } }, {new: true}, function (err, hotel) {
-                if (err) reject(err);
-
-                resolve(hotel.comodities);
-            }).select("-__v");
-        });
-    }
-
 
     function create(values) {
         let newHotel = Model(values);

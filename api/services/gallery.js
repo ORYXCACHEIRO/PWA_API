@@ -1,12 +1,10 @@
 function galleryService(Model) {
 
     let services = {
-        createForHotel,
-        createForRoom,
+        create,
         findAllByHotel,
         findAllByRoom,
-        removeById,
-        updateById
+        removeById
     };
 
     function findAllByHotel(id) {
@@ -29,7 +27,7 @@ function galleryService(Model) {
         });
     }
 
-    function createForHotel(values) {
+    function create(values) {
         let newImg = Model(values);
         return new Promise(function (resolve, reject) {
             newImg.save(function (err) {
@@ -37,27 +35,6 @@ function galleryService(Model) {
 
                 resolve();
             });
-        });
-    }
-
-    function createForRoom(values) {
-        let newImg = Model(values);
-        return new Promise(function (resolve, reject) {
-            newImg.save(function (err) {
-                if (err) reject(err);
-
-                resolve();
-            });
-        });
-    }
-
-    function updateById(id, values){
-        return new Promise(function (resolve, reject) {
-            Model.findByIdAndUpdate(id,values, {new: true}, function (err, hotel) {
-                if (err) reject(err);
-
-                resolve(hotel);
-            }).select("-__v");
         });
     }
 
