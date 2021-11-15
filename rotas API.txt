@@ -25,12 +25,10 @@ ROTAS:
 #/hotel/:h_id/quartos/:q_id/comodities
 #/hotel/:h_id/quartos/:q_id/galeria 
 #/hotel/:h_id/quartos/:q_id/reservas
+#/hotel/:h_id/quartos/:q_id/reservas/:id_res
 
 // B A C K - E N D - cenas que nao convém o utilizador normal ver
 
-""""""""""""/galeria/:id_img"""""""""""
-/reservas/all
-/reservas/:id_res
 /comodidades/all - feito
 /comodidades/:id_com - feito
 /idiomas/all - feito

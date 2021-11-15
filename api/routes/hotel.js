@@ -1,5 +1,10 @@
 const express = require('express');
 const hotel = require('../controllers/hotel');
+const comodities = require('../controllers/comodities');
+const gallery = require('../controllers/gallery');
+const reviews = require('../controllers/reviews');
+const rooms = require('../controllers/rooms');
+const langs = require('../controllers/langs');
 
 function hotelRouter() {
     let router = express();
@@ -92,7 +97,7 @@ function hotelRouter() {
         let id = req.params.hotelid;
         let body = req.body;
 
-        if  ((typeof id == 'string' && id.trim() !== "")) {
+        if ((typeof id == 'string' && id.trim() !== "")) {
 
             hotel.updateById(id, body).then((hotel) => {
                 res.status(200);
@@ -119,7 +124,7 @@ function hotelRouter() {
 
         if (typeof id == 'string' && id.trim() !== "") {
 
-            hotel.removeById(id).then(() => {
+            hotel.findOneById(id).then(() => rooms.removeAllHotelRooms(id)).then(() => reviews.removeByHotelId(id)).then(() => gallery.removeByHotelId(id)).then(() => hotel.removeById(id)).then(() => {
                 res.status(200);
                 res.end();
                 next();
@@ -138,7 +143,7 @@ function hotelRouter() {
         }
 
     });
-    
+
     router.route('/:hotelid/comodities').get(function (req, res, next) {
 
         let id = req.params.hotelid;
@@ -163,53 +168,40 @@ function hotelRouter() {
             res.end();
             next();
         }
-        
+
     }).put(function (req, res, next) {
 
         let id = req.params.hotelid;
-        let body  = req.body;
+        let body = req.body;
 
-        if (typeof id == 'string' && id.trim() !== "") {
+        if (typeof id == 'string' && id.trim() !== "" && (body.comodity && typeof body.comodity == 'string' && body.comodity.trim() !== "")) {
 
-            hotel.findHotelComs(id).then((coms) => {
+            comodities.findHotelComsById(body.comodity).then(() => hotel.findHotelComs(id)).then((coms) => {
 
-                let newArray = [];
-                
-                for(let i = 0; i<body.length; i++){
-                    if (coms.comodities.filter(function(e) { return e.comodity === body[i].comodity; }).length == 0 && newArray.filter(function(e) { return e.comodity === body[i].comodity; }).length == 0) {
+                if (coms.comodities.filter(function (e) { return e.comodity === body.comodity; }).length > 0) {
+                    res.status(401);
+                    res.send("Comodity/s is already present at the Hotel");
+                    res.end();
+                    next();
+                } else {
 
-                        let obj = new Object({
-                            comodity: body[i].comodity
-                        });
-                        
-                        newArray.push(obj); 
-                    }
-                }
-
-                if(newArray.length>0){
-                   
-                    hotel.updateHotelComs(id, newArray).then((hotel) => {
+                    hotel.updateHotelComs(id, body.comodity).then((hotel) => {
                         res.status(200);
                         res.send(hotel)
                         res.end();
                         next();
                     }).catch((err) => {
-                        console.log(err);
+                        //console.log(err);
                         err.status = err.status || 500;
                         res.status(401);
                         res.end();
                         next();
                     });
 
-                } else {
-                    res.status(401);
-                    res.send("Language/s is already present at the Hotel");
-                    res.end();
-                    next();
                 }
-                
+
             }).catch((err) => {
-                //console.log(err);
+                console.log(err);
                 err.status = err.status || 500;
                 res.status(401);
                 res.end();
@@ -224,10 +216,10 @@ function hotelRouter() {
 
     });
 
-    router.route('/:hotelid/comodities/:comid').put(function (req, res, next) { 
+    router.route('/:hotelid/comodities/:comid').put(function (req, res, next) {
 
         let idhotel = req.params.hotelid;
-        let idcom= req.params.comid;
+        let idcom = req.params.comid;
 
         if ((typeof idhotel == 'string' && idhotel.trim() !== "") && (typeof idcom == 'string' && idcom.trim() !== "")) {
 
@@ -242,7 +234,7 @@ function hotelRouter() {
                 res.status(401);
                 res.end();
                 next();
-            });       
+            });
 
         } else {
             res.status(401);
@@ -280,30 +272,22 @@ function hotelRouter() {
     }).put(function (req, res, next) {
 
         let id = req.params.hotelid;
-        let body  = req.body;
+        let body = req.body;
 
-        if (typeof id == 'string' && id.trim() !== "") {
+        if (typeof id == 'string' && id.trim() !== "" && (body.language && typeof body.language == 'string' && body.language.trim() !== ""))  {
 
-            hotel.findHotelLangs(id).then((langs) => {
+            langs.findById(body.language).then(() => hotel.findHotelLangs(id)).then((langss) => {
 
-                let newArray = [];
-                
-                for(let i = 0; i<body.length; i++){
-                    if (langs.languages.filter(function(e) { return e.language === body[i].language; }).length == 0 && newArray.filter(function(e) { return e.language === body[i].language; }).length == 0) {
+                if (langss.languages.filter(function (e) { return e.language === body.language; }).length > 0) {
+                    res.status(401);
+                    res.send("Language/s is already present at the Hotel");
+                    res.end();
+                    next();
+                } else {
 
-                        let obj = new Object({
-                            language: body[i].language
-                        });
-                        
-                        newArray.push(obj); 
-                    }
-                }
-
-                if(newArray.length>0){
-
-                    hotel.updateHotelLangs(id, newArray).then((langs) => {
+                    hotel.updateHotelLangs(id, body.language).then((hotel) => {
                         res.status(200);
-                        res.send(langs)
+                        res.send(hotel)
                         res.end();
                         next();
                     }).catch((err) => {
@@ -314,15 +298,10 @@ function hotelRouter() {
                         next();
                     });
 
-                } else {
-                    res.status(401);
-                    res.send("Language/s is already present at the Hotel");
-                    res.end();
-                    next();
                 }
-                
+
             }).catch((err) => {
-                //console.log(err);
+                console.log(err);
                 err.status = err.status || 500;
                 res.status(401);
                 res.end();
@@ -337,7 +316,7 @@ function hotelRouter() {
 
     });
 
-    router.route('/:hotelid/languages/:langid').put(function (req, res, next) { 
+    router.route('/:hotelid/languages/:langid').put(function (req, res, next) {
 
         let idhotel = req.params.hotelid;
         let idlang = req.params.langid;
@@ -355,7 +334,7 @@ function hotelRouter() {
                 res.status(401);
                 res.end();
                 next();
-            });       
+            });
 
         } else {
             res.status(401);
@@ -371,7 +350,7 @@ function hotelRouter() {
 
         if (typeof id == 'string' && id.trim() !== "") {
 
-            hotel.findAllRooms(id).then((rooms) => {
+            rooms.findByHotelId(id).then((rooms) => {
                 res.status(200);
                 res.send(rooms);
                 res.end();
@@ -391,7 +370,7 @@ function hotelRouter() {
         }
 
     }).post(function (req, res, next) {
-        
+
         let id = req.params.hotelid;
         let body = req.body;
 
@@ -399,7 +378,7 @@ function hotelRouter() {
 
             body.id_hotel = id;
 
-            hotel.createRoom(body).then((room) => {
+            rooms.create(body).then((room) => {
                 res.status(200);
                 res.send(room);
                 res.end();
@@ -427,7 +406,7 @@ function hotelRouter() {
 
         if ((typeof idhotel == 'string' && idhotel.trim() !== "") && (typeof idroom == 'string' && idroom.trim() !== "")) {
 
-            hotel.findOneRoom(idroom).then((quarto) => {
+            rooms.findById(idroom).then((quarto) => {
                 res.status(200);
                 res.send(quarto);
                 res.end();
@@ -446,7 +425,7 @@ function hotelRouter() {
             next();
         }
 
-    }).put(function (req, res, next) { 
+    }).put(function (req, res, next) {
 
         let idhotel = req.params.hotelid;
         let idroom = req.params.roomid;
@@ -454,7 +433,7 @@ function hotelRouter() {
 
         if ((typeof idhotel == 'string' && idhotel.trim() !== "") && (typeof idroom == 'string' && idroom.trim() !== "")) {
 
-            hotel.updateRoom(idroom, body).then((room) => {
+            rooms.updateById(idroom, body).then((room) => {
                 res.status(200);
                 res.send(room);
                 res.end();
@@ -473,14 +452,14 @@ function hotelRouter() {
             next();
         }
 
-    }).delete(function (req, res, next) { 
+    }).delete(function (req, res, next) {
 
         let idhotel = req.params.hotelid;
         let idroom = req.params.roomid;
 
         if ((typeof idhotel == 'string' && idhotel.trim() !== "") && (typeof idroom == 'string' && idroom.trim() !== "")) {
 
-            hotel.removeRoom(idroom).then(() => {
+            rooms.removeById(idroom).then(() => {
                 res.status(200);
                 res.end();
                 next();
@@ -506,7 +485,7 @@ function hotelRouter() {
 
             let id = req.params.hotelid;
 
-            hotel.findAllReviews(id).then((avs) => {
+            reviews.findRevsByHotelId(id).then((avs) => {
                 res.send(avs);
                 res.status(200);
                 res.end();
@@ -539,10 +518,10 @@ function hotelRouter() {
 
             let id = req.params.hotelid;
             body.id_hotel = id;
-            
-            hotel.checkReview(id, body.id_user).then((result) => {
 
-                if(result.length>0){
+            reviews.checkReviews(id, body.id_user).then((result) => {
+
+                if (result.length > 0) {
                     res.status(401);
                     res.end();
                     next();
@@ -550,11 +529,11 @@ function hotelRouter() {
 
                 body.id_hotel = req.params.hotelid;
 
-                if(!body.coment){
+                if (!body.coment) {
                     body.coment = "";
                 }
 
-                hotel.createReview(body).then(() => {
+                reviews.create(body).then(() => {
                     res.status(200);
                     res.send(body);
                     res.end();
@@ -575,7 +554,7 @@ function hotelRouter() {
                 next();
             });
 
-            
+
 
         } else {
             res.status(401);
@@ -585,13 +564,13 @@ function hotelRouter() {
 
     });
 
-    router.route('/:hotelid/reviews/:reviewId').delete(function (req, res, next) { 
+    router.route('/:hotelid/reviews/:reviewId').delete(function (req, res, next) {
 
-        if(req.params.reviewId && typeof req.params.reviewId=="string"){
+        if (req.params.reviewId && typeof req.params.reviewId == "string") {
 
             let id = req.params.reviewId;
 
-            hotel.deleteReview(id).then(() => {
+            reviews.removeByRevId(id).then(() => {
                 res.status(200);
                 res.end();
                 next();
@@ -603,7 +582,7 @@ function hotelRouter() {
                 next();
             });
 
-        }  else {
+        } else {
             res.status(401);
             res.end();
             next();
@@ -611,13 +590,13 @@ function hotelRouter() {
 
     });
 
-    router.route('/:hotelid/gallery').get(function (req, res, next) { 
+    router.route('/:hotelid/gallery').get(function (req, res, next) {
 
         if (req.params.hotelid && typeof req.params.hotelid == "string") {
 
             let id = req.params.hotelid;
 
-            hotel.findPhotos(id).then((photos) => {
+            gallery.findAllByHotel(id).then((photos) => {
                 res.send(photos);
                 res.status(200);
                 res.end();
@@ -635,18 +614,18 @@ function hotelRouter() {
             next();
         }
 
-    }).post(function (req, res, next) { 
+    }).post(function (req, res, next) {
 
         let body = req.body;
 
         if (req.params.hotelid && typeof req.params.hotelid == "string") {
 
             let id = req.params.hotelid;
-            
+
             body.id_room = "";
             body.id_hotel = id;
 
-            hotel.addPhoto(body).then(() => {
+            gallery.create(body).then(() => {
                 res.status(200);
                 res.end();
                 next();
@@ -665,13 +644,13 @@ function hotelRouter() {
 
     });
 
-    router.route('/:hotelid/gallery/:photoid').delete(function (req, res, next) { 
+    router.route('/:hotelid/gallery/:photoid').delete(function (req, res, next) {
 
         if ((req.params.hotelid && typeof req.params.hotelid == "string") && (req.params.photoid && typeof req.params.photoid == "string")) {
 
             let photoid = req.params.photoid;
 
-            hotel.deletePhoto(photoid).then(() => {
+            gallery.removeById(photoid).then(() => {
                 res.status(200);
                 res.end();
                 next();
@@ -688,25 +667,6 @@ function hotelRouter() {
             res.end();
             next();
         }
-
-    });
-
-    router.route('/:hotelid/teste').get(function (req, res, next) {  
-
-        let coisa = "618a8939f070f6773851fa1"
-
-        hotel.checkComsFromHotels(coisa).then((teste) => {
-            res.send(teste)
-            res.status(200);
-            res.end();
-            next();
-        }).catch((err) => {
-            console.log(err);
-            err.status = err.status || 500;
-            res.status(401);
-            res.end();
-            next();
-        });
 
     });
 

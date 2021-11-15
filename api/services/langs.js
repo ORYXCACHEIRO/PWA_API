@@ -10,10 +10,10 @@ function idiomaService(Model) {
 
     function findAll() {
         return new Promise(function (resolve, reject) {
-            Model.find({}, function (err, idiomas) {
+            Model.find({}, function (err, languages) {
                 if (err) reject(err);
 
-                resolve(idiomas);
+                resolve(languages);
             });
         });
     }
@@ -21,10 +21,14 @@ function idiomaService(Model) {
     function findById(value){
         //let model = Model(value);
         return new Promise(function (resolve, reject) {
-            Model.findOne({_id:value }, function (err, comodidades) {
+            Model.findOne({_id:value }, function (err, language) {
                 if (err) reject(err);
 
-                resolve(comodidades);
+                if(language==null){
+                    reject('No language was found');
+                }
+
+                resolve(language);
             }).select("-__v");
         });
     }

@@ -6,9 +6,20 @@ function reviewService(Model) {
         findRevsByHotelId,
         findRevsByUserId,
         removeByRevId,
+        removeByHotelId,
         checkReviews
     };
 
+
+    function removeByHotelId(id){
+        return new Promise(function (resolve, reject) {
+            Model.deleteMany({id_hotel: id}, function (err) {
+                if (err) reject(err);
+
+                resolve();
+            });
+        });
+    }
 
     function removeByRevId(id){
         return new Promise(function (resolve, reject) {

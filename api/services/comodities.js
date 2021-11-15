@@ -6,6 +6,7 @@ function comodidadesService(Model) {
         create,
         findAll,
         findComById,
+        findHotelComsById,
         updateCom,
         removeById,
         removeComsFromHotel
@@ -36,6 +37,23 @@ function comodidadesService(Model) {
                 if (err) reject(err);
 
                 resolve(comodidades);
+            }).select("-__v");
+        });
+    }
+
+    //função para verificar que o di que estamos a mandar é de facto
+    //uma comodidade
+    function findHotelComsById(value){
+        //let model = Model(value);
+        return new Promise(function (resolve, reject) {
+            Model.findOne({_id: value, type: 0 }, function (err, comodidade) {
+                if (err) reject(err);
+
+                if(comodidade==null){
+                    reject('This isnt a comodity or its type is incorrect');
+                }
+
+                resolve();
             }).select("-__v");
         });
     }

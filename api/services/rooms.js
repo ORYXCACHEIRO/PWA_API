@@ -5,7 +5,8 @@ function quartoService(Model) {
         findById,
         findByHotelId,
         removeById,
-        updateById
+        updateById,
+        removeAllHotelRooms
     };
 
     function findById(id){
@@ -22,6 +23,16 @@ function quartoService(Model) {
     function removeById(id){
         return new Promise(function (resolve, reject) {
             Model.findByIdAndRemove(id, function (err) {
+                if (err) reject(err);
+
+                resolve();
+            });
+        });
+    }
+
+    function removeAllHotelRooms(id){
+        return new Promise(function (resolve, reject) {
+            Model.deleteMany({id_hotel: id}, function (err) {
                 if (err) reject(err);
 
                 resolve();
