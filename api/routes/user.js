@@ -1,5 +1,6 @@
 const express = require('express');
 const users = require('../controllers/user');
+const reviews = require('../controllers/reviews');
 
 function usersRouter() {
     let router = express();
@@ -7,7 +8,7 @@ function usersRouter() {
     router.use(express.json({ limit: '100mb' }));
     router.use(express.urlencoded({ limit: '100mb', extended: true }));
 
-    router.route('/all').get(function (req, res, next) {
+    router.route('/').get(function (req, res, next) {
 
         users.findAll().then((users) => {
             res.send(users);
@@ -54,7 +55,7 @@ function usersRouter() {
 
         if  ((typeof id == 'string' && id.trim() !== "")) {
 
-            users.updateById(id, body).then((user) => {
+            users.findById(id).then(() => users.updateById(id, body)).then((user) => {
                 res.status(200);
                 res.send(user);
                 res.end();
@@ -81,7 +82,7 @@ function usersRouter() {
 
         if (typeof id == 'string' && id.trim() !== "") {
 
-            users.removeById(id).then(() => {
+            users.findById(id).then(() => reviews.removeByUserId(id)).then(() => users.removeById(id)).then(() => {
                 res.status(200);
                 res.end();
                 next();

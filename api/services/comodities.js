@@ -36,6 +36,10 @@ function comodidadesService(Model) {
             Model.findOne({_id:value }, function (err, comodidades) {
                 if (err) reject(err);
 
+                if(comodidade==null){
+                    reject('This isnt a comodity or its type is incorrect');
+                }
+
                 resolve(comodidades);
             }).select("-__v");
         });

@@ -1,3 +1,5 @@
+const hotel = require ('../controllers/hotel');
+
 function idiomaService(Model) {
 
     let service = {
@@ -5,8 +7,13 @@ function idiomaService(Model) {
         findAll,
         findById,
         removeById,
+        removeLangsFromHotel,
         updateLang
     };
+
+    function removeLangsFromHotel(value){
+        return hotel.removeHotelLangsAll(value);
+    }
 
     function findAll() {
         return new Promise(function (resolve, reject) {

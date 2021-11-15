@@ -87,7 +87,7 @@ function comoRouter() {
         
         let idcom = req.params.com;
 
-        comodities.removeComsFromHotel(idcom).then(() => comodities.removeById(idcom))
+        comodities.findComById(id).then(() => comodities.removeComsFromHotel(idcom)).then(() => comodities.removeById(idcom))
         .then(() => {
             res.status(200);
             res.end();

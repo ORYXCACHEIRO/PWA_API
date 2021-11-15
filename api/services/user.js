@@ -30,6 +30,10 @@ function userService(Model) {
             Model.findOne({ _id: values }, function (err, user) {
                 if (err) reject(err);
 
+                if(user==null){
+                    reject('Error regarding user');
+                }
+
                 resolve(user);
             });
         });

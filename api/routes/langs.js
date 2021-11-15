@@ -86,7 +86,7 @@ function idiomaRouter() {
 
         let id = req.params.idiom;
 
-        langs.removeById(id).then(() => {
+        langs.findById(id).then(() => langs.removeLangsFromHotel(id)).then(() => langs.removeById(id)).then(() => {
             res.status(200);
             res.end();
             next();

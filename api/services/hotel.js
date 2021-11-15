@@ -9,6 +9,7 @@ function hotelService(Model) {
         findHotelLangs,
         updateHotelLangs,
         removeHotelLang,
+        removeHotelLangsAll,
         findHotelComs,
         updateHotelComs,
         removeHotelComs,
@@ -87,6 +88,16 @@ function hotelService(Model) {
                 if (err) reject(err);
 
                 resolve(hotel);
+            }).select("-__v");
+        });
+    }
+
+    function removeHotelLangsAll(value){
+        return new Promise(function (resolve, reject) {
+            Model.updateMany({}, { $pull: { languages:{ language: value } } }, {new: true}, function (err) {
+                if (err) reject(err);
+
+                resolve();
             }).select("-__v");
         });
     }
