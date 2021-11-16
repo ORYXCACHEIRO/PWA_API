@@ -4,6 +4,7 @@ let hotelAPI = require('./routes/hotel');
 let langsAPI = require('./routes/langs');
 let usersAPI = require('./routes/user');
 let authAPI = require('./routes/auth');
+let profAPI = require('./routes/profile');
 
 function initialize(){
     let api = express();
@@ -13,6 +14,7 @@ function initialize(){
     api.use('/languages', langsAPI());
     api.use('/users', usersAPI());
     api.use('/auth', authAPI());
+    api.use('/profile', profAPI());
 
     return api;
 }
