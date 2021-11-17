@@ -121,7 +121,7 @@ function hotelRouter() {
             next();
         }
 
-    }).delete(verifyToken, limitedAccess, function (req, res, next) {
+    }).delete(verifyToken, onlyAdmin, function (req, res, next) {
 
         let id = req.params.hotelid;
 

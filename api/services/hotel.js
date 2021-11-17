@@ -109,7 +109,7 @@ function hotelService(Model) {
                 if (err) reject(err);
 
                 resolve(hoteis);
-            }).select("-status -__v");
+            }).select("-__v");
         });
     }
 
@@ -119,7 +119,7 @@ function hotelService(Model) {
                 if (err) reject(err);
 
                 resolve(hotel);
-            }).select("-status -__v");
+            }).select("-__v");
         });
     }
     
