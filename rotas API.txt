@@ -24,8 +24,8 @@ ROTAS:
 #/hotel/:h_id/quartos/:q_id - feito
 #/hotel/:h_id/quartos/:q_id/comodities
 #/hotel/:h_id/quartos/:q_id/galeria 
-#/hotel/:h_id/quartos/:q_id/reservas
-#/hotel/:h_id/quartos/:q_id/reservas/:id_res
+#/hotel/:h_id/quartos/:q_id/reservations
+#/hotel/:h_id/quartos/:q_id/reservations/:id_res
 
 // B A C K - E N D - cenas que nao convém o utilizador normal ver
 

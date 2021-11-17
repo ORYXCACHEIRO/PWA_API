@@ -1,13 +1,13 @@
 let mongoose = require('mongoose');
 let Schema = mongoose.Schema;
 
-let reservesSchema = new Schema({
+let reservationsSchema = new Schema({
     begin_date: { type: Date, required: true},
     end_date: { type: Date, required: true },
     id_user: { type: String, required: true },
     id_room: { type: String, required: true }
 });
 
-let reserves = mongoose.model('reserves', reservesSchema);
+let reservations = mongoose.model('reservations', reservationsSchema);
 
-module.exports = reserves;
+module.exports = reservations;

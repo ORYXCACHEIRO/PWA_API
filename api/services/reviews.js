@@ -59,6 +59,10 @@ function reviewService(Model) {
             Model.find({id_hotel:idhotel, id_user: iduser}, function (err, review) {
                 if (err) reject(err);
 
+                if(review==null){
+                    reject('Doesnt have any review made');
+                }
+
                 resolve(review);
             });
         });

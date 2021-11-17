@@ -1,4 +1,5 @@
 const hotel = require('../controllers/hotel');
+const room = require ('../controllers/rooms');
 
 function comodidadesService(Model) {
 
@@ -9,7 +10,7 @@ function comodidadesService(Model) {
         findHotelComsById,
         updateCom,
         removeById,
-        removeComsFromHotel
+        removeComsFromHotel,
     };
 
     //type 0 - hotel, 1 - quarto
