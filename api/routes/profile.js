@@ -2,6 +2,8 @@ const express = require('express');
 const profile = require('../controllers/profile');
 const users = require('../controllers/user');
 const reviews = require('../controllers/reviews');
+const favorites = require('../controllers/favorites');
+const verifyToken = require('../middleware/verifyToken');
 
 function profileRouter() {
     let router = express();
@@ -11,9 +13,14 @@ function profileRouter() {
 
     //6192a6edaabbf0f5264dc80c
     //eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MzcwOTY1OTEsImV4cCI6MTYzNzE4Mjk5MX0.1nCDy2rxQ9kBhLxzlhEX0RHQaDkvJHgYvkCalfF8YVk
-    //eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxOTQxYzhmYWRkMmIzYjhmMzQzYmNlNiIsImVtYWlsIjoiODIwMDEwN0Blc3RnLmlwcC5wdCIsInJvbGUiOiIwIiwiaWF0IjoxNjM3MDk3NDg3LCJleHAiOjE2MzcxODM4ODd9.1iZY1-8wxlY7XaLp4VJ81-6V-PHRYDO2iqf_ar2Tw4c
+    //eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxOTQxYzhmYWRkMmIzYjhmMzQzYmNlNiIsImVtYWlsIjoiODIwMDEwN0Blc3RnLmlwcC5wdCIsInJvbGUiOiIwIiwiaWF0IjoxNjM3MTY1MTc2LCJleHAiOjE2MzcyNTE1NzZ9.6GMzqh21pKfCLv4MOCwFu1ud-8myGzUKg_F56p3fxv8
+
+    // adicionar middleware~
+    // favourites fazer tudo? schema id user id hotel
+    // prontos
 
 
+    /// necessita mudancas
 
     router.use(function (req, res, next) {
         let token = req.headers['x-access-token'];
@@ -21,9 +28,14 @@ function profileRouter() {
             req.user = user;
             next();
         }).catch((err) => {
-            res.status(401).send({auth:false, message: 'No token provided'}).end();
+            res.status(401).send({ auth: false, message: 'No token provided' }).end();
         })
     })
+
+    //// mas ta ca por necessidade
+
+
+    router.use(verifyToken);
 
 
     router.route('/').get(function (req, res, next) {
@@ -56,6 +68,35 @@ function profileRouter() {
             res.end();
             next();
         }
+
+    });
+
+    router.route('/favorites').get(function (req, res, next) {
+
+        favorites.findByUserId(req.user.id).then((favorites) => {
+            res.send(favorites);
+            res.end();
+            next();
+        }).catch((err) => {
+            console.log(err);
+            next();
+        });
+
+    }).post(function (req, res, next) {
+
+        let body = req.body;
+
+        favorites.create(body).then(() => {
+            res.status(200);
+            res.send(body);
+            next();
+        }).catch((err) => {
+            //console.log(err);
+            err.status = err.status || 500;
+            res.status(401);
+            res.end();
+            next();
+        });
 
     });
 
