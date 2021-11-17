@@ -71,6 +71,7 @@ function profileRouter() {
 
     });
 
+
     router.route('/favorites').get(function (req, res, next) {
 
         favorites.findByUserId(req.user.id).then((favorites) => {
@@ -89,6 +90,24 @@ function profileRouter() {
         favorites.create(body).then(() => {
             res.status(200);
             res.send(body);
+            next();
+        }).catch((err) => {
+            //console.log(err);
+            err.status = err.status || 500;
+            res.status(401);
+            res.end();
+            next();
+        });
+
+    });
+
+    router.route('/favorites/:favid').delete(function (req, res, next) { 
+
+        let id = req.params.favid;
+
+        favorites.findById(id).then(() => favorites.removeById(id)).then(() => {
+            res.status(200);
+            res.end();
             next();
         }).catch((err) => {
             //console.log(err);

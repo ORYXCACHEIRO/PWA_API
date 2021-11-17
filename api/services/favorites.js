@@ -1,7 +1,9 @@
 function favoritesService(Model) {
     let service = {
         create,
-        findByUserId
+        findByUserId,
+        removeById,
+        findById
     };
 
     function create(values) {
@@ -25,6 +27,28 @@ function favoritesService(Model) {
             })
         });
     }
+
+    
+    function findById(values) {
+        return new Promise(function (resolve, reject) {
+            Model.findOne({ _id: values }, function (err, user) {
+                if (err) reject(err);
+
+                resolve(user);
+            });
+        });
+    }
+
+    function removeById(id){
+        return new Promise(function (resolve, reject) {
+            Model.findByIdAndRemove(id, function (err) {
+                if (err) reject(err);
+
+                resolve();
+            });
+        });
+    }
+
 
 
     return service;
