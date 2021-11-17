@@ -1,11 +1,17 @@
 const express = require('express');
 const comodities = require('../controllers/comodities');
 
+const verifyToken = require('../middleware/verifyToken');
+const {onlyAdmin} = require('../middleware/verifyAccess');
+
 function comoRouter() {
     let router = express();
 
     router.use(express.json({ limit: '100mb' }));
     router.use(express.urlencoded({ limit: '100mb', extended: true }));
+
+    router.use(verifyToken);
+    router.use(onlyAdmin);
 
     router.route('/').get(function (req, res, next) { 
 

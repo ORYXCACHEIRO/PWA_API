@@ -6,6 +6,9 @@ const reviews = require('../controllers/reviews');
 const rooms = require('../controllers/rooms');
 const langs = require('../controllers/langs');
 
+const verifyToken = require('../middleware/verifyToken');
+const {onlyAdmin, limitedAccess} = require('../middleware/verifyAccess');
+
 function hotelRouter() {
     let router = express();
 
@@ -27,7 +30,7 @@ function hotelRouter() {
             next();
         });
 
-    }).post(function (req, res, next) {
+    }).post(verifyToken, onlyAdmin, function (req, res, next) {
 
         let body = req.body;
 
@@ -92,7 +95,7 @@ function hotelRouter() {
             next();
         }
 
-    }).put(function (req, res, next) {
+    }).put(verifyToken, limitedAccess, function (req, res, next) {
 
         let id = req.params.hotelid;
         let body = req.body;
@@ -118,7 +121,7 @@ function hotelRouter() {
             next();
         }
 
-    }).delete(function (req, res, next) {
+    }).delete(verifyToken, limitedAccess, function (req, res, next) {
 
         let id = req.params.hotelid;
 
@@ -169,7 +172,7 @@ function hotelRouter() {
             next();
         }
 
-    }).put(function (req, res, next) {
+    }).put(verifyToken, limitedAccess, function (req, res, next) {
 
         let id = req.params.hotelid;
         let body = req.body;
@@ -216,7 +219,7 @@ function hotelRouter() {
 
     });
 
-    router.route('/:hotelid/comodities/:comid').put(function (req, res, next) {
+    router.route('/:hotelid/comodities/:comid').put(verifyToken, limitedAccess,function (req, res, next) {
 
         let idhotel = req.params.hotelid;
         let idcom = req.params.comid;
@@ -269,7 +272,7 @@ function hotelRouter() {
             next();
         }
 
-    }).put(function (req, res, next) {
+    }).put(verifyToken, limitedAccess,function (req, res, next) {
 
         let id = req.params.hotelid;
         let body = req.body;
@@ -316,7 +319,7 @@ function hotelRouter() {
 
     });
 
-    router.route('/:hotelid/languages/:langid').put(function (req, res, next) {
+    router.route('/:hotelid/languages/:langid').put(verifyToken, limitedAccess, function (req, res, next) {
 
         let idhotel = req.params.hotelid;
         let idlang = req.params.langid;
@@ -369,7 +372,7 @@ function hotelRouter() {
             next();
         }
 
-    }).post(function (req, res, next) {
+    }).post(verifyToken, limitedAccess,function (req, res, next) {
 
         let id = req.params.hotelid;
         let body = req.body;
@@ -425,7 +428,7 @@ function hotelRouter() {
             next();
         }
 
-    }).put(function (req, res, next) {
+    }).put(verifyToken, limitedAccess, function (req, res, next) {
 
         let idhotel = req.params.hotelid;
         let idroom = req.params.roomid;
@@ -452,7 +455,7 @@ function hotelRouter() {
             next();
         }
 
-    }).delete(function (req, res, next) {
+    }).delete(verifyToken, limitedAccess,function (req, res, next) {
 
         let idhotel = req.params.hotelid;
         let idroom = req.params.roomid;
@@ -479,6 +482,38 @@ function hotelRouter() {
 
     });
 
+    //TODO rotas em baixo
+
+    router.route('/:hotelid/rooms/:roomid/comodities').get(function (req, res, next) { 
+        
+    }).put(function (req, res, next) { });
+
+    router.route('/:hotelid/rooms/:roomid/comodities/:comid').put(function (req, res, next) { });
+
+    router.route('/:hotelid/rooms/:roomid/languages').get(function (req, res, next) { 
+        
+    }).put(function (req, res, next) { });
+
+    router.route('/:hotelid/rooms/:roomid/languages/:langid').put(function (req, res, next) { });
+
+    router.route('/:hotelid/rooms/:roomid/gallery').get(function (req, res, next) { 
+        
+    }).post(function (req, res, next) { });
+
+    router.route('/:hotelid/rooms/:roomid/gallery/:photoid').delete(function (req, res, next) { });
+
+    router.route('/:hotelid/rooms/:roomid/reservations').get(function (req, res, next) { 
+        
+    }).post(function (req, res, next) { });
+
+    router.route('/:hotelid/rooms/:roomid/reservations/:res_id').get(function (req, res, next) { 
+
+    }).put(function (req, res, next) { 
+
+    }).delete(function (req, res, next) { });
+    
+    //--------------------------------------------------------
+
     router.route('/:hotelid/reviews').get(function (req, res, next) {
 
         if (req.params.hotelid && typeof req.params.hotelid == "string") {
@@ -503,7 +538,7 @@ function hotelRouter() {
             next();
         }
 
-    }).post(async (req, res, next) => {
+    }).post(verifyToken, async (req, res, next) => {
 
         let body = req.body;
 
@@ -514,6 +549,7 @@ function hotelRouter() {
             && (typeof body.id_user == 'string' && body.id_user.trim() !== "")
             && (typeof body.review == 'number' && (body.review >= 0 && body.review <= 10))
             && (req.params.hotelid && typeof req.params.hotelid == "string")
+            && req.user_role ==0
         ) {
 
             let id = req.params.hotelid;
@@ -564,7 +600,7 @@ function hotelRouter() {
 
     });
 
-    router.route('/:hotelid/reviews/:reviewId').delete(function (req, res, next) {
+    router.route('/:hotelid/reviews/:reviewId').delete(verifyToken, limitedAccess,function (req, res, next) {
 
         if (req.params.reviewId && typeof req.params.reviewId == "string") {
 
@@ -614,7 +650,7 @@ function hotelRouter() {
             next();
         }
 
-    }).post(function (req, res, next) {
+    }).post(verifyToken, limitedAccess,function (req, res, next) {
 
         let body = req.body;
 
@@ -644,7 +680,7 @@ function hotelRouter() {
 
     });
 
-    router.route('/:hotelid/gallery/:photoid').delete(function (req, res, next) {
+    router.route('/:hotelid/gallery/:photoid').delete(verifyToken, limitedAccess,function (req, res, next) {
 
         if ((req.params.hotelid && typeof req.params.hotelid == "string") && (req.params.photoid && typeof req.params.photoid == "string")) {
 

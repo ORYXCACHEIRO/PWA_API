@@ -12,7 +12,8 @@ function userService(Model) {
         removeById,
         updateById,
         createToken,
-        verifyToken
+        verifyToken,
+        findAllWorkStations
     };
 
     function findAll() {
@@ -21,7 +22,7 @@ function userService(Model) {
                 if (err) reject(err);
 
                 resolve(users);
-            }).select("-password -role");
+            }).select("-password");
         });
     }
 
@@ -31,7 +32,17 @@ function userService(Model) {
                 if (err) reject(err);
 
                 resolve(user);
-            });
+            }).select("-password");
+        });
+    }
+
+    function findAllWorkStations(id,) {
+        return new Promise(function (resolve, reject) {
+            Model.findById(id, function (err, users) {
+                if (err) reject(err);
+
+                resolve(users.workStation);
+            }).select("-password");
         });
     }
 
