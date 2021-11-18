@@ -11,8 +11,12 @@ function galleryService(Model) {
 
     function findAllByHotel(id) {
         return new Promise(function (resolve, reject) {
-            Model.findById(id, function (err, gallery) {
+            Model.find({id_hotel: id}, function (err, gallery) {
                 if (err) reject(err);
+
+                if(gallery==null){
+                    reject('Hotel doesnt exist or doesnt have photos yet');
+                }
 
                 resolve(gallery);
             }).select("-status -__v");
@@ -21,8 +25,12 @@ function galleryService(Model) {
 
     function findAllByRoom(id) {
         return new Promise(function (resolve, reject) {
-            Model.findById(id, function (err, gallery) {
+            Model.find({id_room: id}, function (err, gallery) {
                 if (err) reject(err);
+
+                if(gallery==null){
+                    reject('Room doesnt exist or doesnt have photos yet');
+                }
 
                 resolve(gallery);
             }).select("-status -__v");

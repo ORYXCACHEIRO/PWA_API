@@ -179,7 +179,7 @@ function hotelRouter() {
 
         if (typeof id == 'string' && id.trim() !== "" && (body.comodity && typeof body.comodity == 'string' && body.comodity.trim() !== "")) {
 
-            comodities.findHotelComsById(body.comodity).then(() => hotel.findHotelComs(id)).then((coms) => {
+            comodities.findComById(body.comodity).then(() => hotel.findHotelComs(id)).then((coms) => {
 
                 if (coms.comodities.filter(function (e) { return e.comodity === body.comodity; }).length > 0) {
                     res.status(401);
@@ -387,7 +387,7 @@ function hotelRouter() {
                 res.end();
                 next();
             }).catch((err) => {
-                console.log(err);
+                //console.log(err);
                 err.status = err.status || 500;
                 res.status(401);
                 res.end();
@@ -486,21 +486,135 @@ function hotelRouter() {
 
     router.route('/:hotelid/rooms/:roomid/comodities').get(function (req, res, next) { 
         
-    }).put(function (req, res, next) { });
+        let idhotel = req.params.hotelid;
+        let idroom = req.params.roomid;
 
-    router.route('/:hotelid/rooms/:roomid/comodities/:comid').put(function (req, res, next) { });
+        if ((typeof idhotel == 'string' && idhotel.trim() !== "") && (typeof idroom == 'string' && idroom.trim() !== "")) {
 
-    router.route('/:hotelid/rooms/:roomid/languages').get(function (req, res, next) { 
-        
-    }).put(function (req, res, next) { });
+            rooms.findRoomComs(idroom).then((coms) => {
+                res.status(200);
+                res.send(coms);
+                res.end();
+                next();
+            }).catch((err) => {
+                //console.log(err);
+                err.status = err.status || 500;
+                res.status(401);
+                res.end();
+                next();
+            });
 
-    router.route('/:hotelid/rooms/:roomid/languages/:langid').put(function (req, res, next) { });
+        } else {
+            res.status(401);
+            res.end();
+            next();
+        }
+
+    }).put(verifyToken, limitedAccess,function (req, res, next) { 
+
+        let idroom = req.params.roomid;
+        let body = req.body;
+
+        if (typeof idroom == 'string' && idroom.trim() !== "" && (body.comodity && typeof body.comodity == 'string' && body.comodity.trim() !== "")) {
+
+            console.log(body.comodity);
+
+            comodities.findComById(body.comodity).then(() => rooms.findRoomComs(idroom)).then((coms) => {
+
+                if (coms.comodities.filter(function (e) { return e.comodity === body.comodity; }).length > 0) {
+                    res.status(401);
+                    res.send("Comodity/s is already present at the Hotel");
+                    res.end();
+                    next();
+                } else {
+
+                    rooms.updateRoomComs(idroom, body.comodity).then((room) => {
+                        res.status(200);
+                        res.send(room)
+                        res.end();
+                        next();
+                    }).catch((err) => {
+                        //console.log(err);
+                        err.status = err.status || 500;
+                        res.status(401);
+                        res.end();
+                        next();
+                    });
+
+                }
+
+            }).catch((err) => {
+                console.log(err);
+                err.status = err.status || 500;
+                res.status(401);
+                res.end();
+                next();
+            });
+
+        } else {
+            res.status(401);
+            res.end();
+            next();
+        }
+
+    });
+
+    router.route('/:hotelid/rooms/:roomid/comodities/:comid').put(verifyToken, limitedAccess,function (req, res, next) { 
+
+        let idhotel = req.params.hotelid;
+        let idcom = req.params.comid;
+        let idroom = req.params.roomid;
+
+        if ((typeof idhotel == 'string' && idhotel.trim() !== "") && (typeof idcom == 'string' && idcom.trim() !== "") && (typeof idroom == 'string' && idroom.trim() !== "")) {
+
+            rooms.removeRoomComs(idroom, idcom).then((coms) => {
+                res.status(200);
+                res.send(coms);
+                res.end();
+                next();
+            }).catch((err) => {
+                //console.log(err);
+                err.status = err.status || 500;
+                res.status(401);
+                res.end();
+                next();
+            });
+
+        } else {
+            res.status(401);
+            res.end();
+            next();
+        }
+
+    });
 
     router.route('/:hotelid/rooms/:roomid/gallery').get(function (req, res, next) { 
         
+        if ((req.params.hotelid && typeof req.params.hotelid == "string") && (req.params.roomid && typeof req.params.roomid)) {
+
+            let idroom = req.params.roomid;
+
+            gallery.findAllByRoom(idroom).then((photos) => {
+                res.send(photos);
+                res.status(200);
+                res.end();
+                next();
+            }).catch((err) => {
+                //console.log(err);
+                res.status(401);
+                res.end();
+                next();
+            });
+
+        } else {
+            res.status(401);
+            res.end();
+            next();
+        }
+
     }).post(function (req, res, next) { });
 
-    router.route('/:hotelid/rooms/:roomid/gallery/:photoid').delete(function (req, res, next) { });
+    router.route('/:hotelid/rooms/:roomid/gallery/:photoid').put(function (req, res, next) { });
 
     router.route('/:hotelid/rooms/:roomid/reservations').get(function (req, res, next) { 
         

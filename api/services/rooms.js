@@ -6,17 +6,30 @@ function quartoService(Model) {
         findByHotelId,
         removeById,
         updateById,
-        removeAllHotelRooms
+        removeAllHotelRooms,
+        removeRoomComs,
+        findRoomComs,
+        updateRoomComs
     };
 
     function findById(id){
         //let model = Model(value);
         return new Promise(function (resolve, reject) {
-            Model.findById(id, function (err, quarto) {
+            Model.findById(id, function (err, room) {
                 if (err) reject(err);
 
-                resolve(quarto);
+                resolve(room);
             }).select("-__v");
+        });
+    }
+
+    function findRoomComs(id){
+        return new Promise(function (resolve, reject) {
+            Model.findById(id, 'comodities', function (err, room) {
+                if (err) reject(err);
+
+                resolve(room);
+            }).select("-_id");
         });
     }
 
@@ -27,6 +40,16 @@ function quartoService(Model) {
 
                 resolve();
             });
+        });
+    }
+
+    function removeRoomComs(id, value){
+        return new Promise(function (resolve, reject) {
+            Model.findByIdAndUpdate(id, { $pull: { comodities:{ comodity: value } } }, {new: true}, function (err, room) {
+                if (err) reject(err);
+
+                resolve(room);
+            }).select("-__v");
         });
     }
 
@@ -50,13 +73,23 @@ function quartoService(Model) {
         });
     }
 
+    function updateRoomComs(id, value){
+        return new Promise(function (resolve, reject) {
+            Model.findByIdAndUpdate(id, { $push: { comodities:{ comodity: value } } }, {new: true}, function (err, room) {
+                if (err) reject(err);
+
+                resolve(room);
+            }).select("-__v");
+        });
+    }
+
     function findByHotelId(id){
         //let model = Model(value);
         return new Promise(function (resolve, reject) {
-            Model.find({id_hotel: id}, function (err, quartos) {
+            Model.find({id_hotel: id}, function (err, rooms) {
                 if (err) reject(err);
 
-                resolve(quartos);
+                resolve(rooms);
             }).select("-__v");
         });
     }

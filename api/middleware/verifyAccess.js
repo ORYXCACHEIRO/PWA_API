@@ -12,7 +12,7 @@ const limitedAccess = (req, res, next) => {
     if(req.user_role==1 && req.params.hotelid){
         user.findAllWorkStations(req.user_id).then((work) => {
 
-            console.log(work);
+            //console.log(work);
 
             if(work.length==0){
                 console.log("access not granted");

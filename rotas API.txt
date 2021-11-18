@@ -22,7 +22,7 @@ ROTAS:
 #/hotel/:h_id/galeria/:id_foto - feito
 #/hotel/:h_id/quartos - feito
 #/hotel/:h_id/quartos/:q_id - feito
-#/hotel/:h_id/quartos/:q_id/comodities
+#/hotel/:h_id/quartos/:q_id/comodities - feito
 #/hotel/:h_id/quartos/:q_id/galeria 
 #/hotel/:h_id/quartos/:q_id/reservations
 #/hotel/:h_id/quartos/:q_id/reservations/:id_res
