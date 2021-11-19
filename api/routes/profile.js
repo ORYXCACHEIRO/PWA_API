@@ -11,14 +11,6 @@ function profileRouter() {
     router.use(express.json({ limit: '100mb' }));
     router.use(express.urlencoded({ limit: '100mb', extended: true }));
 
-    //6192a6edaabbf0f5264dc80c
-    //eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MzcwOTY1OTEsImV4cCI6MTYzNzE4Mjk5MX0.1nCDy2rxQ9kBhLxzlhEX0RHQaDkvJHgYvkCalfF8YVk
-    //eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxOTQxYzhmYWRkMmIzYjhmMzQzYmNlNiIsImVtYWlsIjoiODIwMDEwN0Blc3RnLmlwcC5wdCIsInJvbGUiOiIwIiwiaWF0IjoxNjM3MTY1MTc2LCJleHAiOjE2MzcyNTE1NzZ9.6GMzqh21pKfCLv4MOCwFu1ud-8myGzUKg_F56p3fxv8
-
-    // adicionar middleware~
-    // favourites fazer tudo? schema id user id hotel
-    // prontos
-
 
     /// necessita mudancas
 
