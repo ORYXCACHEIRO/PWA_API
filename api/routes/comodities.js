@@ -73,7 +73,7 @@ function comoRouter() {
 
         let body = req.body;
 
-        if((typeof body.name=='string' && body.name.trim()!=="") && (body.free===0 || body.free===1) && body.type>=0){
+        if((typeof body.name=='string' && body.name.trim()!=="") && (body.free===0 || body.free===1)){
 
             let id = req.params.com;
 

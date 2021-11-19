@@ -37,18 +37,18 @@
 }
 
 //update a languages do hotel em array de objectos
-[
-    {
-        "language": "618a8bf58f9d5eada5f34c5ff"
-    }
-]
+
+{
+    "language": "618a8bf58f9d5eada5f34c5ff"
+}
+
 
 //update a comodities do hotel em array de objectos
-[
-    {
-        "comodity": "618a8bf58f9d5eada5f34c5ff"
-    }
-]
+
+{
+    "comodity": "618a8bf58f9d5eada5f34c5ff"
+}
+
 
 //quarto 
 {

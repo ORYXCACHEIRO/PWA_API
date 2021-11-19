@@ -22,9 +22,9 @@ function hotelService(Model) {
 
     function findHotelComs(id){
         return new Promise(function (resolve, reject) {
-        Model.findById(id, 'comodities', function (err, langs) {
+        Model.findById(id, 'comodities', function (err, coms) {
                 if (err) reject(err);
-                resolve(langs);
+                resolve(coms);
             }).select("-_id");
         });
     }
@@ -109,7 +109,7 @@ function hotelService(Model) {
                 if (err) reject(err);
 
                 resolve(hoteis);
-            }).select("-status -__v");
+            }).select("-__v");
         });
     }
 
@@ -119,7 +119,7 @@ function hotelService(Model) {
                 if (err) reject(err);
 
                 resolve(hotel);
-            }).select("-status -__v");
+            }).select("-__v");
         });
     }
     
