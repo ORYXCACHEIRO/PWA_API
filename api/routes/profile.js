@@ -3,6 +3,7 @@ const profile = require('../controllers/profile');
 const users = require('../controllers/user');
 const reviews = require('../controllers/reviews');
 const favorites = require('../controllers/favorites');
+const nodemailer = require("nodemailer");
 const verifyToken = require('../middleware/verifyToken');
 
 function profileRouter() {
@@ -28,6 +29,52 @@ function profileRouter() {
 
 
     router.use(verifyToken);
+
+
+
+
+    router.route('/mail').get(function (req, res, next) {
+        let token = req.headers['x-access-token'];
+        console.log(token);
+        req.email = req.user_email;
+        console.log(req.email);
+        nodemailer.createTestAccount((err, account) => {
+            var transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                  user: 'ticadeliobeta@gmail.com',
+                  pass: '90GRTEABCc!'
+                }
+              });
+            var mailOptions = {
+                from: 'deus@gmail.com',
+                to: req.email,
+                subject: 'A coca que eu nao vi',
+                text: 'http://127.0.0.1:3000/profile/mail/' + token
+            };
+    
+            transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log('Email sent: ' + info.response);
+                }
+            });
+        });
+        res.send("feitinho");
+        next();
+
+    });
+
+
+    router.route('/mail/:token').get(function (req, res, next) {
+        res.send(req.user.password);
+        console.log(req.user);
+        next();
+    }
+
+    );
+
 
 
     router.route('/').get(function (req, res, next) {
@@ -93,7 +140,7 @@ function profileRouter() {
 
     });
 
-    router.route('/favorites/:favid').delete(function (req, res, next) { 
+    router.route('/favorites/:favid').delete(function (req, res, next) {
 
         let id = req.params.favid;
 
