@@ -1,5 +1,6 @@
 const express = require('express');
 const users = require('../controllers/user');
+const verifyToken = require('../middleware/verifyToken');
 
 function authRouter() {
 
@@ -27,25 +28,7 @@ function authRouter() {
             });
     });
 
-    router.route('/me').get(function (req, res, next) { 
-
-        let token = req.headers['x-access-token'];
-
-        if(!token){
-            res.status(401).send({auth:false, message: 'No token provided'}).end();
-        }
-
-        users.verifyToken(token).then((decoded) => {
-            res.status(200).send({auth: true, decoded}).end();
-            next();
-        }).catch((err) => {
-            res.status(500);
-            res.send(err);
-            res.end();
-            next();
-        });
-
-    });
+    router.route('/me').get(verifyToken);
 
     router.route('/login').post(function (req, res, next) { 
 

@@ -10,10 +10,12 @@ function userService(Model) {
         findByEmail,
         findById,
         removeById,
+        removeWorkStation,
         updateById,
         createToken,
         verifyToken,
-        findAllWorkStations
+        findAllWorkStations,
+        addWorkStation
     };
 
     function findAll() {
@@ -75,7 +77,7 @@ function userService(Model) {
     function verifyToken(token) {
         return new Promise(function (resolve, reject) {
             jwt.verify(token, config.secret, (err, decoded) => {
-                if (err) reject()
+                if (err) reject(err)
 
                 return resolve(decoded);
             });
@@ -100,12 +102,32 @@ function userService(Model) {
         });
     }
 
+    function removeWorkStation(id, value){
+        return new Promise(function (resolve, reject) {
+            Model.findByIdAndUpdate(id, { $pull: { workStation:{ hotel: value } } }, {new: true}, function (err) {
+                if (err) reject(err);
+
+                resolve();
+            }).select("-__v");
+        });
+    }
+
     function updateById(id, values) {
         return new Promise(function (resolve, reject) {
             Model.findByIdAndUpdate(id, values, { new: true }, function (err, user) {
                 if (err) reject(err);
 
                 resolve(user);
+            }).select("-__v");
+        });
+    }
+
+    function addWorkStation(id, value){
+        return new Promise(function (resolve, reject) {
+            Model.findByIdAndUpdate(id, { $push: { workStation:{ hotel: value } } }, {new: true}, function (err, workStations) {
+                if (err) reject(err);
+
+                resolve(workStations);
             }).select("-__v");
         });
     }

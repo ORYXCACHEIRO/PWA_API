@@ -1,8 +1,8 @@
 const express = require('express');
-const langs = require('../controllers/langs');
+const langs = require('../../controllers/langs');
 
-const verifyToken = require('../middleware/verifyToken');
-const {onlyAdmin} = require('../middleware/verifyAccess');
+const verifyToken = require('../../middleware/verifyToken');
+const {onlyAdmin} = require('../../middleware/verifyAccess');
 
 function idiomaRouter() {
     let router = express();
