@@ -1,8 +1,8 @@
 const express = require('express');
-const comodities = require('../controllers/comodities');
+const comodities = require('../../controllers/comodities');
 
-const verifyToken = require('../middleware/verifyToken');
-const {onlyAdmin} = require('../middleware/verifyAccess');
+const verifyToken = require('../../middleware/verifyToken');
+const {onlyAdmin} = require('../../middleware/verifyAccess');
 
 function comoRouter() {
     let router = express();

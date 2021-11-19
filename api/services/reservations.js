@@ -4,7 +4,9 @@ function reservationService(Model) {
         create,
         removeById,
         findOneById,
-        findAllByRoomId
+        findAllByRoomId,
+        removeAllRoomRes,
+        updateById
     }
 
     function findAllByRoomId(id) {
@@ -27,9 +29,29 @@ function reservationService(Model) {
         });
     }
 
+    function updateById(id, values){
+        return new Promise(function (resolve, reject) {
+            Model.findByIdAndUpdate(id,values, {new: true}, function (err, reserv) {
+                if (err) reject(err);
+
+                resolve(reserv);
+            }).select("-__v");
+        });
+    }
+
     function removeById(id){
         return new Promise(function (resolve, reject) {
             Model.findByIdAndRemove(id, function (err) {
+                if (err) reject(err);
+
+                resolve();
+            });
+        });
+    }
+
+    function removeAllRoomRes(id){
+        return new Promise(function (resolve, reject) {
+            Model.deleteMany({id_room: id}, function (err) {
                 if (err) reject(err);
 
                 resolve();
