@@ -43,7 +43,7 @@ function profileRouter() {
                 service: 'gmail',
                 auth: {
                   user: 'ticadeliobeta@gmail.com',
-                  pass: '90GRTEABCc!'
+                  pass: ''
                 }
               });
             var mailOptions = {
