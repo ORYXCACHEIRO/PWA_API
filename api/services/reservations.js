@@ -3,10 +3,11 @@ function reservationService(Model) {
     let service = { 
         create,
         removeById,
-        findOneById,
+        findById,
         findAllByRoomId,
         removeAllRoomRes,
-        updateById
+        updateById,
+        checkAvalability
     }
 
     function findAllByRoomId(id) {
@@ -19,10 +20,33 @@ function reservationService(Model) {
         });
     }
 
-    function findOneById(id){
+    function findById(id){
         return new Promise(function (resolve, reject) {
             Model.findById(id, function (err, reserv) {
                 if (err) reject(err);
+
+                if(reserv==null){
+                    reject('No reservation was found');
+                }
+
+                resolve(reserv);
+            }).select("-__v");
+        });
+    }
+
+    function checkAvalability(datai, dataf, idroom){
+        //{"OrderDateTime":{ $gte:ISODate("2019-02-10"), $lt:ISODate("2019-02-21") }
+        //$gt greater then
+        //$lt lower then
+        return new Promise(function (resolve, reject) {
+            Model.find({ "begin_date" : { $gte:datai }, "end_date": { $lte: dataf }, id_room: idroom}, function (err, reserv) {
+                if (err) reject(err);
+
+                console.log(reserv);
+
+                if(reserv==null || reserv.length>0){
+                    reject('No avalability');
+                }
 
                 resolve(reserv);
             }).select("-__v");

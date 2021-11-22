@@ -2,6 +2,7 @@ const express = require('express');
 
 const rooms = require('../controllers/rooms');
 const gallery = require('../controllers/gallery');
+const reservations = require('../controllers/reservations');
 
 const verifyToken = require('../middleware/verifyToken');
 const {limitedAccess} = require('../middleware/verifyAccess');
@@ -10,6 +11,7 @@ const {limitedAccess} = require('../middleware/verifyAccess');
 const comsRoomAPI = require('../routes/comodities/comoditiesRoom');
 const galleryRoomAPI = require('../routes/gallery/galleryRoom');
 const reservationsAPI = require('./reservations');
+
 
 function roomRouter() {
     let router = express.Router({mergeParams: true});
@@ -133,7 +135,7 @@ function roomRouter() {
 
         if ((typeof idhotel == 'string' && idhotel.trim() !== "") && (typeof idroom == 'string' && idroom.trim() !== "")) {
 
-            rooms.findById(idroom).then(() => gallery.removeByRoomId(idroom)).then(() => rooms.removeById(idroom)).then(() => {
+            rooms.findById(idroom).then(() => gallery.removeByRoomId(idroom)).then(() => reservations.removeAllRoomRes(idroom)).then(() => rooms.removeById(idroom)).then(() => {
                 res.status(200);
                 res.end();
                 next();

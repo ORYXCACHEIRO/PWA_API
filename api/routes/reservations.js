@@ -1,6 +1,7 @@
 const express = require('express');
 
 const reservations = require('../controllers/reservations');
+const rooms = require('../controllers/rooms');
 
 const verifyToken = require('../middleware/verifyToken');
 const {limitedAccess} = require('../middleware/verifyAccess');
@@ -11,7 +12,7 @@ function reservationRouter() {
     router.use(express.json({ limit: '100mb' }));
     router.use(express.urlencoded({ limit: '100mb', extended: true }));
 
-    router.route('/').get(function (req, res, next) { 
+    router.route('/').get(verifyToken, limitedAccess, function (req, res, next) { 
         
         let idhotel = req.params.hotelid;
         let idroom = req.params.roomid;
@@ -37,33 +38,110 @@ function reservationRouter() {
             next();
         }
 
-    }).post(function (req, res, next) { 
+    }).post(verifyToken,function (req, res, next) { 
 
-        /*
+        
         let idhotel = req.params.hotelid;
         let idroom = req.params.roomid;
         let body = req.body;
 
         if ((typeof idhotel == 'string' && idhotel.trim() !== "") && (typeof idroom == 'string' && idroom.trim() !== "")) {
+
+            body.id_room = idroom;
+            body.id_user = req.user_id;
+
+            let beginDate =  new Date(body.begin_date);
+            let endDate = new Date(body.end_date);
+
+            if(beginDate==null || endDate==null || (beginDate>endDate)){
+                res.status(401);
+                res.send('Dates are invalid');
+                res.end();
+                next();
+            }
+
+            //console.log(beginDate);
+            //console.log(endDate);
         
-            //if(body)
-            let data = Date.now;
-            res.send(new Date);
+            rooms.findById(idroom).then(() => reservations.checkAvalability(beginDate, endDate, idroom)).then(() => reservations.create(body)).then((reserv) => {
+                res.status(200);
+                res.send(reserv);
+                res.end();
+                next();
+            }).catch((err) => {
+                console.log(err);
+                err.status = err.status || 500;
+                res.status(401);
+                res.end();
+                next();
+            });
 
         } else {
             res.status(401);
             res.end();
             next();
         }
-        */
+        
 
     });
 
-    router.route('/:res_id').get(function (req, res, next) { 
+    router.route('/:res_id').get(verifyToken, function (req, res, next) { 
+
+        let idhotel = req.params.hotelid;
+        let idroom = req.params.roomid;
+        let idres = req.params.res_id;
+
+        if ((typeof idhotel == 'string' && idhotel.trim() !== "") && (typeof idroom == 'string' && idroom.trim() !== "") && (typeof idres == 'string' && idres.trim() !== "")) {
+
+            reservations.findById(idres).then((reserv) => {
+                res.status(200);
+                res.send(reserv);
+                res.end();
+                next();
+            }).catch((err) => {
+                //console.log(err);
+                err.status = err.status || 500;
+                res.status(401);
+                res.end();
+                next();
+            });
+
+        } else {
+            res.status(401);
+            res.end();
+            next();
+        }
 
     }).put(function (req, res, next) { 
 
-    }).delete(function (req, res, next) { });
+    }).delete(verifyToken, limitedAccess, function (req, res, next) { 
+
+        let idhotel = req.params.hotelid;
+        let idroom = req.params.roomid;
+        let idres = req.params.res_id;
+
+        if ((typeof idhotel == 'string' && idhotel.trim() !== "") && (typeof idroom == 'string' && idroom.trim() !== "") && (typeof idres == 'string' && idres.trim() !== "")) {
+
+            reservations.removeById(idres).then((reserv) => {
+                res.status(200);
+                res.send(reserv);
+                res.end();
+                next();
+            }).catch((err) => {
+                //console.log(err);
+                err.status = err.status || 500;
+                res.status(401);
+                res.end();
+                next();
+            });
+
+        } else {
+            res.status(401);
+            res.end();
+            next();
+        }
+
+    });
 
     return router;
 }

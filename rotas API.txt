@@ -24,8 +24,10 @@ ROTAS:
 #/hotel/:h_id/quartos/:q_id - feito
 #/hotel/:h_id/quartos/:q_id/comodities - feito
 #/hotel/:h_id/quartos/:q_id/galeria - feito
-#/hotel/:h_id/quartos/:q_id/reservations
+#/hotel/:h_id/quartos/:q_id/reservations - feito
 #/hotel/:h_id/quartos/:q_id/reservations/:id_res
+
+//todo remover, reservas ao remover quarto juntamente com o hotel
 
 // B A C K - E N D - cenas que nao convém o utilizador normal ver
 
