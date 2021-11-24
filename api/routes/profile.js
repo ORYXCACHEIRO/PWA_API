@@ -13,46 +13,26 @@ function profileRouter() {
     router.use(express.urlencoded({ limit: '100mb', extended: true }));
 
 
-    /// necessita mudancas
 
-    router.use(function (req, res, next) {
-        let token = req.headers['x-access-token'];
-        users.verifyToken(token).then((user) => {
-            req.user = user;
-            next();
-        }).catch((err) => {
-            res.status(401).send({ auth: false, message: 'No token provided' }).end();
-        })
-    })
+    router.route('/mail/:email').get( function (req, res, next) {
+        let email = req.params.email;
 
-    //// mas ta ca por necessidade
-
-
-    router.use(verifyToken);
-
-
-
-
-    router.route('/mail').get(function (req, res, next) {
-        let token = req.headers['x-access-token'];
-        console.log(token);
-        req.email = req.user_email;
-        console.log(req.email);
+        console.log(email);
         nodemailer.createTestAccount((err, account) => {
             var transporter = nodemailer.createTransport({
-                service: 'gmail',
+                service: 'outlook',
                 auth: {
-                  user: 'ticadeliobeta@gmail.com',
-                  pass: ''
+                    user: 'naotepergunteinadapwa@hotmail.com',
+                    pass: '123456789!=?'
                 }
-              });
+            });
             var mailOptions = {
-                from: 'deus@gmail.com',
-                to: req.email,
-                subject: 'A coca que eu nao vi',
-                text: 'http://127.0.0.1:3000/profile/mail/' + token
+                from: 'naotepergunteinadapwa@hotmail.com',
+                to: email,
+                subject: 'Trocar a Pass',
+                text: 'http://127.0.0.1:3000/profile/mail/request' + reqid
             };
-    
+
             transporter.sendMail(mailOptions, function (error, info) {
                 if (error) {
                     console.log(error);
@@ -67,24 +47,49 @@ function profileRouter() {
     });
 
 
-    router.route('/mail/:token').get(function (req, res, next) {
-        res.send(req.user.password);
+    router.route('/mail/request').get(function (req, res, next) {
+        res.send(req.userMemail);
         console.log(req.user);
         next();
-    }
+    }).put(function (req, res, next) {
 
-    );
+        let id = req.params.userid;
+        let body = req.body;
+
+        if ((typeof id == 'string' && id.trim() !== "")) {
+
+            users.findById(id).then(() => users.updateById(id, body)).then((user) => {
+                res.status(200);
+                res.send(user);
+                res.end();
+                next();
+            }).catch((err) => {
+                //console.log(err);
+                err.status = err.status || 500;
+                res.status(401);
+                res.end();
+                next();
+            });
+
+        } else {
+            console.log(err);
+            res.status(401);
+            res.end();
+            next();
+        }
+
+    });
 
 
 
-    router.route('/').get(function (req, res, next) {
-        res.send(req.user);
+    router.route('/').get(verifyToken, function (req, res, next) {
+        res.send(req.user_id);
         next();
     }
 
     );
 
-    router.route('/reviews/:userid').get(function (req, res, next) {
+    router.route('/reviews/:userid').get(verifyToken, function (req, res, next) {
 
         if (req.params.userid && typeof req.params.userid == "string") {
 
@@ -111,7 +116,7 @@ function profileRouter() {
     });
 
 
-    router.route('/favorites').get(function (req, res, next) {
+    router.route('/favorites').get(verifyToken, function (req, res, next) {
 
         favorites.findByUserId(req.user.id).then((favorites) => {
             res.send(favorites);
@@ -140,7 +145,7 @@ function profileRouter() {
 
     });
 
-    router.route('/favorites/:favid').delete(function (req, res, next) {
+    router.route('/favorites/:favid').delete(verifyToken, function (req, res, next) {
 
         let id = req.params.favid;
 
