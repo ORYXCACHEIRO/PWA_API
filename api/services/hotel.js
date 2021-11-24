@@ -65,7 +65,6 @@ function hotelService(Model) {
         });
     }
 
-//.sort( { $sort: { name: 1 } } )
 
     //remove de todos os hoteis
     function removeHotelComsAll(value) {

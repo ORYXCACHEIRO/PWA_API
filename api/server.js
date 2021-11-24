@@ -1,7 +1,7 @@
 const http = require('http');
 const express = require('express');
 let router = require('./router');
-const config = require('./config/db');
+const config = require('./config/config');
 const mongoose = require('mongoose');
 
 

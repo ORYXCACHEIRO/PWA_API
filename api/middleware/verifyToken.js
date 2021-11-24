@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const config = require('../config/db');
+const config = require('../config/config');
 
 const verifyToken = (req, res, next) => {
   
@@ -20,7 +20,7 @@ const verifyToken = (req, res, next) => {
     req.user_id = decoded.id;
     req.user_role = decoded.role;
 
-    console.log("verified");
+    //console.log("verified");
     return next();
   });
 };
