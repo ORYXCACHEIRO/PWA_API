@@ -13,25 +13,28 @@ function hotelService(Model) {
         findHotelComs,
         updateHotelComs,
         removeHotelComs,
-        removeHotelComsAll
+        removeHotelComsAll,
+        searchHotelbyName
     };
 
     //---------------------Comodities---------------------------
 
     //TODO fazer um check se io que está a inserir é uma comodidade existente e se é do tipo de hotel
 
-    function findHotelComs(id){
+    function findHotelComs(id) {
         return new Promise(function (resolve, reject) {
-        Model.findById(id, 'comodities', function (err, coms) {
+            Model.find(id, 'comodities', function (err, coms) {
                 if (err) reject(err);
                 resolve(coms);
             }).select("-_id");
         });
     }
 
-    function updateHotelComs(id, value){
+
+
+    function updateHotelComs(id, value) {
         return new Promise(function (resolve, reject) {
-            Model.findByIdAndUpdate(id, { $push: { comodities:{ comodity: value } } }, {new: true}, function (err, hotel) {
+            Model.findByIdAndUpdate(id, { $push: { comodities: { comodity: value } } }, { new: true }, function (err, hotel) {
                 if (err) reject(err);
 
                 resolve(hotel);
@@ -40,9 +43,9 @@ function hotelService(Model) {
     }
 
     //remove hotel em especifico
-    function removeHotelComs(id, value){
+    function removeHotelComs(id, value) {
         return new Promise(function (resolve, reject) {
-            Model.findByIdAndUpdate(id, { $pull: { comodities:{ comodity: value } } }, {new: true}, function (err, hotel) {
+            Model.findByIdAndUpdate(id, { $pull: { comodities: { comodity: value } } }, { new: true }, function (err, hotel) {
                 if (err) reject(err);
 
                 resolve(hotel);
@@ -50,10 +53,22 @@ function hotelService(Model) {
         });
     }
 
-    //remove de todos os hoteis
-    function removeHotelComsAll(value){
+
+    //procura os hoteis por nome, se calhar
+
+    function searchHotelbyName(name) {
         return new Promise(function (resolve, reject) {
-            Model.updateMany({}, { $pull: { comodities:{ comodity: value } } }, {new: true}, function (err) {
+            Model.find({ $text: { $search: name } }, function (err, hotel) {
+                if (err) reject(err);
+                resolve(hotel);
+            })
+        });
+    }
+
+    //remove de todos os hoteis
+    function removeHotelComsAll(value) {
+        return new Promise(function (resolve, reject) {
+            Model.updateMany({}, { $pull: { comodities: { comodity: value } } }, { new: true }, function (err) {
                 if (err) reject(err);
 
                 resolve();
@@ -63,18 +78,18 @@ function hotelService(Model) {
 
     //--------------------Languages------------------------------
 
-    function findHotelLangs(id){
+    function findHotelLangs(id) {
         return new Promise(function (resolve, reject) {
-        Model.findById(id, 'languages', function (err, langs) {
+            Model.findById(id, 'languages', function (err, langs) {
                 if (err) reject(err);
                 resolve(langs);
             }).select("-_id");
         });
     }
 
-    function updateHotelLangs(id, values){
+    function updateHotelLangs(id, values) {
         return new Promise(function (resolve, reject) {
-            Model.findByIdAndUpdate(id, { $push: { languages:{ language: values } } }, {new: true}, function (err, hotel) {
+            Model.findByIdAndUpdate(id, { $push: { languages: { language: values } } }, { new: true }, function (err, hotel) {
                 if (err) reject(err);
 
                 resolve(hotel);
@@ -82,9 +97,9 @@ function hotelService(Model) {
         });
     }
 
-    function removeHotelLang(id, value){
+    function removeHotelLang(id, value) {
         return new Promise(function (resolve, reject) {
-            Model.findByIdAndUpdate(id, { $pull: { languages:{ language: value } } }, {new: true}, function (err, hotel) {
+            Model.findByIdAndUpdate(id, { $pull: { languages: { language: value } } }, { new: true }, function (err, hotel) {
                 if (err) reject(err);
 
                 resolve(hotel);
@@ -92,9 +107,9 @@ function hotelService(Model) {
         });
     }
 
-    function removeHotelLangsAll(value){
+    function removeHotelLangsAll(value) {
         return new Promise(function (resolve, reject) {
-            Model.updateMany({}, { $pull: { languages:{ language: value } } }, {new: true}, function (err) {
+            Model.updateMany({}, { $pull: { languages: { language: value } } }, { new: true }, function (err) {
                 if (err) reject(err);
 
                 resolve();
@@ -113,7 +128,7 @@ function hotelService(Model) {
         });
     }
 
-    function findOneById(id){
+    function findOneById(id) {
         return new Promise(function (resolve, reject) {
             Model.findById(id, function (err, hotel) {
                 if (err) reject(err);
@@ -122,11 +137,11 @@ function hotelService(Model) {
             }).select("-__v");
         });
     }
-    
 
-    function updateById(id, values){
+
+    function updateById(id, values) {
         return new Promise(function (resolve, reject) {
-            Model.findByIdAndUpdate(id,values, {new: true}, function (err, hotel) {
+            Model.findByIdAndUpdate(id, values, { new: true }, function (err, hotel) {
                 if (err) reject(err);
 
                 resolve(hotel);
@@ -134,7 +149,7 @@ function hotelService(Model) {
         });
     }
 
-    function removeById(id){
+    function removeById(id) {
         return new Promise(function (resolve, reject) {
             Model.findByIdAndRemove(id, function (err) {
                 if (err) reject(err);
