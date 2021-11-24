@@ -31,15 +31,6 @@ function hotelService(Model) {
     }
 
 
-    function searchHotelbyName(name) {
-        return new Promise(function (resolve, reject) {
-            console.log(name);
-            Model.find({ $text: { $search: name } }, function (err, hotel) {
-                if (err) reject(err);
-                resolve(hotel);
-            })
-        });
-    }
 
     function updateHotelComs(id, value) {
         return new Promise(function (resolve, reject) {
@@ -59,6 +50,18 @@ function hotelService(Model) {
 
                 resolve(hotel);
             }).select("-__v");
+        });
+    }
+
+
+    //procura os hoteis por nome, se calhar
+
+    function searchHotelbyName(name) {
+        return new Promise(function (resolve, reject) {
+            Model.find({ $text: { $search: name } }, function (err, hotel) {
+                if (err) reject(err);
+                resolve(hotel);
+            })
         });
     }
 
