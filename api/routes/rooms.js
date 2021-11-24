@@ -24,14 +24,14 @@ function roomRouter() {
         let id = req.params.hotelid;
 
         if (typeof id == 'string' && id.trim() !== "") {
-
-            rooms.findByHotelId(id).then((rooms) => {
+            
+            rooms.findByHotelId(id).then((room) => {
                 res.status(200);
-                res.send(rooms);
+                res.send(room);
                 res.end();
                 next();
             }).catch((err) => {
-                //console.log(err);
+                console.log(err);
                 err.status = err.status || 500;
                 res.status(401);
                 res.end();

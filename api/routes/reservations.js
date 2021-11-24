@@ -40,7 +40,6 @@ function reservationRouter() {
 
     }).post(verifyToken,function (req, res, next) { 
 
-        
         let idhotel = req.params.hotelid;
         let idroom = req.params.roomid;
         let body = req.body;
@@ -50,8 +49,8 @@ function reservationRouter() {
             body.id_room = idroom;
             body.id_user = req.user_id;
 
-            let beginDate =  new Date(body.begin_date);
-            let endDate = new Date(body.end_date);
+            let beginDate =  new Date(body.begin_date) || null;
+            let endDate = new Date(body.end_date) || null;
 
             if(beginDate==null || endDate==null || (beginDate>endDate)){
                 res.status(401);
@@ -112,7 +111,84 @@ function reservationRouter() {
             next();
         }
 
-    }).put(function (req, res, next) { 
+    }).put(verifyToken, limitedAccess, function (req, res, next) { 
+
+        let idhotel = req.params.hotelid;
+        let idroom = req.params.roomid;
+        let idres = req.params.res_id;
+        let body = req.body;
+
+        if ((typeof idhotel == 'string' && idhotel.trim() !== "") && (typeof idroom == 'string' && idroom.trim() !== "") && (typeof idres == 'string' && idres.trim() !== "")) {
+
+            /* if(!body.begin_date && !body.end_date){
+
+                reservations.updateById(idres).then((reserv) => {
+                    res.status(200);
+                    res.send(reserv);
+                    res.end();
+                    next();
+                }).catch((err) => {
+                    //console.log(err);
+                    err.status = err.status || 500;
+                    res.status(401);
+                    res.end();
+                    next();
+                });
+
+            } */
+
+            reservations.findById(idres).then((reserv) => {
+
+                let bdDateBegin = reserv.begin_date;
+                let bdDateEnd = reserv.end_date;
+
+                if(body.begin_date){
+                    //console.log("beggg");
+                    let beginDate =  new Date(body.begin_date) || null;
+                    bdDateBegin = beginDate;
+                }
+
+                if(body.end_date){
+                    //console.log("sjkbgbjgs");
+                    let endDate = new Date(body.end_date) || null;
+                    bdDateEnd = endDate;
+                }
+
+                if(bdDateBegin==null || bdDateEnd==null || (bdDateBegin>bdDateEnd)){
+                    res.status(401);
+                    res.send('Dates are invalid');
+                    res.end();
+                    next();
+                }
+
+                //console.log("afaf");
+
+                reservations.checkAvalabilityOnUpdate(bdDateBegin, bdDateEnd, idroom, idres).then(() => reservations.updateById(idres, body)).then((reserv) => {
+                    res.status(200);
+                    res.send(reserv);
+                    res.end();
+                    next();
+                }).catch((err) => {
+                    console.log(err);
+                    err.status = err.status || 500;
+                    res.status(401);
+                    res.end();
+                    next();
+                });
+
+            }).catch((err) => {
+                console.log(err);
+                err.status = err.status || 500;
+                res.status(401);
+                res.end();
+                next();
+            });
+
+        } else {
+            res.status(401);
+            res.end();
+            next();
+        }
 
     }).delete(verifyToken, limitedAccess, function (req, res, next) { 
 

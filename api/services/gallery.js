@@ -6,7 +6,8 @@ function galleryService(Model) {
         findAllByRoom,
         removeById,
         removeByHotelId,
-        removeByRoomId
+        removeByRoomId,
+        removeFinalbyRoomId
     };
 
     function findAllByHotel(id) {
@@ -71,6 +72,23 @@ function galleryService(Model) {
     function removeByRoomId(id){
         return new Promise(function (resolve, reject) {
             Model.deleteMany({id_room: id}, function (err) {
+                if (err) reject(err);
+
+                resolve();
+            });
+        });
+    }
+
+    function removeFinalbyRoomId(id){
+
+        let arrayIds = [];
+
+        for(let i =0; i<id.length;i++){
+            arrayIds.push(String(id[i]._id));
+        }
+
+        return new Promise(function (resolve, reject) {
+            Model.deleteMany({id_room: {$in: arrayIds}}, function (err) {
                 if (err) reject(err);
 
                 resolve();

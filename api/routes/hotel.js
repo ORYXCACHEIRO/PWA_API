@@ -5,6 +5,7 @@ const gallery = require('../controllers/gallery');
 const reviews = require('../controllers/reviews');
 const rooms = require('../controllers/rooms');
 const users = require('../controllers/user');
+const reservations = require('../controllers/reservations');
 
 //routes
 const roomAPI = require('../routes/rooms');
@@ -133,13 +134,12 @@ function hotelRouter() {
         let id = req.params.hotelid;
 
         if (typeof id == 'string' && id.trim() !== "") {
-
-            hotel.findOneById(id).then(() => rooms.removeAllHotelRooms(id)).then(() => reviews.removeByHotelId(id)).then(() => gallery.removeByHotelId(id)).then(() => users.removeWorkStation(id)).then(() => hotel.removeById(id)).then(() => {
+            hotel.findOneById(id).then(() => rooms.findIdsByHotelId(id)).then((room) => reservations.removeAllRoomRes(room).then(() => gallery.removeFinalbyRoomId(room))).then(() => rooms.removeAllHotelRooms(id)).then(() => reviews.removeByHotelId(id)).then(() => gallery.removeByHotelId(id)).then(() => users.removeWorkStation(id)).then(() => hotel.removeById(id)).then(() => {
                 res.status(200);
                 res.end();
                 next();
             }).catch((err) => {
-                //console.log(err);
+                console.log(err);
                 err.status = err.status || 500;
                 res.status(401);
                 res.end();

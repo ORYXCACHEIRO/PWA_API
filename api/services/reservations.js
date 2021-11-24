@@ -7,7 +7,8 @@ function reservationService(Model) {
         findAllByRoomId,
         removeAllRoomRes,
         updateById,
-        checkAvalability
+        checkAvalability,
+        checkAvalabilityOnUpdate
     }
 
     function findAllByRoomId(id) {
@@ -36,13 +37,34 @@ function reservationService(Model) {
 
     function checkAvalability(datai, dataf, idroom){
         //{"OrderDateTime":{ $gte:ISODate("2019-02-10"), $lt:ISODate("2019-02-21") }
-        //$gt greater then
-        //$lt lower then
+        //$gte greater then or equal
+        //$lte lower then or equal
+        //$ne not equal
         return new Promise(function (resolve, reject) {
             Model.find({ "begin_date" : { $gte:datai }, "end_date": { $lte: dataf }, id_room: idroom}, function (err, reserv) {
                 if (err) reject(err);
 
-                console.log(reserv);
+                //console.log(reserv);
+
+                if(reserv==null || reserv.length>0){
+                    reject('No avalability');
+                }
+
+                resolve(reserv);
+            }).select("-__v");
+        });
+    }
+
+    function checkAvalabilityOnUpdate(datai, dataf, idroom, idres){
+        //{"OrderDateTime":{ $gte:ISODate("2019-02-10"), $lt:ISODate("2019-02-21") }
+        //$gte greater then or equal
+        //$lte lower then or equal
+        //$ne not equal
+        return new Promise(function (resolve, reject) {
+            Model.find({ "begin_date" : { $gte:datai }, "end_date": { $lte: dataf }, id_room: idroom, "_id": {$ne: idres}}, function (err, reserv) {
+                if (err) reject(err);
+
+                //console.log(reserv);
 
                 if(reserv==null || reserv.length>0){
                     reject('No avalability');
@@ -74,8 +96,16 @@ function reservationService(Model) {
     }
 
     function removeAllRoomRes(id){
+
+        let arrayIds = [];
+
+        for(let i =0; i<id.length;i++){
+            arrayIds.push(String(id[i]._id));
+        }
+
         return new Promise(function (resolve, reject) {
-            Model.deleteMany({id_room: id}, function (err) {
+            Model.deleteMany({id_room: {$in: arrayIds}}, function (err) {
+                console.log("adelio")
                 if (err) reject(err);
 
                 resolve();

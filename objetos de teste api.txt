@@ -68,3 +68,10 @@
 {
     "path": "afagfyevgyuasgvbsgvesgvse"
 }
+
+//reservations 
+{
+    "begin_date" : "2021-11-25",
+    "end_date": "2021-11-26",
+    "total_price": 150
+}
