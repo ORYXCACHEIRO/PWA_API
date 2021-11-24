@@ -12,7 +12,7 @@ function usersRouter() {
     router.use(express.urlencoded({ limit: '100mb', extended: true }));
 
     router.use(verifyToken);
-    router.use(onlyAdmin);
+ 
 
     router.route('/').get(function (req, res, next) {
 
@@ -75,6 +75,7 @@ function usersRouter() {
             });
 
         } else {
+            console.log(err);
             res.status(401);
             res.end();
             next();

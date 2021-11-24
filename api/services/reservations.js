@@ -8,7 +8,18 @@ function reservationService(Model) {
         removeAllRoomRes,
         updateById,
         checkAvalability,
-        checkAvalabilityOnUpdate
+        checkAvalabilityOnUpdate,
+        findByUserId
+    }
+
+    function findByUserId(value){
+        return new Promise(function (resolve, reject) {
+            Model.find({ id_user:value }, function (err, reserv) {
+                if (err) reject(err);
+
+                resolve(reserv);
+            }).select("-__v");
+        });
     }
 
     function findAllByRoomId(id) {
