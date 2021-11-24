@@ -58,12 +58,14 @@ function hotelService(Model) {
 
     function searchHotelbyName(name) {
         return new Promise(function (resolve, reject) {
-            Model.find({ $text: { $search: name } }, function (err, hotel) {
+            Model.find({ $text: { $search: name } }, { score: { $meta: "textScore" } }, function (err, hotel) {
                 if (err) reject(err);
                 resolve(hotel);
-            })
+            }).sort( { name: 1 } );
         });
     }
+
+//.sort( { $sort: { name: 1 } } )
 
     //remove de todos os hoteis
     function removeHotelComsAll(value) {
