@@ -9,7 +9,8 @@ function quartoService(Model) {
         removeAllHotelRooms,
         removeRoomComs,
         findRoomComs,
-        updateRoomComs
+        updateRoomComs,
+        findIdsByHotelId
     };
 
     function findById(id){
@@ -94,6 +95,16 @@ function quartoService(Model) {
         });
     }
 
+    function findIdsByHotelId(id){
+        //let model = Model(value);
+        return new Promise(function (resolve, reject) {
+            Model.find({id_hotel: id}, '_id', function (err, rooms) {
+                if (err) reject(err);
+
+                resolve(rooms);
+            });
+        });
+    }
 
     function create(values) {
         let newQart = Model(values);
