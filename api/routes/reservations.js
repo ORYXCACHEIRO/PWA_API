@@ -84,7 +84,7 @@ function reservationRouter() {
 
     });
 
-    router.route('/:res_id').get(verifyToken, function (req, res, next) { 
+    router.route('/:res_id').get(verifyToken, limitedAccess, function (req, res, next) { 
 
         let idhotel = req.params.hotelid;
         let idroom = req.params.roomid;
@@ -92,7 +92,7 @@ function reservationRouter() {
 
         if ((typeof idhotel == 'string' && idhotel.trim() !== "") && (typeof idroom == 'string' && idroom.trim() !== "") && (typeof idres == 'string' && idres.trim() !== "")) {
 
-            reservations.findById(idres).then((reserv) => {
+            rooms.findByRoomAndHotel(idroom, idhotel).then(() => reservations.findById(idres)).then((reserv) => {
                 res.status(200);
                 res.send(reserv);
                 res.end();
@@ -137,7 +137,7 @@ function reservationRouter() {
 
             } */
 
-            reservations.findById(idres).then((reserv) => {
+            rooms.findByRoomAndHotel(idroom, idhotel).then(() => reservations.findById(idres)).then((reserv) => {
 
                 let bdDateBegin = reserv.begin_date;
                 let bdDateEnd = reserv.end_date;
@@ -198,7 +198,7 @@ function reservationRouter() {
 
         if ((typeof idhotel == 'string' && idhotel.trim() !== "") && (typeof idroom == 'string' && idroom.trim() !== "") && (typeof idres == 'string' && idres.trim() !== "")) {
 
-            reservations.removeById(idres).then((reserv) => {
+           rooms.findByRoomAndHotel(idroom, idhotel).then(() => reservations.removeById(idres)).then((reserv) => {
                 res.status(200);
                 res.send(reserv);
                 res.end();

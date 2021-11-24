@@ -116,7 +116,6 @@ function reservationService(Model) {
 
         return new Promise(function (resolve, reject) {
             Model.deleteMany({id_room: {$in: arrayIds}}, function (err) {
-                console.log("adelio")
                 if (err) reject(err);
 
                 resolve();
