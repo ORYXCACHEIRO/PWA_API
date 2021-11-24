@@ -19,7 +19,7 @@ function reservationRouter() {
 
         if ((typeof idhotel == 'string' && idhotel.trim() !== "") && (typeof idroom == 'string' && idroom.trim() !== "")) {
 
-            reservations.findAllByRoomId(idroom).then((reservs) => {
+            rooms.findByRoomAndHotel(idroom, idhotel).then(() => reservations.findAllByRoomId(idroom)).then((reservs) => {
                 res.status(200);
                 res.send(reservs);
                 res.end();
@@ -62,7 +62,7 @@ function reservationRouter() {
             //console.log(beginDate);
             //console.log(endDate);
         
-            rooms.findById(idroom).then(() => reservations.checkAvalability(beginDate, endDate, idroom)).then(() => reservations.create(body)).then((reserv) => {
+            rooms.findByRoomAndHotel(idroom, idhotel).then(() => reservations.checkAvalability(beginDate, endDate, idroom)).then(() => reservations.create(body)).then((reserv) => {
                 res.status(200);
                 res.send(reserv);
                 res.end();

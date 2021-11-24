@@ -1,6 +1,7 @@
 const express = require('express');
 
 const gallery = require('../../controllers/gallery');
+const rooms = require('../../controllers/rooms');
 
 const verifyToken = require('../../middleware/verifyToken');
 const {limitedAccess} = require('../../middleware/verifyAccess');
@@ -16,8 +17,9 @@ function galleryRouter() {
         if ((req.params.hotelid && typeof req.params.hotelid == "string") && (req.params.roomid && typeof req.params.roomid)) {
 
             let idroom = req.params.roomid;
+            let idhotel = req.params.hotelid;
 
-            gallery.findAllByRoom(idroom).then((photos) => {
+            rooms.findByRoomAndHotel(idroom,idhotel).then(() => gallery.findAllByRoom(idroom)).then((photos) => {
                 res.send(photos);
                 res.status(200);
                 res.end();
@@ -41,12 +43,13 @@ function galleryRouter() {
 
         if (req.params.hotelid && typeof req.params.hotelid == "string" && req.params.roomid && typeof req.params.roomid == "string") {
 
-            let id = req.params.roomid;
+            let idroom = req.params.roomid;
+            let idhotel = req.params.hotelid;
 
-            body.id_room = id;
+            body.id_room = idroom;
             body.id_hotel = "";
 
-            gallery.create(body).then(() => {
+            rooms.findByRoomAndHotel(idroom,idhotel).then(() => gallery.create(body)).then(() => {
                 res.status(200);
                 res.end();
                 next();
@@ -71,7 +74,7 @@ function galleryRouter() {
 
             let photoid = req.params.photoid;
 
-            gallery.removeById(photoid).then(() => {
+            rooms.findByRoomAndHotel(idroom,idhotel).then(() => gallery.removeById(photoid)).then(() => {
                 res.status(200);
                 res.end();
                 next();

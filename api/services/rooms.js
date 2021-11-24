@@ -37,11 +37,13 @@ function quartoService(Model) {
 
     function findByRoomAndHotel(idroom, idhotel){
         return new Promise(function (resolve, reject) {
-            Model.findOne({id_room: idroom, id_hotel: idhotel}, function (err, room) {
+            Model.findOne({_id: idroom, id_hotel: idhotel}, function (err, room) {
                 if (err) reject(err);
 
+                console.log(room);
+
                 if(room==null){
-                    reject('No room was found');
+                    reject('Erro finding room');
                 }
 
                 resolve(room);
