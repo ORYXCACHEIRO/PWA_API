@@ -10,7 +10,8 @@ function quartoService(Model) {
         removeRoomComs,
         findRoomComs,
         updateRoomComs,
-        findIdsByHotelId
+        findIdsByHotelId,
+        findByRoomAndHotel
     };
 
     function findById(id){
@@ -31,6 +32,20 @@ function quartoService(Model) {
 
                 resolve(room);
             }).select("-_id");
+        });
+    }
+
+    function findByRoomAndHotel(idroom, idhotel){
+        return new Promise(function (resolve, reject) {
+            Model.findOne({id_room: idroom, id_hotel: idhotel}, function (err, room) {
+                if (err) reject(err);
+
+                if(room==null){
+                    reject('No room was found');
+                }
+
+                resolve(room);
+            });
         });
     }
 
