@@ -3,6 +3,7 @@ const profile = require('../controllers/profile');
 const users = require('../controllers/user');
 const reviews = require('../controllers/reviews');
 const favorites = require('../controllers/favorites');
+const reservas = require('../controllers/reservations');
 const nodemailer = require("nodemailer");
 const verifyToken = require('../middleware/verifyToken');
 
@@ -18,44 +19,47 @@ function profileRouter() {
         let email = req.params.email;
 
         console.log(email);
-        nodemailer.createTestAccount((err, account) => {
-            var transporter = nodemailer.createTransport({
-                service: 'outlook',
-                auth: {
-                    user: 'naotepergunteinadapwa@hotmail.com',
-                    pass: '123456789!=?'
-                }
-            });
-            var mailOptions = {
-                from: 'naotepergunteinadapwa@hotmail.com',
-                to: email,
-                subject: 'Trocar a Pass',
-                text: 'http://127.0.0.1:3000/profile/mail/request' + reqid
-            };
 
-            transporter.sendMail(mailOptions, function (error, info) {
-                if (error) {
-                    console.log(error);
-                } else {
-                    console.log('Email sent: ' + info.response);
-                }
+        users.findByEmailReq(email).then((usv) => {
+            nodemailer.createTestAccount((err, account) => {
+                var transporter = nodemailer.createTransport({
+                    service: 'outlook',
+                    auth: {
+                        user: 'naotepergunteinadapwa2@outlook.pt',
+                        pass: '123456789!=?'
+                    }
+                });
+
+                //naotepergunteinadapwa@hotmail.com  123456789!=?
+                var mailOptions = {
+                    from: 'naotepergunteinadapwa2@outlook.pt',
+                    to: email,
+                    subject: 'Trocar a Pass',
+                    text: 'http://127.0.0.1:3000/profile/mail/request/' + usv.id
+                };
+                console.log(usv.id)
+                transporter.sendMail(mailOptions, function (error, info) {
+                    if (error) {
+                        console.log(error);
+                    } else {
+                        console.log('Email sent: ' + info.response);
+                    }
+                });
             });
+            next();
+        }).catch((err) => {
+            console.log(err);
+            next();
         });
-        res.send("feitinho");
-        next();
-
     });
 
 
-    router.route('/mail/request').get(function (req, res, next) {
-        res.send(req.userMemail);
-        console.log(req.user);
-        next();
-    }).put(function (req, res, next) {
+    router.route('/mail/request/:userid').put(function (req, res, next) {
 
         let id = req.params.userid;
         let body = req.body;
-
+        console.log(id);
+        console.log(body);
         if ((typeof id == 'string' && id.trim() !== "")) {
 
             users.findById(id).then(() => users.updateById(id, body)).then((user) => {
@@ -95,6 +99,32 @@ function profileRouter() {
 
             let id = req.params.userid;
             reviews.findRevsByUserId(id).then((avs) => {
+                res.status(200);
+                res.send(avs);
+                res.end();
+                next();
+            }).catch((err) => {
+                console.log(err);
+                err.status = err.status || 500;
+                res.status(401);
+                res.end();
+                next();
+            });
+
+        } else {
+            res.status(401);
+            res.end();
+            next();
+        }
+
+    });
+
+    router.route('/reservations/:userid').get(verifyToken, function (req, res, next) {
+
+        if (req.params.userid && typeof req.params.userid == "string") {
+
+            let id = req.params.userid;
+            reservas.findByUserId(id).then((avs) => {
                 res.status(200);
                 res.send(avs);
                 res.end();

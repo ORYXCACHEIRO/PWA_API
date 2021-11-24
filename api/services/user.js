@@ -15,7 +15,8 @@ function userService(Model) {
         createToken,
         verifyToken,
         findAllWorkStations,
-        addWorkStation
+        addWorkStation,
+        findByEmailReq
     };
 
     function findAll() {
@@ -37,6 +38,17 @@ function userService(Model) {
             }).select("-password");
         });
     }
+
+    function findByEmailReq({email}) {
+        return new Promise(function (resolve, reject) {
+            Model.findOne(email, function (err, user) {
+                if (err) reject(err);
+
+                resolve(user);
+            })
+        });
+    }
+
 
     function findAllWorkStations(id,) {
         return new Promise(function (resolve, reject) {
@@ -65,6 +77,7 @@ function userService(Model) {
             });
         });
     }
+
 
     function createToken(user) {
         let token = jwt.sign({ id: user._id, email: user.email, role: user.role }, config.secret, {
