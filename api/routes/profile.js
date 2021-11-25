@@ -7,6 +7,7 @@ const reservas = require('../controllers/reservations');
 
 const verifyToken = require('../middleware/verifyToken');
 const {onlyClient} = require('../middleware/verifyAccess');
+const reservations = require('../models/reservations');
 
 function profileRouter() {
     let router = express();
@@ -98,6 +99,24 @@ function profileRouter() {
 
     });
 
+    router.route('/reviews/:revid').delete(verifyToken, onlyClient, function (req, res, next) {
+
+        let id = req.params.revid;
+
+        reviews.removeById(id).then(() => {
+            res.status(200);
+            res.end();
+            next();
+        }).catch((err) => {
+            //console.log(err);
+            err.status = err.status || 500;
+            res.status(401);
+            res.end();
+            next();
+        });
+
+    });
+
     router.route('/reservations').get(verifyToken, onlyClient, function (req, res, next) {
 
         let id = req.user_id;
@@ -108,6 +127,25 @@ function profileRouter() {
             next();
         }).catch((err) => {
             console.log(err);
+            err.status = err.status || 500;
+            res.status(401);
+            res.end();
+            next();
+        });
+
+    });
+
+    
+    router.route('/reservations/:resid').delete(verifyToken, onlyClient, function (req, res, next) {
+
+        let id = req.params.resid;
+
+        reservations.removeById(id).then(() => {
+            res.status(200);
+            res.end();
+            next();
+        }).catch((err) => {
+            //console.log(err);
             err.status = err.status || 500;
             res.status(401);
             res.end();
