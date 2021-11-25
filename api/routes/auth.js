@@ -69,7 +69,7 @@ function authRouter() {
 
 
                 body.id_user = usv._id;
-                body.key = createkey;
+                body.key = createkey.replace(/\//g, "");
 
                 //console.log(body);
 

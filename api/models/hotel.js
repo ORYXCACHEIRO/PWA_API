@@ -22,6 +22,8 @@ let hotelSchema = new Schema({
    
 });
 
+hotelSchema.index( { name: "text" } );
+
 let hotel = mongoose.model('hotels', hotelSchema);
 
 module.exports = hotel;

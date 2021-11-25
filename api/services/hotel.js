@@ -60,6 +60,7 @@ function hotelService(Model) {
         return new Promise(function (resolve, reject) {
             Model.find({ $text: { $search: name } }, function (err, hotel) {
                 if (err) reject(err);
+
                 resolve(hotel);
             }).sort( { name: 1 } );
         });
