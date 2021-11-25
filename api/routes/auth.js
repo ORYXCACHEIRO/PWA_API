@@ -36,9 +36,6 @@ function authRouter() {
 
         let body = req.body;
 
-        console.log("Length: " + Object.keys(body).length);
-        //console.log(email);
-
         if((body.email && typeof body.email=="string" && body.email.trim()!="") && Object.keys(body).length==1){
 
             users.findByEmailReq(body.email).then(async (usv) => {
@@ -54,7 +51,6 @@ function authRouter() {
                     }
                 });
 
-                //console.log(usv);
                 //naotepergunteinadapwa@hotmail.com  123456789!=?
 
                 let createkey = await users.hashPasswordOnUpdate(`${usv._id}.${usv.email}`);
@@ -71,18 +67,12 @@ function authRouter() {
                 body.id_user = usv._id;
                 body.key = createkey.replace(/\//g, "");
 
-                //console.log(body);
-
-                recPass.checkById(usv.id).then(() => recPass.create(body)).then(() => {
-                    console.log("criada");
-                }).catch((err) => {
+                recPass.checkById(usv.id).then(() => recPass.create(body)).catch((err) => {
                     //console.log(err);
                     res.status(401);
                     res.end();
                     next();
                 });
-
-                //console.log(usv.id)
 
                 transporter.sendMail(mailOptions, function (error, info) {
                     if (error) {
@@ -111,7 +101,6 @@ function authRouter() {
             });
 
         } else {
-            //console.log("ajgbfsjabkjsdgb")
             res.status(401);
             res.end();
             next();
