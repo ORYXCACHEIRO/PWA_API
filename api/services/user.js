@@ -19,7 +19,8 @@ function userService(Model) {
         findByEmailReq,
         updatePassword,
         hashPasswordOnUpdate,
-        checkWorkStation
+        checkWorkStation,
+        checkIfUserAdmin
     };
 
     function findAll() {
@@ -165,6 +166,20 @@ function userService(Model) {
 
                 resolve(workStations);
             }).select("-__v");
+        });
+    }
+
+    function checkIfUserAdmin(id){
+        return new Promise(function (resolve, reject) {
+            Model.findById(id, function (err, user) {
+                if (err) reject(err);
+
+                if(user.role==2 || user==null || user.length==0){
+                    reject('Error deleting this user');
+                }
+
+                resolve(user);
+            }).select("-password __v");
         });
     }
 

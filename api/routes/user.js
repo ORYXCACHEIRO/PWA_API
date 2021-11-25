@@ -193,11 +193,9 @@ function usersRouter() {
 
         let id = req.params.userid;
 
-        //TODO ELEMINAR TUDO DO UTILIZADOR AO ELIMINAR O UTILIZADOR, TAIS COMO AVALIAÇÕES DO MESMO
-
         if (typeof id == 'string' && id.trim() !== "") {
 
-            users.findById(id).then(() => reviews.removeByUserId(id)).then(() => users.removeById(id)).then(() => {
+            users.checkIfUserAdmin(id).then(() => reviews.removeByUserId(id)).then(() => users.removeById(id)).then(() => {
                 res.status(200);
                 res.end();
                 next();
