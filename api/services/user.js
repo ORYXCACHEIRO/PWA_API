@@ -17,10 +17,9 @@ function userService(Model) {
         findAllWorkStations,
         addWorkStation,
         findByEmailReq,
-        createToken_req_pass,
-        verifyToken_req_pass,
         updatePassword,
-        hashPasswordOnUpdate
+        hashPasswordOnUpdate,
+        checkWorkStation
     };
 
     function findAll() {
@@ -92,28 +91,9 @@ function userService(Model) {
         return { auth: true, token }
     }
 
-    function createToken_req_pass(user){
-        let token = jwt.sign({ id: user._id, email: user.email, }, config.secretpass, {
-            expiresIn: config.expireTokenPass
-        });
-
-        return { auth: true, token }
-    }
-
     function verifyToken(token) {
         return new Promise(function (resolve, reject) {
             jwt.verify(token, config.secret, (err, decoded) => {
-                if (err) reject(err)
-
-                return resolve(decoded);
-            });
-        });
-    }
-
-    function verifyToken_req_pass(token) {
-        return new Promise(function (resolve, reject) {
-            jwt.verify(token, config.secretpass, (err, decoded) => {
-                console.log(decoded);
                 if (err) reject(err)
 
                 return resolve(decoded);
@@ -141,16 +121,6 @@ function userService(Model) {
 
                 resolve();
             });
-        });
-    }
-
-    function removeWorkStation(id, value){
-        return new Promise(function (resolve, reject) {
-            Model.findByIdAndUpdate(id, { $pull: { workStation:{ hotel: value } } }, {new: true}, function (err) {
-                if (err) reject(err);
-
-                resolve();
-            }).select("-__v");
         });
     }
 
@@ -184,6 +154,33 @@ function userService(Model) {
 
                 resolve(workStations);
             }).select("-__v");
+        });
+    }
+
+    
+    function removeWorkStation(id, value){
+        return new Promise(function (resolve, reject) {
+            Model.findByIdAndUpdate(id, { $pull: { workStation:{ hotel: value } } }, {new: true}, function (err, workStations) {
+                if (err) reject(err);
+
+                resolve(workStations);
+            }).select("-__v");
+        });
+    }
+
+    function checkWorkStation(id, idhotel){
+        return new Promise(function (resolve, reject) {
+            Model.find({_id: id, workStation:{ $elemMatch: { hotel: idhotel} }, role: 1}, function (err, users) {
+                if (err) reject(err);
+
+                //console.log(users);
+
+                if(users==null || users.length>0){
+                    reject('User already has one workstation with that value');
+                }
+
+                resolve();
+            });
         });
     }
 

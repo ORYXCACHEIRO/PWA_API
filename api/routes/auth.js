@@ -18,18 +18,18 @@ function authRouter() {
         const body = req.body;
 
         users.create(body).then((user) => users.createToken(user))
-            .then((response) => {
-                res.status(200);
-                res.send(response);
-                res.end();
-                next();
-            }).catch((err) => {
-                //console.log(err);
-                res.status(500);
-                res.send(err);
-                res.end();
-                next();
-            });
+        .then((response) => {
+            res.status(200);
+            res.send(response);
+            res.end();
+            next();
+        }).catch((err) => {
+            //console.log(err);
+            res.status(500);
+            res.send(err);
+            res.end();
+            next();
+        });
     });
 
     router.route('/recover').post(function (req, res, next) {

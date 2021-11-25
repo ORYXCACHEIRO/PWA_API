@@ -4,6 +4,8 @@ let Schema = mongoose.Schema;
 let roomSchema = new Schema({
     name: { type: String, required: true},
     descrption: { type: String, required: true},
+    maxAdult: {type: Number, required: true},
+    maxChildren: {type: Number, required: true},
     id_hotel: { type: String, required: true },
     price_per_night: {type: Number, required: true},
     comodities: { type: Array, default: []},

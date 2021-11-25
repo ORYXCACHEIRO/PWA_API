@@ -54,6 +54,8 @@
 {
     "name": "adelio",
     "descrption": "adelio",
+    "maxAdult": 3,
+    "maxChildren": 1,
     "price_per_night": 50
 }
 
