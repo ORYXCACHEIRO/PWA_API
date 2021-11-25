@@ -14,6 +14,33 @@ function usersRouter() {
     router.use(verifyToken);
     router.use(onlyAdmin);
 
+    router.route('/alt-password/:userid').put( function (req, res, next) { 
+
+        let id = req.params.userid;
+
+        if(body.password && body.password.trim()!=""){
+            
+            users.updatePassword(id, body.password).then(() => {
+                res.status(200);
+                res.end();
+                next();
+            }).catch((err) => {
+                //console.log(err);
+                err.status = err.status || 500;
+                res.status(401);
+                res.end();
+                next();
+            });
+
+        } else {
+            res.status(401);
+            res.end();
+            next();
+        }
+
+    });
+
+
     router.route('/').get(function (req, res, next) {
 
         users.findAll().then((users) => {
@@ -34,7 +61,7 @@ function usersRouter() {
         
         let id = req.params.userid;
 
-        if (typeof id == 'string' && id.trim() !== "") {
+        if (typeof id == 'string' && id.trim() !== "" ) {
 
             users.findById(id).then((user) => {
                 res.send(user);
@@ -59,7 +86,7 @@ function usersRouter() {
         let id = req.params.userid;
         let body = req.body;
 
-        if  ((typeof id == 'string' && id.trim() !== "")) {
+        if  ((typeof id == 'string' && id.trim() !== "" && !body.password && !body.role)) {
 
             users.findById(id).then(() => users.updateById(id, body)).then((user) => {
                 res.status(200);
@@ -75,7 +102,6 @@ function usersRouter() {
             });
 
         } else {
-            console.log(err);
             res.status(401);
             res.end();
             next();

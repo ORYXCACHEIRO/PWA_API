@@ -55,20 +55,28 @@ function profileRouter() {
 
     }).put(verifyToken, function (req, res, next) { 
 
-        let body = req.body;
+        if  ((!body.password && !body.role)) {
 
-        users.updateById(req.user_id, body).then((users) => {
-            res.status(200);
-            res.send(users);
-            res.end();
-            next();
-        }).catch((err) => {
-            //console.log(err);
-            err.status = err.status || 500;
+            let body = req.body;
+
+            users.updateById(req.user_id, body).then((users) => {
+                res.status(200);
+                res.send(users);
+                res.end();
+                next();
+            }).catch((err) => {
+                //console.log(err);
+                err.status = err.status || 500;
+                res.status(401);
+                res.end();
+                next();
+            });
+
+        } else {
             res.status(401);
             res.end();
             next();
-        });
+        }
 
     });
 
