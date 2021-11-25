@@ -1,6 +1,7 @@
 const express = require('express');
 
 const gallery = require('../../controllers/gallery');
+const config = require('../../config/config');
 
 const verifyToken = require('../../middleware/verifyToken');
 const {limitedAccess} = require('../../middleware/verifyAccess');
@@ -35,7 +36,7 @@ function galleryRouter() {
             next();
         }
 
-    }).post(verifyToken, limitedAccess,function (req, res, next) {
+    }).post(verifyToken, limitedAccess, function (req, res, next) {
 
         let body = req.body;
 
@@ -45,6 +46,22 @@ function galleryRouter() {
 
             body.id_room = "";
             body.id_hotel = id;
+
+            if(!body.path || body.path && body.path.trim().length<3){
+                res.status(401);
+                res.send('Invalid image');
+                res.end();
+                next();
+            }
+
+            let extension = body.path.slice(-4);
+
+            if(!config.valideImgFormat.includes(extension)){
+                res.status(401);
+                res.send('Invalid image format');
+                res.end();
+                next();
+            }
 
             gallery.create(body).then(() => {
                 res.status(200);

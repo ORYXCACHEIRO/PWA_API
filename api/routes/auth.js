@@ -2,6 +2,7 @@ const express = require('express');
 const nodemailer = require("nodemailer");
 
 const users = require('../controllers/user');
+const recPass = require('../controllers/rec_pass');
 
 const verifyToken = require('../middleware/verifyToken');
 
@@ -35,14 +36,18 @@ function authRouter() {
 
         let body = req.body;
 
+        console.log("Length: " + Object.keys(body).length);
         //console.log(email);
 
-        if((body.email && typeof body.email=="string" && body.email.trim()!="")){
+        if((body.email && typeof body.email=="string" && body.email.trim()!="") && Object.keys(body).length==1){
 
-            users.findByEmailReq(body.email).then((usv) => {
+            users.findByEmailReq(body.email).then(async (usv) => {
+
+                delete body.email;
 
                 var transporter = nodemailer.createTransport({
-                    service: 'outlook',
+                    host: 'smtp-mail.outlook.com',
+                    port: 587,
                     auth: {
                         user: 'naotepergunteinadapwa2@outlook.pt',
                         pass: '123456789!=?'
@@ -52,34 +57,53 @@ function authRouter() {
                 //console.log(usv);
                 //naotepergunteinadapwa@hotmail.com  123456789!=?
 
-                let createtoken = users.createToken_req_pass(usv._id, usv.email);
+                let createkey = await users.hashPasswordOnUpdate(`${usv._id}.${usv.email}`);
 
+                
                 var mailOptions = {
                     from: 'naotepergunteinadapwa2@outlook.pt',
                     to: usv.email,
                     subject: 'Recuparação da Password',
-                    html: `<b>http://127.0.0.1:3000/auth/recover/${createtoken.token}</b>`, // html body
+                    html: `<b>http://127.0.0.1:3000/auth/recover/${createkey}</b>`, // html body
                 };
+
+
+                body.id_user = usv._id;
+                body.key = createkey;
+
+                //console.log(body);
+
+                recPass.checkById(usv.id).then(() => recPass.create(body)).then(() => {
+                    console.log("criada");
+                }).catch((err) => {
+                    //console.log(err);
+                    res.status(401);
+                    res.end();
+                    next();
+                });
 
                 //console.log(usv.id)
 
                 transporter.sendMail(mailOptions, function (error, info) {
                     if (error) {
-                        console.log(error);
-                        err.status = err.status || 500;
-                        res.status(401);
-                        res.end();
-                        next();
-                    } else {
-                        res.status(200);
-                        res.send('Email sent: ' + info.response);
-                        res.end();
-                        next();
+                    
+                        recPass.removeById(usv.id).then(() => {
+                            //console.log(error);
+                            res.status(401);
+                            res.end();
+                            next();
+                        });
+                        
                     }
                 });
 
+                res.status(200);
+                res.send('Email sent');
+                res.end();
+                next(); 
+
             }).catch((err) => {
-                console.log(err);
+                //console.log(err);
                 err.status = err.status || 500;
                 res.status(401);
                 res.end();
@@ -87,7 +111,7 @@ function authRouter() {
             });
 
         } else {
-            console.log("ajgbfsjabkjsdgb")
+            //console.log("ajgbfsjabkjsdgb")
             res.status(401);
             res.end();
             next();
@@ -97,28 +121,30 @@ function authRouter() {
 
 
     //aletara passaword apos receber email, body contem apenas passaword
-    router.route('/recover/:token').post(function (req, res, next) {
+    router.route('/recover/:key').post(function (req, res, next) {
 
-        let token = req.params.token;
+        let key = req.params.key;
         let body = req.body;
 
-        if ((typeof token == 'string' && token.trim() !== "") && (body.password && typeof body.password=="string" && body.password.trim()!="")) {
+        if ((typeof key == 'string' && key.trim() !== "") && (body.password && typeof body.password=="string" && body.password.trim()!="") && Object.keys(body).length==1) {
 
-            users.verifyToken_req_pass(token).then((decoded) => users.findById(decoded.id).then(() => users.updatePassword(decoded.id, body.password).then(() => {
+            recPass.findByKey(key).then((reponse) => users.findById(reponse.id_user).then(() => users.updatePassword(reponse.id_user, body.password)).then(() => recPass.removeByKey(key).then(() => {
                 res.status(200);
                 res.send('Password updated');
                 res.end();
                 next();
             }).catch((err) => {
-                console.log(err);
+                //console.log(err);
                 err.status = err.status || 500;
+                res.send(err);
                 res.status(401);
                 res.end();
                 next();
             }))).catch((err) => {
-                console.log(err);
+                //console.log(err);
                 err.status = err.status || 500;
                 res.status(401);
+                res.send(err);
                 res.end();
                 next();
             });

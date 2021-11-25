@@ -2,6 +2,7 @@ const express = require('express');
 
 const gallery = require('../../controllers/gallery');
 const rooms = require('../../controllers/rooms');
+const config = require('../../config/config');
 
 const verifyToken = require('../../middleware/verifyToken');
 const {limitedAccess} = require('../../middleware/verifyAccess');
@@ -48,6 +49,22 @@ function galleryRouter() {
 
             body.id_room = idroom;
             body.id_hotel = "";
+
+            if(!body.path || body.path && body.path.trim().length<3){
+                res.status(401);
+                res.send('Invalid image');
+                res.end();
+                next();
+            }
+
+            let extension = body.path.slice(-4);
+
+            if(!config.valideImgFormat.includes(extension)){
+                res.status(401);
+                res.send('Invalid image format');
+                res.end();
+                next();
+            }
 
             rooms.findByRoomAndHotel(idroom,idhotel).then(() => gallery.create(body)).then(() => {
                 res.status(200);

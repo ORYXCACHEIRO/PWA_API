@@ -113,6 +113,7 @@ function userService(Model) {
     function verifyToken_req_pass(token) {
         return new Promise(function (resolve, reject) {
             jwt.verify(token, config.secretpass, (err, decoded) => {
+                console.log(decoded);
                 if (err) reject(err)
 
                 return resolve(decoded);
@@ -124,10 +125,11 @@ function userService(Model) {
         return bcrypt.hash(user.password, config.saltRounds);
     }
 
+    //esta funcção é utilizada também para criar keys para recuparação de passwords
     function hashPasswordOnUpdate(password) {
         return bcrypt.hash(password, config.saltRounds);
     }
-
+    
     function comparePassword(password, hash) {
         return bcrypt.compare(password, hash);
     }

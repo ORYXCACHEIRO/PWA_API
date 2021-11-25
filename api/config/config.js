@@ -4,6 +4,7 @@ const config = {
     secretpass: 'superscretpass',
     expiresPassword: 86400,
     expireTokenPass: 60*5,
+    valideImgFormat: [".png", ".jpg"],
     saltRounds: 10
 }
 

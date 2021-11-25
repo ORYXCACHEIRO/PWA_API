@@ -25,7 +25,7 @@ ROTAS:
 #/hotel/:h_id/quartos/:q_id/comodities - feito
 #/hotel/:h_id/quartos/:q_id/galeria - feito
 #/hotel/:h_id/quartos/:q_id/reservations - feito
-#/hotel/:h_id/quartos/:q_id/reservations/:id_res
+#/hotel/:h_id/quartos/:q_id/reservations/:id_res - feito
 
 //todo remover, reservas ao remover quarto juntamente com o hotel
 

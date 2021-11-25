@@ -14,6 +14,64 @@ function profileRouter() {
     router.use(express.json({ limit: '100mb' }));
     router.use(express.urlencoded({ limit: '100mb', extended: true }));
 
+    router.route('/alt-password').put(verifyToken, function (req, res, next) { 
+
+        if(body.password && body.password.trim()!=""){
+            
+            users.updatePassword(req.user_id, body.password).then(() => {
+                res.status(200);
+                res.end();
+                next();
+            }).catch((err) => {
+                //console.log(err);
+                err.status = err.status || 500;
+                res.status(401);
+                res.end();
+                next();
+            });
+
+        } else {
+            res.status(401);
+            res.end();
+            next();
+        }
+
+    });
+
+    router.route('/settings').get(verifyToken, function (req, res, next) {
+
+        users.findById(req.user_id).then((user) => {
+            res.status(200);
+            res.send(user);
+            res.end();
+            next();
+        }).catch((err) => {
+            //console.log(err);
+            err.status = err.status || 500;
+            res.status(401);
+            res.end();
+            next();
+        });
+
+    }).put(verifyToken, function (req, res, next) { 
+
+        let body = req.body;
+
+        users.updateById(req.user_id, body).then((users) => {
+            res.status(200);
+            res.send(users);
+            res.end();
+            next();
+        }).catch((err) => {
+            //console.log(err);
+            err.status = err.status || 500;
+            res.status(401);
+            res.end();
+            next();
+        });
+
+    });
+
     router.route('/reviews').get(verifyToken, onlyClient, function (req, res, next) {
 
         let id = req.user_id;
