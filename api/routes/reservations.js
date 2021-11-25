@@ -4,7 +4,7 @@ const reservations = require('../controllers/reservations');
 const rooms = require('../controllers/rooms');
 
 const verifyToken = require('../middleware/verifyToken');
-const {limitedAccess} = require('../middleware/verifyAccess');
+const {limitedAccess, limitedAccessWithClient} = require('../middleware/verifyAccess');
 
 function reservationRouter() {
     let router = express.Router({mergeParams: true});
@@ -38,7 +38,7 @@ function reservationRouter() {
             next();
         }
 
-    }).post(verifyToken,function (req, res, next) { 
+    }).post(verifyToken, limitedAccessWithClient, function (req, res, next) { 
 
         let idhotel = req.params.hotelid;
         let idroom = req.params.roomid;

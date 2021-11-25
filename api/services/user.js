@@ -20,7 +20,8 @@ function userService(Model) {
         updatePassword,
         hashPasswordOnUpdate,
         checkWorkStation,
-        checkIfUserAdmin
+        checkIfUserAdmin,
+        checkIfUserEmployee
     };
 
     function findAll() {
@@ -174,7 +175,7 @@ function userService(Model) {
             Model.findById(id, function (err, user) {
                 if (err) reject(err);
 
-                if(user.role==2 || user==null || user.length==0){
+                if(user==null || user.length==0 || user.role==2 ){
                     reject('Error deleting this user');
                 }
 
@@ -183,9 +184,23 @@ function userService(Model) {
         });
     }
 
+    function checkIfUserEmployee(id){
+        return new Promise(function (resolve, reject) {
+            Model.find({ $and: [{_id: id, role: 1}]}, function (err, user) {
+                if (err) reject(err);
+
+                if(user==null || user.length==0 || user.role!=1){
+                    reject('Error deleting this user');
+                }
+
+                resolve();
+            }).select("-password -__v");
+        });
+    }
+
     function checkWorkStation(id, idhotel){
         return new Promise(function (resolve, reject) {
-            Model.find({_id: id, workStation:{ $elemMatch: { hotel: idhotel} }, role: 1}, function (err, users) {
+            Model.find({_id: id, workStation:{ $elemMatch: { hotel: idhotel} }}, function (err, users) {
                 if (err) reject(err);
 
                 //console.log(users);

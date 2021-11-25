@@ -48,9 +48,7 @@ function usersRouter() {
 
         if(id.trim()!="" && Object.keys(body).length==1 && body.hotel && typeof body.hotel=="string" && body.hotel.trim()!=""){
 
-            console.log("dsgsdgsdgg")
-
-           hotel.findOneById(body.hotel).then(() => users.checkWorkStation(id, body.hotel)).then(() => users.addWorkStation(id, body.hotel)).then((work) => {
+           hotel.findOneById(body.hotel).then(() =>  users.checkIfUserEmployee(id)).then(() => users.checkWorkStation(id, body.hotel)).then(() => users.addWorkStation(id, body.hotel)).then((work) => {
                 res.status(200);
                 res.send(work.workStation);
                 res.end();
