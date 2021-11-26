@@ -21,7 +21,8 @@ function userService(Model) {
         hashPasswordOnUpdate,
         checkWorkStation,
         checkIfUserAdmin,
-        checkIfUserEmployee
+        checkIfUserEmployee,
+        checkIfUserClient
     };
 
     function findAll() {
@@ -180,7 +181,21 @@ function userService(Model) {
                 }
 
                 resolve(user);
-            }).select("-password __v");
+            }).select("-password -__v");
+        });
+    }
+
+    function checkIfUserClient(id){
+        return new Promise(function (resolve, reject) {
+            Model.findById(id, function (err, user) {
+                if (err) reject(err);
+
+                if(user==null || user.length==0 || user.role!=0 ){
+                    reject('User not valid');
+                }
+
+                resolve(user);
+            }).select("-password -__v");
         });
     }
 

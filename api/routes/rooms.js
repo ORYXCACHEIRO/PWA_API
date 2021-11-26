@@ -3,6 +3,7 @@ const express = require('express');
 const rooms = require('../controllers/rooms');
 const gallery = require('../controllers/gallery');
 const reservations = require('../controllers/reservations');
+const hotel = require('../controllers/hotel');
 
 const verifyToken = require('../middleware/verifyToken');
 const {limitedAccess} = require('../middleware/verifyAccess');
@@ -54,7 +55,7 @@ function roomRouter() {
 
             body.id_hotel = id;
 
-            rooms.create(body).then((room) => {
+            hotel.findOneById(id).then(() => rooms.create(body)).then((room) => {
                 res.status(200);
                 res.send(room);
                 res.end();

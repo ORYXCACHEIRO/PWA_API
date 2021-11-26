@@ -40,7 +40,7 @@ function quartoService(Model) {
             Model.findOne({_id: idroom, id_hotel: idhotel}, function (err, room) {
                 if (err) reject(err);
 
-                console.log(room);
+                //console.log(room);
 
                 if(room==null){
                     reject('Erro finding room');

@@ -2,6 +2,7 @@ const express = require('express');
 
 const reservations = require('../controllers/reservations');
 const rooms = require('../controllers/rooms');
+const users = require('../controllers/user');
 
 const verifyToken = require('../middleware/verifyToken');
 const {limitedAccess, limitedAccessWithClient} = require('../middleware/verifyAccess');
@@ -46,34 +47,46 @@ function reservationRouter() {
 
         if ((typeof idhotel == 'string' && idhotel.trim() !== "") && (typeof idroom == 'string' && idroom.trim() !== "")) {
 
-            body.id_room = idroom;
-            body.id_user = req.user_id;
+            rooms.findByRoomAndHotel(idroom, idhotel).then((room) => {
 
-            let beginDate =  new Date(body.begin_date) || null;
-            let endDate = new Date(body.end_date) || null;
 
-            if(beginDate==null || endDate==null || (beginDate>endDate)){
-                res.status(401);
-                res.send('Dates are invalid');
-                res.end();
-                next();
-            }
+                body.id_room = idroom;
 
-            //console.log(beginDate);
-            //console.log(endDate);
-        
-            rooms.findByRoomAndHotel(idroom, idhotel).then(() => reservations.checkAvalability(beginDate, endDate, idroom)).then(() => reservations.create(body)).then((reserv) => {
-                res.status(200);
-                res.send(reserv);
-                res.end();
-                next();
+                let beginDate =  new Date(body.begin_date) || null;
+                let endDate = new Date(body.end_date) || null;
+
+                if(beginDate==null || endDate==null || (beginDate>endDate) || body.numberAdults && body.numberAdults>room.maxAdult || body.numberChildren && body.numberChildren>room.maxChildren || !body.id_user || body.numberAdults==0){
+                    res.status(401);
+                    res.send('Reservation is invalid');
+                    res.end();
+                    next();
+                }
+
+                //console.log(beginDate);
+                //console.log(endDate);
+            
+                users.checkIfUserClient(body.id_user).then(() => reservations.checkAvalability(beginDate, endDate, idroom)).then(() => reservations.create(body)).then((reserv) => {
+                    res.status(200);
+                    res.send(reserv);
+                    res.end();
+                    next();
+                }).catch((err) => {
+                    //console.log(err);
+                    err.status = err.status || 500;
+                    res.status(401);
+                    res.end();
+                    next();
+                });
+
             }).catch((err) => {
-                console.log(err);
+                //console.log(err);
                 err.status = err.status || 500;
                 res.status(401);
                 res.end();
                 next();
             });
+
+            
 
         } else {
             res.status(401);

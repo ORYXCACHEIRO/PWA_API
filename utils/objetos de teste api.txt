@@ -75,5 +75,8 @@
 {
     "begin_date" : "2021-11-25",
     "end_date": "2021-11-26",
+    "id_user": "",
+    "numberAdults": 2,
+    "numberChildren": 0,
     "total_price": 150
 }

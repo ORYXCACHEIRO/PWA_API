@@ -6,6 +6,8 @@ let reservationsSchema = new Schema({
     end_date: { type: Date, required: true },
     id_user: { type: String, required: true },
     id_room: { type: String, required: true },
+    numberAdults: { type: Number, required: true },
+    numberChildren: { type: Number, required: true },
     total_price: {type: Number, required: true}
 });
 
