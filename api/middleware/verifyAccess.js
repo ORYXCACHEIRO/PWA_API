@@ -3,7 +3,7 @@ const user = require('../controllers/user');
 const limitedAccess = (req, res, next) => {
 
     //client
-    if(!req.user_role || req.user_role==0){
+    if(req.user_role==0){
         //console.log("access not granted");
         return res.status(401).end();
     }
@@ -52,6 +52,7 @@ const limitedAccessWithClient = (req, res, next) => {
     //client
     if(!req.user_role){
         //console.log("access not granted");
+        console.log("ahfvahjsfvafv");
         return res.status(401).end();
     }
 
@@ -100,7 +101,7 @@ const limitedAccessWithClient = (req, res, next) => {
 
 const onlyClient = (req, res, next) => { 
 
-    if(!req.user_role || req.user_role!=0){
+    if(req.user_role!=0){
         //console.log("access not granted");
         return res.status(401).end();
     } 
@@ -112,7 +113,7 @@ const onlyClient = (req, res, next) => {
 
 const onlyAdmin = (req, res, next) => { 
 
-    if(!req.user_role || req.user_role!=2){
+    if(req.user_role!=2){
         //console.log("access not granted");
         return res.status(401).end();
     } 

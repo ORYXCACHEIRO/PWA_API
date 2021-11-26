@@ -3,6 +3,7 @@ const express = require('express');
 const users = require('../controllers/user');
 const reviews = require('../controllers/reviews');
 const hotel = require('../controllers/hotel');
+const favorites = require('../controllers/favorites');
 
 const verifyToken = require('../middleware/verifyToken');
 const {onlyAdmin} = require('../middleware/verifyAccess');
@@ -193,7 +194,7 @@ function usersRouter() {
 
         if (typeof id == 'string' && id.trim() !== "") {
 
-            users.checkIfUserAdmin(id).then(() => reviews.removeByUserId(id)).then(() => users.removeById(id)).then(() => {
+            users.checkIfUserAdmin(id).then(() =>  favorites.removeByUserId(id)).then(() =>  reviews.removeByUserId(id)).then(() => users.removeById(id)).then(() => {
                 res.status(200);
                 res.end();
                 next();

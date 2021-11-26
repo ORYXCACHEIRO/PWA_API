@@ -6,6 +6,7 @@ const reviews = require('../controllers/reviews');
 const rooms = require('../controllers/rooms');
 const users = require('../controllers/user');
 const reservations = require('../controllers/reservations');
+const favorites = require('../controllers/favorites');
 
 //routes
 const roomAPI = require('../routes/rooms');
@@ -15,7 +16,7 @@ const langsHotelAPI = require('../routes/langs/langsHotel');
 const galleryHotelAPI = require('../routes/gallery/galleryHotel');
 
 const verifyToken = require('../middleware/verifyToken');
-const {onlyAdmin, limitedAccess} = require('../middleware/verifyAccess');
+const {onlyAdmin, limitedAccess, onlyClient} = require('../middleware/verifyAccess');
 
 function hotelRouter() {
     let router = express();
@@ -32,8 +33,8 @@ function hotelRouter() {
             res.end();
             next();
         }).catch((err) => {
-            console.log(err);
-            res.status(401);
+            //console.log(err);
+            res.status(400);
             res.end();
             next();
         });
@@ -65,13 +66,13 @@ function hotelRouter() {
             }).catch((err) => {
                 //console.log(err);
                 err.status = err.status || 500;
-                res.status(401);
+                res.status(400);
                 res.end();
                 next();
             });
 
         } else {
-            res.status(401);
+            res.status(400);
             res.end();
             next();
         }
@@ -92,13 +93,13 @@ function hotelRouter() {
             }).catch((err) => {
                 //console.log(err);
                 err.status = err.status || 500;
-                res.status(401);
+                res.status(400);
                 res.end();
                 next();
             });
 
         } else {
-            res.status(401);
+            res.status(400);
             res.end();
             next();
         }
@@ -118,13 +119,13 @@ function hotelRouter() {
             }).catch((err) => {
                 //console.log(err);
                 err.status = err.status || 500;
-                res.status(401);
+                res.status(400);
                 res.end();
                 next();
             });
 
         } else {
-            res.status(401);
+            res.status(400);
             res.end();
             next();
         }
@@ -134,20 +135,54 @@ function hotelRouter() {
         let id = req.params.hotelid;
 
         if (typeof id == 'string' && id.trim() !== "") {
-            hotel.findOneById(id).then(() => rooms.findIdsByHotelId(id)).then((room) => reservations.removeAllRoomRes(room).then(() => gallery.removeFinalbyRoomId(room))).then(() => rooms.removeAllHotelRooms(id)).then(() => reviews.removeByHotelId(id)).then(() => gallery.removeByHotelId(id)).then(() => users.removeWorkStation(id)).then(() => hotel.removeById(id)).then(() => {
+            hotel.findOneById(id).then(() => rooms.findIdsByHotelId(id)).then((room) => reservations.removeAllRoomRes(room).then(() => gallery.removeFinalbyRoomId(room))).then(() =>  favorites.removeByHotelId(id)).then(() => rooms.removeAllHotelRooms(id)).then(() => reviews.removeByHotelId(id)).then(() => gallery.removeByHotelId(id)).then(() => users.removeWorkStation(id)).then(() => hotel.removeById(id)).then(() => {
                 res.status(200);
                 res.end();
                 next();
             }).catch((err) => {
-                console.log(err);
+                //console.log(err);
                 err.status = err.status || 500;
-                res.status(401);
+                res.status(400);
                 res.end();
                 next();
             });
 
         } else {
-            res.status(401);
+            res.status(400);
+            res.end();
+            next();
+        }
+
+    });
+
+    router.route('/:hotelid/favorites').post(verifyToken, onlyClient, function (req, res, next) { 
+
+        let id = req.params.hotelid;
+
+        if (typeof id == 'string' && id.trim() !== "") { 
+
+            let user_id = req.user_id;
+
+            let obj = new Object({
+                id_user: user_id,
+                id_hotel: id
+            });
+
+            hotel.findOneById(id).then(() => favorites.checkIfFavorite(user_id, id)).then(() => favorites.create(obj)).then((fav) => {
+                res.status(200);
+                res.send(fav);
+                res.end();
+                next();
+            }).catch((err) => {
+                console.log(err);
+                err.status = err.status || 500;
+                res.status(400);
+                res.end();
+                next();
+            });
+
+        } else {
+            res.status(400);
             res.end();
             next();
         }

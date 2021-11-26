@@ -16,6 +16,8 @@ const verifyToken = (req, res, next) => {
       return res.status(500).send("Invalid Token").end();
     }
 
+    //console.log(decoded);
+
     req.user_email = decoded.email;
     req.user_id = decoded.id;
     req.user_role = decoded.role;

@@ -3,10 +3,14 @@ function favoritesService(Model) {
         create,
         findByUserId,
         removeById,
-        findById
+        findById,
+        removeByHotelId,
+        removeByUserId,
+        checkIfFavorite
     };
 
     function create(values) {
+
         let newFavorite = Model(values);
         return new Promise(function (resolve, reject) {
             newFavorite.save(function (err) {
@@ -42,6 +46,40 @@ function favoritesService(Model) {
     function removeById(id){
         return new Promise(function (resolve, reject) {
             Model.findByIdAndRemove(id, function (err) {
+                if (err) reject(err);
+
+                resolve();
+            });
+        });
+    }
+
+    function checkIfFavorite(iduser, idhotel){
+        return new Promise(function (resolve, reject) {
+            Model.find({ id_user: iduser, id_hotel: idhotel}, function (err, user) {
+                if (err) reject(err);
+
+                if(user==null || user.length>0){
+                    reject('Error adding hotel to favorites');
+                }
+
+                resolve();
+            });
+        });
+    }
+
+    function removeByHotelId(id){
+        return new Promise(function (resolve, reject) {
+            Model.deleteMany({id_hotel: id}, function (err) {
+                if (err) reject(err);
+
+                resolve();
+            });
+        });
+    }
+
+    function removeByUserId(id){
+        return new Promise(function (resolve, reject) {
+            Model.deleteMany({id_user: id}, function (err) {
                 if (err) reject(err);
 
                 resolve();
