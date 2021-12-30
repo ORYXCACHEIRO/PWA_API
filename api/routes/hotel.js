@@ -79,6 +79,22 @@ function hotelRouter() {
 
     });
 
+    router.route('/recomended').get(function (req, res, next) {
+
+        hotel.findAllRecomended().then((hotel) => {
+            res.send(hotel);
+            res.status(200);
+            res.end();
+            next();
+        }).catch((err) => {
+            //console.log(err);
+            res.status(400);
+            res.end();
+            next();
+        });
+
+    });
+
     router.route('/:hotelid').get(function (req, res, next) {
 
         let id = req.params.hotelid;

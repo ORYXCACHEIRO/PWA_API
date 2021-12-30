@@ -17,6 +17,7 @@ let hotelSchema = new Schema({
     //valor que decide se o hotel é visivel ou nao no frontend 0 - nao visivel, 1 - visivel
     comodities: { type: Array, default: []},
     languages: {type: Array, default: []},
+    recomended: {type: Number, default: 0},
     //0 - nao visivel ao publico
     state: {type: Number, default: 0}
    

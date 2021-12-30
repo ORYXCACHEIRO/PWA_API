@@ -3,16 +3,18 @@ const express = require('express');
 let router = require('./router');
 const config = require('./config/config');
 const mongoose = require('mongoose');
+const cors = require('cors');
 
 
 const host = '127.0.0.1';
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 
 var app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.set('trust proxy', true);
+app.use(cors());
 
 app.use(function (req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');

@@ -3,7 +3,7 @@ const config = require('../config/config');
 
 const verifyToken = (req, res, next) => {
   
-  const token = req.headers['x-access-token'];
+  const token = req.cookies.token;
 
   if (!token) {
     return res.status(401).send({auth:false, message: 'No token provided'}).end();
@@ -13,7 +13,7 @@ const verifyToken = (req, res, next) => {
 
     if(err){
       //console.log(err);
-      return res.status(500).send("Invalid Token").end();
+      return res.status(500).send({auth:false, message: 'Invalid Token'}).end();
     }
 
     //console.log(decoded);

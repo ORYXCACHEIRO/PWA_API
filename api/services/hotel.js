@@ -4,6 +4,7 @@ function hotelService(Model) {
         create,
         findAll,
         findOneById,
+        findAllRecomended,
         updateById,
         removeById,
         findHotelLangs,
@@ -123,6 +124,16 @@ function hotelService(Model) {
     function findAll() {
         return new Promise(function (resolve, reject) {
             Model.find({}, function (err, hoteis) {
+                if (err) reject(err);
+
+                resolve(hoteis);
+            }).select("-__v");
+        });
+    }
+
+    function findAllRecomended() {
+        return new Promise(function (resolve, reject) {
+            Model.find({recomended: 1}, function (err, hoteis) {
                 if (err) reject(err);
 
                 resolve(hoteis);

@@ -1,5 +1,6 @@
 const express = require('express');
 const nodemailer = require("nodemailer");
+const cookieParser = require('cookie-parser');
 
 const users = require('../controllers/user');
 const recPass = require('../controllers/rec_pass');
@@ -19,6 +20,7 @@ function authRouter() {
 
         users.create(body).then((user) => users.createToken(user))
         .then((response) => {
+            res.cookie('token', response.token, {httpOnly: true});
             res.status(200);
             res.send(response);
             res.end();
@@ -146,7 +148,29 @@ function authRouter() {
 
     });
 
-    router.route('/me').get(verifyToken);
+    router.use(cookieParser());
+
+    router.route('/me').get(verifyToken, function(req, res, next){
+
+        const token = req.cookies.token;
+
+        console.log(token);
+
+        if(!token){
+            res.status(401).send({auth:false, message: 'No token provided'}).end();
+        }
+
+        users.verifyToken(token).then((decoded) => {
+            res.status(200).send({auth: true, decoded}).end();
+            next();
+        }).catch((err) => {
+            res.status(500);
+            res.send(err);
+            res.end();
+            next();
+        });
+
+    });
 
     router.route('/login').post(function (req, res, next) { 
 
@@ -159,6 +183,7 @@ function authRouter() {
         }
 
         users.findByEmail(body).then((user) => users.createToken(user)).then((response) => {
+            res.cookie('token', response.token, {httpOnly: true});
             res.status(200);
             res.send(response);
             res.end();
@@ -171,6 +196,13 @@ function authRouter() {
             next();
         });
     }); 
+
+    router.route('/logout').get(function (req, res, next) { 
+        res.cookie('token', req.cookies.token, {httpOnly: true, maxAge: 0});
+        res.status(200);
+        res.send({logout: true});
+        next();
+    });
 
     return router;
 }
