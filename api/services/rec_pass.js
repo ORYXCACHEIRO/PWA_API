@@ -12,10 +12,13 @@ function rec_passService(Model) {
         return new Promise(function (resolve, reject) {
             Model.findOne({key: key}, function (err, key) {
                 if (err) reject(err);
-
+                console.log("ad");
+                console.log(key);
+                console.log("eb");
                 if(key==null || key.expire_date>Date.now){
-                    reject('key invalid');
+                    reject('key invalidaaa');
                 }
+
 
                 resolve(key);
             }).select("-__v");

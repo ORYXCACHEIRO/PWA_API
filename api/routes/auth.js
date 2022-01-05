@@ -18,25 +18,25 @@ function authRouter() {
         const body = req.body;
 
         users.create(body).then((user) => users.createToken(user))
-        .then((response) => {
-            res.status(200);
-            res.send(response);
-            res.end();
-            next();
-        }).catch((err) => {
-            //console.log(err);
-            res.status(500);
-            res.send(err);
-            res.end();
-            next();
-        });
+            .then((response) => {
+                res.status(200);
+                res.send(response);
+                res.end();
+                next();
+            }).catch((err) => {
+                //console.log(err);
+                res.status(500);
+                res.send(err);
+                res.end();
+                next();
+            });
     });
 
     router.route('/recover').post(function (req, res, next) {
 
         let body = req.body;
 
-        if((body.email && typeof body.email=="string" && body.email.trim()!="") && Object.keys(body).length==1){
+        if ((body.email && typeof body.email == "string" && body.email.trim() != "") && Object.keys(body).length == 1) {
 
             users.findByEmailReq(body.email).then(async (usv) => {
 
@@ -46,7 +46,7 @@ function authRouter() {
                     host: 'smtp-mail.outlook.com',
                     port: 587,
                     auth: {
-                        user: 'dalima@outlook.pt',
+                        user: 'dalima3@outlook.pt',
                         pass: '123456789!=?'
                     }
                 });
@@ -56,9 +56,9 @@ function authRouter() {
                 let createkey = await users.hashPasswordOnUpdate(`${usv._id}.${usv.email}`);
                 body.key = createkey.replace(/\//g, "");
 
-                
+
                 var mailOptions = {
-                    from: 'dalima@outlook.pt',
+                    from: 'dalima3@outlook.pt',
                     to: usv.email,
                     subject: 'Recuparação da Password',
                     html: `<b>http://127.0.0.1:3000/auth/recover/${body.key}</b>`, // html body
@@ -76,21 +76,21 @@ function authRouter() {
 
                 transporter.sendMail(mailOptions, function (error, info) {
                     if (error) {
-                    
+
                         recPass.removeById(usv.id).then(() => {
                             //console.log(error);
                             res.status(401);
                             res.end();
                             next();
                         });
-                        
+
                     }
                 });
 
                 res.status(200);
                 res.send('Email sent');
                 res.end();
-                next(); 
+                next();
 
             }).catch((err) => {
                 //console.log(err);
@@ -115,7 +115,7 @@ function authRouter() {
         let key = req.params.key;
         let body = req.body;
 
-        if ((typeof key == 'string' && key.trim() !== "") && (body.password && typeof body.password=="string" && body.password.trim()!="") && Object.keys(body).length==1) {
+        if ((typeof key == 'string' && key.trim() !== "") && (body.password && typeof body.password == "string" && body.password.trim() != "") && Object.keys(body).length == 1) {
 
             recPass.findByKey(key).then((reponse) => users.findById(reponse.id_user).then(() => users.updatePassword(reponse.id_user, body.password)).then(() => recPass.removeByKey(key).then(() => {
                 res.status(200);
@@ -146,18 +146,18 @@ function authRouter() {
 
     });
 
-    router.route('/login').post(function (req, res, next) { 
+    router.route('/login').post(function (req, res, next) {
 
         const body = req.body;
 
-        if (!(typeof body.email=="string" && body.email.trim()!=="") && !(typeof body.password=="string" && body.password.trim()!=="")) {
+        if (!(typeof body.email == "string" && body.email.trim() !== "") && !(typeof body.password == "string" && body.password.trim() !== "")) {
             res.status(400).send("All input is required");
             res.end();
             next();
         }
 
         users.findByEmail(body).then((user) => users.createToken(user)).then((response) => {
-            res.cookie('tokenn', response.token, {httpOnly: true});
+            res.cookie('tokenn', response.token, { httpOnly: true });
             res.status(200);
             res.send(response);
             res.end();
@@ -169,21 +169,21 @@ function authRouter() {
             res.end();
             next();
         });
-    }); 
+    });
 
-    router.route('/me').get(verifyToken, function(req, res, next){
+    router.route('/me').get(verifyToken, function (req, res, next) {
 
         const token = req.cookies.tokenn;
 
         console.log(token);
 
-        if(!token){
-            res.status(401).send({auth:false, message: 'No token provided'}).end();
+        if (!token) {
+            res.status(401).send({ auth: false, message: 'No token provided' }).end();
             next();
         }
 
         users.verifyToken(token).then((decoded) => {
-            res.status(200).send({auth: true, decoded}).end();
+            res.status(200).send({ auth: true, decoded }).end();
             next();
         }).catch((err) => {
             res.status(500);
@@ -194,10 +194,10 @@ function authRouter() {
 
     });
 
-    router.route('/logout').get(function (req, res, next) { 
-        res.cookie('token', req.cookies.token, {httpOnly: true, maxAge: 0});
+    router.route('/logout').get(function (req, res, next) {
+        res.cookie('token', req.cookies.token, { httpOnly: true, maxAge: 0 });
         res.status(200);
-        res.send({logout: true});
+        res.send({ logout: true });
         next();
     });
 
