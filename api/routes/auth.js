@@ -61,7 +61,7 @@ function authRouter() {
                     from: 'dalima3@outlook.pt',
                     to: usv.email,
                     subject: 'Recuparação da Password',
-                    html: `<b>http://127.0.0.1:3000/auth/recover/${body.key}</b>`, // html body
+                    html: `<b>http://127.0.0.1:3000/recoverpass/${body.key}</b>`, // html body
                 };
 
 
