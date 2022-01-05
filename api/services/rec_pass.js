@@ -4,7 +4,8 @@ function rec_passService(Model) {
         create,
         removeByKey,
         findByKey,
-        checkById
+        checkById,
+        removeById
     };
 
     function findByKey(key){
@@ -35,6 +36,16 @@ function rec_passService(Model) {
     function removeByKey(key){
         return new Promise(function (resolve, reject) {
             Model.deleteOne({key: key}, function (err) {
+                if (err) reject(err);
+
+                resolve();
+            });
+        });
+    }
+
+    function removeById(id){
+        return new Promise(function (resolve, reject) {
+            Model.deleteOne({_id: id}, function (err) {
                 if (err) reject(err);
 
                 resolve();
