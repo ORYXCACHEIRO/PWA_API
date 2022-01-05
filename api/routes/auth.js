@@ -194,7 +194,7 @@ function authRouter() {
 
     });
 
-    router.route('/logout').get(function (req, res, next) { 
+    router.route('/logout').get(verifyToken, function (req, res, next) { 
         res.cookie('token', req.cookies.token, {httpOnly: true, maxAge: 0});
         res.status(200);
         res.send({logout: true});
