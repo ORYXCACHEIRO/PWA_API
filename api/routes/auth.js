@@ -46,7 +46,7 @@ function authRouter() {
                     host: 'smtp-mail.outlook.com',
                     port: 587,
                     auth: {
-                        user: 'naotepergunteinadapwa2@outlook.pt',
+                        user: 'dalima@outlook.pt',
                         pass: '123456789!=?'
                     }
                 });
@@ -57,7 +57,7 @@ function authRouter() {
 
                 
                 var mailOptions = {
-                    from: 'naotepergunteinadapwa2@outlook.pt',
+                    from: 'dalima@outlook.pt',
                     to: usv.email,
                     subject: 'Recuparação da Password',
                     html: `<b>http://127.0.0.1:3000/auth/recover/${createkey}</b>`, // html body
