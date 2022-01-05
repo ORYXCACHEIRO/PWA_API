@@ -1,6 +1,5 @@
 const express = require('express');
 const nodemailer = require("nodemailer");
-const cookieParser = require('cookie-parser');
 
 const users = require('../controllers/user');
 const recPass = require('../controllers/rec_pass');
@@ -20,7 +19,6 @@ function authRouter() {
 
         users.create(body).then((user) => users.createToken(user))
         .then((response) => {
-            res.cookie('token', response.token, {httpOnly: true});
             res.status(200);
             res.send(response);
             res.end();
@@ -148,16 +146,40 @@ function authRouter() {
 
     });
 
-    router.use(cookieParser());
+    router.route('/login').post(function (req, res, next) { 
+
+        const body = req.body;
+
+        if (!(typeof body.email=="string" && body.email.trim()!=="") && !(typeof body.password=="string" && body.password.trim()!=="")) {
+            res.status(400).send("All input is required");
+            res.end();
+            next();
+        }
+
+        users.findByEmail(body).then((user) => users.createToken(user)).then((response) => {
+            res.cookie('tokenn', response.token, {httpOnly: true});
+            res.status(200);
+            res.send(response);
+            res.end();
+            next();
+        }).catch((err) => {
+            console.log(err);
+            res.status(500);
+            res.send(err);
+            res.end();
+            next();
+        });
+    }); 
 
     router.route('/me').get(verifyToken, function(req, res, next){
 
-        const token = req.cookies.token;
+        const token = req.cookies.tokenn;
 
         console.log(token);
 
         if(!token){
             res.status(401).send({auth:false, message: 'No token provided'}).end();
+            next();
         }
 
         users.verifyToken(token).then((decoded) => {
@@ -171,31 +193,6 @@ function authRouter() {
         });
 
     });
-
-    router.route('/login').post(function (req, res, next) { 
-
-        const body = req.body;
-
-        if (!(typeof body.email=="string" && body.email.trim()!=="") && !(typeof body.password=="string" && body.password.trim()!=="")) {
-            res.status(400).send("All input is required");
-            res.end();
-            next();
-        }
-
-        users.findByEmail(body).then((user) => users.createToken(user)).then((response) => {
-            res.cookie('token', response.token, {httpOnly: true});
-            res.status(200);
-            res.send(response);
-            res.end();
-            next();
-        }).catch((err) => {
-            console.log(err);
-            res.status(500);
-            res.send(err);
-            res.end();
-            next();
-        });
-    }); 
 
     router.route('/logout').get(function (req, res, next) { 
         res.cookie('token', req.cookies.token, {httpOnly: true, maxAge: 0});

@@ -3,7 +3,7 @@ const config = require('../config/config');
 
 const verifyToken = (req, res, next) => {
   
-  const token = req.cookies.token;
+  let token = req.cookies.tokenn;
 
   if (!token) {
     return res.status(401).send({auth:false, message: 'No token provided'}).end();
