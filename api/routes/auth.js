@@ -54,18 +54,18 @@ function authRouter() {
                 //naotepergunteinadapwa@hotmail.com  123456789!=?
 
                 let createkey = await users.hashPasswordOnUpdate(`${usv._id}.${usv.email}`);
+                body.key = createkey.replace(/\//g, "");
 
                 
                 var mailOptions = {
                     from: 'dalima@outlook.pt',
                     to: usv.email,
                     subject: 'Recuparação da Password',
-                    html: `<b>http://127.0.0.1:3000/auth/recover/${createkey}</b>`, // html body
+                    html: `<b>http://127.0.0.1:3000/auth/recover/${body.key}</b>`, // html body
                 };
 
 
                 body.id_user = usv._id;
-                body.key = createkey.replace(/\//g, "");
 
                 recPass.checkById(usv.id).then(() => recPass.create(body)).catch((err) => {
                     //console.log(err);
