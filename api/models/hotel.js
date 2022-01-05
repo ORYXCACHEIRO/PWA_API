@@ -5,7 +5,7 @@ let hotelSchema = new Schema({
     name: { type: String, required: true, unique: true},
     description: { type: String, required: true },
     // 1 estrela, 2 estrelas...
-    category: { type: Number, required: true },
+    category: { type: Number, default: 0 },
     adress: { type: String, required: true },
     postalc: { type: String, required: true },
     city: { type: String, required: true },
