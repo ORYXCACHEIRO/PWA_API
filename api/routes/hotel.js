@@ -24,8 +24,7 @@ function hotelRouter() {
     router.use(express.json({ limit: '100mb' }));
     router.use(express.urlencoded({ limit: '100mb', extended: true }));
 
-
-
+    
     router.route('/').get(function (req, res, next) {
 
         hotel.findAll().then((hotel) => {
@@ -172,12 +171,12 @@ function hotelRouter() {
 
     });
 
-    router.route('/:hotelid/workstations').get(function (req, res, next) {
+    router.route('/:hotelid/workavailable').get(function (req, res, next) {
 
         let id = req.params.hotelid;
 
         if (typeof id == 'string' && id.trim() !== "") {
-            users.findAllEmployeesFromHotel(id).then((users) => {
+            users.findAllEmployeesNotFromHotel(id).then((users) => {
                 res.status(200);
                 res.send(users);
                 res.end();
