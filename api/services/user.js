@@ -87,7 +87,7 @@ function userService(Model) {
 
 
     function createToken(user) {
-        let token = jwt.sign({ id: user._id, email: user.email, role: user.role }, config.secret, {
+        let token = jwt.sign({ id: user._id, email: user.email, role: user.role, name: user.name }, config.secret, {
             expiresIn: config.expiresPassword
         });
 

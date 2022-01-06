@@ -135,6 +135,25 @@ function profileRouter() {
 
     });
 
+    router.route('/reservations/:userid').get(verifyToken, onlyClient, function (req, res, next) {
+
+        let id = req.params.userid;
+        reservas.findByUserId(id).then((avs) => {
+            res.status(200);
+            res.send(avs);
+            res.end();
+            next();
+        }).catch((err) => {
+            console.log(err);
+            err.status = err.status || 500;
+            res.status(401);
+            res.end();
+            next();
+        });
+
+    });
+
+
     
     router.route('/reservations/:resid').delete(verifyToken, onlyClient, function (req, res, next) {
 
