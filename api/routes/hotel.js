@@ -25,6 +25,7 @@ function hotelRouter() {
     router.use(express.urlencoded({ limit: '100mb', extended: true }));
 
 
+
     router.route('/').get(function (req, res, next) {
 
         hotel.findAll().then((hotel) => {
