@@ -171,6 +171,32 @@ function hotelRouter() {
 
     });
 
+    router.route('/:hotelid/workstations').get(function (req, res, next) {
+
+        let id = req.params.hotelid;
+
+        if (typeof id == 'string' && id.trim() !== "") {
+            users.findAllEmployeesFromHotel(id).then((users) => {
+                res.status(200);
+                res.send(users);
+                res.end();
+                next();
+            }).catch((err) => {
+                //console.log(err);
+                err.status = err.status || 500;
+                res.status(400);
+                res.end();
+                next();
+            });
+
+        } else {
+            res.status(400);
+            res.end();
+            next();
+        }
+
+    });
+
     router.route('/:hotelid/favorites').post(verifyToken, onlyClient, function (req, res, next) { 
 
         let id = req.params.hotelid;

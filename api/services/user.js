@@ -9,6 +9,8 @@ function userService(Model) {
         findAll,
         findByEmail,
         findById,
+        findAllEmployeesNotFromHotel,
+        findAllEmployeesFromHotel,
         removeById,
         removeWorkStation,
         updateById,
@@ -56,13 +58,33 @@ function userService(Model) {
         });
     }
 
-
-    function findAllWorkStations(id,) {
+    
+    function findAllWorkStations(id) {
         return new Promise(function (resolve, reject) {
             Model.findById(id, function (err, users) {
                 if (err) reject(err);
 
                 resolve(users.workStation);
+            }).select("-password");
+        });
+    }
+
+    function findAllEmployeesNotFromHotel(idhotel) {
+        return new Promise(function (resolve, reject) {
+            Model.find({role: 1, workStation: { $ne: idhotel }}, function (err, users) {
+                if (err) reject(err);
+
+                resolve(users);
+            }).select("-password");
+        });
+    }
+
+    function findAllEmployeesFromHotel(idhotel) {
+        return new Promise(function (resolve, reject) {
+            Model.find({workStation: { $in: [idhotel] }}, function (err, users) {
+                if (err) reject(err);
+
+                resolve(users);
             }).select("-password");
         });
     }

@@ -175,8 +175,6 @@ function authRouter() {
 
         const token = req.cookies.tokenn;
 
-        console.log(token);
-
         if (!token) {
             res.status(401).send({ auth: false, message: 'No token provided' }).end();
             next();
