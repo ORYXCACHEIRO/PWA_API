@@ -55,7 +55,6 @@ function favoritesService(Model) {
     }
 
     function checkIfFavorite(iduser, idhotel){
-        console.log(iduser + " | " + idhotel);
         return new Promise(function (resolve, reject) {
             Model.find({ id_user: iduser, id_hotel: idhotel}, function (err, user) {
                 if (err) reject(err);

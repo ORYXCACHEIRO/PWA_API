@@ -216,6 +216,10 @@ function profileRouter() {
         }).catch((err) => {
             //console.log(err);
             err.status = err.status || 500;
+            res.send({
+                response: "unsuccessfull",
+                err: err
+            })
             res.status(401);
             res.end();
             next();
