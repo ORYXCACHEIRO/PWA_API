@@ -114,9 +114,10 @@ function hotelRouter() {
 
     router.route('/all-reservs').get(verifyToken, onlyAdmin, function (req, res, next) {
 
-        reservations.findAll().then((res) => {
-            res.send(res);
+        reservations.findAll().then((reserv) => {
+            //console.log(ress);
             res.status(200);
+            res.send(reserv);
             res.end();
             next();
         }).catch((err) => {
