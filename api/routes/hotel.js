@@ -212,12 +212,13 @@ function hotelRouter() {
 
             hotel.findOneById(id).then(() => favorites.checkIfFavorite(user_id, id)).then(() => favorites.create(obj)).then((fav) => {
                 res.status(200);
-                res.send(fav);
+                res.send({response: true});
                 res.end();
                 next();
             }).catch((err) => {
                 console.log(err);
                 err.status = err.status || 500;
+                res.status(err)
                 res.status(400);
                 res.end();
                 next();

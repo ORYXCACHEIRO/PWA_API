@@ -204,12 +204,13 @@ function profileRouter() {
 
     });
 
-    router.route('/favorites/:favid').delete(verifyToken, onlyClient, function (req, res, next) {
+    router.route('/favorites/:hotelid').delete(verifyToken, onlyClient, function (req, res, next) {
 
-        let id = req.params.favid;
+        let id = req.params.hotelid;
 
-        favorites.removeById(id).then(() => {
+        favorites.removeOneByHotelId(id).then(() => {
             res.status(200);
+            res.send({response: "successfull"})
             res.end();
             next();
         }).catch((err) => {
