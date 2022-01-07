@@ -95,6 +95,40 @@ function hotelRouter() {
 
     });
 
+    router.route('/all-reviews').get(verifyToken, onlyAdmin, function (req, res, next) {
+
+        reviews.findAll().then((avs) => {
+            res.send(avs);
+            res.status(200);
+            res.end();
+            next();
+        }).catch((err) => {
+            //console.log(err);
+            res.send(err);
+            res.status(401);
+            res.end();
+            next();
+        });
+
+    });
+
+    router.route('/all-reservs').get(verifyToken, onlyAdmin, function (req, res, next) {
+
+        reservations.findAll().then((res) => {
+            res.send(res);
+            res.status(200);
+            res.end();
+            next();
+        }).catch((err) => {
+            //console.log(err);
+            res.send(err);
+            res.status(401);
+            res.end();
+            next();
+        });
+
+    });
+
     router.route('/:hotelid').get(function (req, res, next) {
 
         let id = req.params.hotelid;

@@ -11,22 +11,6 @@ function reviewRouter() {
     router.use(express.json({ limit: '100mb' }));
     router.use(express.urlencoded({ limit: '100mb', extended: true }));
 
-    router.route('/all').get(function (req, res, next) {
-
-        reviews.findAll().then((avs) => {
-            res.send(avs.length);
-            res.status(200);
-            res.end();
-            next();
-        }).catch((err) => {
-            //console.log(err);
-            res.status(401);
-            res.end();
-            next();
-        });
-
-    });
-
 
     router.route('/').get(function (req, res, next) {
 

@@ -5,6 +5,7 @@ function reservationService(Model) {
         removeById,
         findById,
         findAllByRoomId,
+        findAll,
         removeAllRoomRes,
         updateById,
         checkAvalability,
@@ -15,6 +16,16 @@ function reservationService(Model) {
     function findByUserId(value){
         return new Promise(function (resolve, reject) {
             Model.find({ id_user:value }, function (err, reserv) {
+                if (err) reject(err);
+
+                resolve(reserv);
+            }).select("-__v");
+        });
+    }
+
+    function findAll(){
+        return new Promise(function (resolve, reject) {
+            Model.find({}, function (err, reserv) {
                 if (err) reject(err);
 
                 resolve(reserv);
