@@ -8,7 +8,8 @@ function reviewService(Model) {
         removeByRevId,
         removeByHotelId,
         removeByUserId,
-        checkReviews
+        checkReviews,
+        findAll
     };
 
 
@@ -46,6 +47,17 @@ function reviewService(Model) {
         //let model = Model(value);
         return new Promise(function (resolve, reject) {
             Model.findById(id, function (err, avaliacao) {
+                if (err) reject(err);
+
+                resolve(avaliacao);
+            }).select("-__v");
+        });
+    }
+
+    function findAll(){
+        //let model = Model(value);
+        return new Promise(function (resolve, reject) {
+            Model.find({}, function (err, avaliacao) {
                 if (err) reject(err);
 
                 resolve(avaliacao);
