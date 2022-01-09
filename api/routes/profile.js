@@ -17,22 +17,36 @@ function profileRouter() {
 
     router.route('/alt-password').put(verifyToken, function (req, res, next) { 
 
-        if(body.password && body.password.trim()!=""){
+        let body = req.body;
+
+        if((body.password && body.password.trim()!="") && (body.nPassword && body.nPassword.trim()!="")){
             
-            users.updatePassword(req.user_id, body.password).then(() => {
-                res.status(200);
-                res.end();
-                next();
-            }).catch((err) => {
-                //console.log(err);
-                err.status = err.status || 500;
+            if(body.password==body.nPassword){
+
+                users.updatePassword(req.user_id, body.password).then(() => {
+                    res.status(200);
+                    res.end();
+                    next();
+                }).catch((err) => {
+                    //console.log(err);
+                    err.status = err.status || 500;
+                    res.send({message: "Error editing password"});
+                    res.status(401);
+                    res.end();
+                    next();
+                });
+
+            } else {
                 res.status(401);
+                res.send({message: "Passwords didnt match"});
                 res.end();
                 next();
-            });
+            }
+            
 
         } else {
             res.status(401);
+            res.send({message: "Error editing password"});
             res.end();
             next();
         }
@@ -56,9 +70,9 @@ function profileRouter() {
 
     }).put(verifyToken, function (req, res, next) { 
 
-        if  ((!body.password && !body.role)) {
+        let body = req.body;
 
-            let body = req.body;
+        if  ((!body.password && !body.role) && body.name.trim()!=="" && body.lastName.trim()!=="" && body.email.trim()!=="") {
 
             users.updateById(req.user_id, body).then((users) => {
                 res.status(200);

@@ -15,12 +15,27 @@ function idiomaService(Model) {
         return hotel.removeHotelLangsAll(value);
     }
 
-    function findAll() {
+    function findAll(pagination) {
+
+        const {limit, skip} = pagination;
+
         return new Promise(function (resolve, reject) {
-            Model.find({}, function (err, languages) {
+            Model.find({}, {}, {skip, limit}, function (err, languages) {
                 if (err) reject(err);
 
                 resolve(languages);
+            }).select('-__v');
+        }).then( async (languages) => {
+            const totalLangs = await Model.count();
+
+            return Promise.resolve({
+                langs: languages,
+                pagination: {
+                    pageSize: limit,
+                    page: Math.floor(skip/limit),
+                    hasMore: (skip+limit)<totalLangs,
+                    total: totalLangs
+                }
             });
         });
     }

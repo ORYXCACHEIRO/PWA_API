@@ -7,6 +7,7 @@ function userService(Model) {
     let service = {
         create,
         findAll,
+        findAllTable,
         findByEmail,
         findById,
         findAllEmployeesNotFromHotel,
@@ -37,6 +38,32 @@ function userService(Model) {
         });
     }
 
+    function findAllTable(pagination) {
+
+        const {limit, skip} = pagination;
+
+        return new Promise(function (resolve, reject) {
+            Model.find({role: {$ne: 2}}, {}, {skip, limit}, function (err, users) {
+                if (err) reject(err);
+
+                resolve(users);
+            }).select("-password -workStations -__v");
+
+        }).then( async (users) => {
+            const totalUsers = await Model.count();
+
+            return Promise.resolve({
+                users: users,
+                pagination: {
+                    pageSize: limit,
+                    page: Math.floor(skip/limit),
+                    hasMore: (skip+limit)<totalUsers,
+                    total: totalUsers
+                }
+            });
+        });
+    }
+
     function findById(id) {
         //console.log(id);
         return new Promise(function (resolve, reject) {
@@ -44,7 +71,7 @@ function userService(Model) {
                 if (err) reject(err);
 
                 resolve(user);
-            }).select("-password");
+            }).select("-password -__v ");
         });
     }
 

@@ -7,6 +7,7 @@ const favorites = require('../controllers/favorites');
 
 const verifyToken = require('../middleware/verifyToken');
 const {onlyAdmin} = require('../middleware/verifyAccess');
+const paginationn = require('../middleware/pagination/paginationUsers');
 
 function usersRouter() {
     let router = express();
@@ -16,6 +17,7 @@ function usersRouter() {
 
     router.use(verifyToken);
     router.use(onlyAdmin);
+    router.use(paginationn);
 
     router.route('/workstation/:userid').get(function (req, res, next) { 
 
@@ -123,6 +125,21 @@ function usersRouter() {
 
 
     router.route('/').get(function (req, res, next) {
+        users.findAllTable(req.paginationUsers).then((users) => {
+            res.send(users);
+            res.status(200);
+            res.end();
+            next();
+        }).catch((err) => {
+            console.log(err);
+            res.status(400);
+            res.end();
+            next();
+        });
+
+    });
+
+    router.route('/count').get(function (req, res, next) {
 
         users.findAll().then((users) => {
             res.send(users);
@@ -196,6 +213,7 @@ function usersRouter() {
 
             users.checkIfUserAdmin(id).then(() =>  favorites.removeByUserId(id)).then(() =>  reviews.removeByUserId(id)).then(() => users.removeById(id)).then(() => {
                 res.status(200);
+                res.send({message: "User deleted"});
                 res.end();
                 next();
             }).catch((err) => {
