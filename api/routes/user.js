@@ -19,32 +19,7 @@ function usersRouter() {
     router.use(onlyAdmin);
     router.use(paginationn);
 
-    router.route('/workstation/:userid').get(function (req, res, next) { 
-
-        let id = req.params.userid;
-
-        if(id.trim()!=""){
-
-            users.findById(id).then((user) => {
-                res.status(200);
-                res.send(user.workStation);
-                res.end();
-                next();
-            }).catch((err) => {
-                //console.log(err);
-                err.status = err.status || 500;
-                res.status(400);
-                res.end();
-                next();
-            });
-
-        } else {
-            res.status(400);
-            res.end();
-            next();
-        }
-
-    }).put(function (req, res, next) { 
+    router.route('/workstation/:userid').put(function (req, res, next) { 
 
         let id = req.params.userid;
         let body = req.body;
@@ -100,23 +75,38 @@ function usersRouter() {
     router.route('/alt-password/:userid').put( function (req, res, next) { 
 
         let id = req.params.userid;
+        let body = req.body;
 
-        if(body.password && body.password.trim()!=""){
+        if((body.password && body.password.trim()!="") && (body.nPassword && body.nPassword.trim()!="")){
+
+            if(body.password==body.nPassword){
+                
+                users.updatePassword(id, body.password).then(() => {
+                    res.status(200);
+                    res.end();
+                    next();
+                }).catch((err) => {
+                    //console.log(err);
+                    err.status = err.status || 500;
+                    res.status(400);
+                    res.send({message: "Error editing password"});
+                    res.end();
+                    next();
+                });
+
+            }
+            else {
+                res.status(401);
+                res.send({message: "Passwords didnt match"});
+                res.end();
+                next();
+            }
             
-            users.updatePassword(id, body.password).then(() => {
-                res.status(200);
-                res.end();
-                next();
-            }).catch((err) => {
-                //console.log(err);
-                err.status = err.status || 500;
-                res.status(400);
-                res.end();
-                next();
-            });
+            
 
         } else {
             res.status(400);
+            res.send({message: "Error editing password"});
             res.end();
             next();
         }

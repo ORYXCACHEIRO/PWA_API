@@ -111,6 +111,18 @@ const onlyClient = (req, res, next) => {
 
 }
 
+const onlyEmployee = (req, res, next) => { 
+
+    if(req.user_role!=1){
+        //console.log("access not granted");
+        return res.status(401).end();
+    } 
+    
+    //console.log("access granted");
+    return next();
+
+}
+
 const onlyAdmin = (req, res, next) => { 
 
     if(req.user_role!=2){
@@ -123,4 +135,4 @@ const onlyAdmin = (req, res, next) => {
 
 }
 
-module.exports = {limitedAccess, onlyAdmin, onlyClient, limitedAccessWithClient};
+module.exports = {limitedAccess, onlyAdmin, onlyClient, limitedAccessWithClient, onlyEmployee};

@@ -87,9 +87,12 @@ function userService(Model) {
 
     
     function findAllWorkStations(id) {
+        console.log(id);
         return new Promise(function (resolve, reject) {
             Model.findById(id, function (err, users) {
                 if (err) reject(err);
+
+                console.log(users.workStation)
 
                 resolve(users.workStation);
             }).select("-password");
