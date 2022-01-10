@@ -17,19 +17,29 @@ function authRouter() {
 
         const body = req.body;
 
-        users.create(body).then((user) => users.createToken(user))
+        if((body.name && body.name.trim()!=="") && (body.lastName && body.lastName.trim()!=="") && (body.email && body.email.trim()!=="") && (body.password && body.password.trim()!=="") && (parseInt(body.role)<=1 || !body.role)){
+            
+            users.create(body).then((user) => users.createToken(user))
             .then((response) => {
                 res.status(200);
-                res.send(response);
+                res.send({message: "User registered"});
                 res.end();
                 next();
             }).catch((err) => {
                 //console.log(err);
                 res.status(500);
-                res.send(err);
+                res.send({message: "error registering user"});
                 res.end();
                 next();
             });
+
+        } else {
+            res.status(500);
+            res.send({message: "error registering user"});
+            res.end();
+            next();
+        }
+        
     });
 
     router.route('/recover').post(function (req, res, next) {

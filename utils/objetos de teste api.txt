@@ -61,8 +61,7 @@
 
 //avaliacoes
 {
-    "review": 9,
-    "id_user": "617fe4de333ecb8b25d63df0",
+    "review": 5,
     "coment": ""
 }
 

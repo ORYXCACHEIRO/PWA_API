@@ -44,7 +44,7 @@ function reviewRouter() {
 
         if (
             (body.coment && body.coment.length > 0 && typeof body.coment == 'string' && body.coment.trim() !== "" || !body.coment)
-            && (typeof body.review == 'number' && (body.review >= 0 && body.review <= 10))
+            && (typeof body.review == 'number' && (body.review >= 0 && body.review <= 5))
             && (req.params.hotelid && typeof req.params.hotelid == "string")
             && req.user_role ==0
         ) {
