@@ -19,7 +19,24 @@ function usersRouter() {
     router.use(onlyAdmin);
     router.use(paginationn);
 
-    router.route('/workstation/:userid').put(function (req, res, next) { 
+    router.route('/workstation/:userid').get(function (req, res, next) { 
+
+        let id = req.params.userid;
+
+        users.findAllWorkStations(id).then((works) => hotel.findByWorkStationsId(works)).then((hoteis) => {
+            res.status(200);
+            res.send(hoteis);
+            res.end();
+            next();
+        }).catch((err) => {
+            console.log(err);
+            err.status = err.status || 500;
+            res.status(401);
+            res.end();
+            next();
+        });
+
+    }).put(function (req, res, next) { 
 
         let id = req.params.userid;
         let body = req.body;

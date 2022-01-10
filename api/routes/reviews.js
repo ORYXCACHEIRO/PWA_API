@@ -40,8 +40,6 @@ function reviewRouter() {
 
         let body = req.body;
 
-        //TODO: Mudar forma como obtenho o id depois de implementar o sistema de login
-
         if (
             (body.coment && body.coment.length > 0 && typeof body.coment == 'string' && body.coment.trim() !== "" || !body.coment)
             && (typeof body.review == 'number' && (body.review >= 0 && body.review <= 5))
@@ -60,8 +58,6 @@ function reviewRouter() {
                     res.end();
                     next();
                 }
-
-                body.id_hotel = req.params.hotelid;
 
                 if (!body.coment) {
                     body.coment = "";

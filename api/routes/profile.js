@@ -114,23 +114,6 @@ function profileRouter() {
 
     });
 
-    router.route('/workstations').get(verifyToken, onlyEmployee, function (req, res, next) {
-
-        users.findAllWorkStations(req.user_id).then((works) => hotel.findByWorkStationsId(works)).then((hoteis) => {
-            res.status(200);
-            res.send(hoteis);
-            res.end();
-            next();
-        }).catch((err) => {
-            console.log(err);
-            err.status = err.status || 500;
-            res.status(401);
-            res.end();
-            next();
-        });
-
-    });
-
     router.route('/reviews/:userid').get(verifyToken, onlyClient, function (req, res, next) {
 
         let id = req.params.userid;
