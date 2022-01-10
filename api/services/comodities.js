@@ -20,12 +20,29 @@ function comodidadesService(Model) {
         return hotel.removeHotelComsAll(value);
     }
 
-    function findAll() {
+    function findAll(pagination) {
+
+        const {limit, skip} = pagination;
+
         return new Promise(function (resolve, reject) {
-            Model.find({}, function (err, comodidades) {
+
+            Model.find({}, {}, {skip, limit}, function (err, comodidades) {
                 if (err) reject(err);
 
                 resolve(comodidades);
+            });
+
+        }).then( async (comodidades) => {
+            const totalComs = await Model.count();
+
+            return Promise.resolve({
+                coms: comodidades,
+                pagination: {
+                    pageSize: limit,
+                    page: Math.floor(skip/limit),
+                    hasMore: (skip+limit)<totalComs,
+                    total: totalComs
+                }
             });
         });
     }
