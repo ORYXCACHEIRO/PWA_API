@@ -242,6 +242,32 @@ function profileRouter() {
 
     });
 
+    router.route('/:userid').get(function (req, res, next) {
+        
+        let id = req.params.userid;
+
+        if (typeof id == 'string' && id.trim() !== "" ) {
+
+            users.findById(id).then((user) => {
+                res.send(user);
+                res.status(200);
+                res.end();
+                next();
+            }).catch((err) => {
+                //console.log(err);
+                res.status(400);
+                res.end();
+                next();
+            });
+
+        } else {
+            res.status(400);
+            res.end();
+            next();
+        }
+
+    });
+
     return router;
 }
 
