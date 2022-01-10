@@ -132,7 +132,7 @@ function hotelService(Model) {
         });
     }
 
-    function findByWorkStationsId(array) {
+    function findByWorkStationsId(array, pagination) {
 
         let arrayIds = [];
 
@@ -140,13 +140,27 @@ function hotelService(Model) {
             arrayIds.push(String(array[i].hotel));
         }
 
-        console.log(array);
+        const {limit, skip} = pagination;
+
         return new Promise(function (resolve, reject) {
-            Model.find({_id: {$in : arrayIds}}, function (err, hoteis) {
+            Model.find({_id: {$in : arrayIds}}, {}, {skip, limit}, function (err, hoteis) {
                 if (err) reject(err);
 
                 resolve(hoteis);
             }).select("-__v");
+
+        }).then( async (hoteis) => {
+            const totalHotels = await Model.count();
+
+            return Promise.resolve({
+                hotels: hoteis,
+                pagination: {
+                    pageSize: limit,
+                    page: Math.floor(skip/limit),
+                    hasMore: (skip+limit)<totalHotels,
+                    total: totalHotels
+                }
+            });
         });
     }
 

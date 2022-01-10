@@ -23,7 +23,7 @@ function usersRouter() {
 
         let id = req.params.userid;
 
-        users.findAllWorkStations(id).then((works) => hotel.findByWorkStationsId(works)).then((hoteis) => {
+        users.findAllWorkStations(id).then((works) => hotel.findByWorkStationsId(works, req.paginationUsers)).then((hoteis) => {
             res.status(200);
             res.send(hoteis);
             res.end();
@@ -40,6 +40,8 @@ function usersRouter() {
 
         let id = req.params.userid;
         let body = req.body;
+
+        console.log(body);
 
         if(id.trim()!="" && Object.keys(body).length==1 && body.hotel && typeof body.hotel=="string" && body.hotel.trim()!=""){
 

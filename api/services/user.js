@@ -10,7 +10,6 @@ function userService(Model) {
         findAllTable,
         findByEmail,
         findById,
-        findAllEmployeesNotFromHotel,
         findAllEmployeesFromHotel,
         removeById,
         removeWorkStation,
@@ -87,24 +86,11 @@ function userService(Model) {
 
     
     function findAllWorkStations(id) {
-        console.log(id);
         return new Promise(function (resolve, reject) {
             Model.findById(id, function (err, users) {
                 if (err) reject(err);
 
-                console.log(users.workStation)
-
                 resolve(users.workStation);
-            }).select("-password");
-        });
-    }
-
-    function findAllEmployeesNotFromHotel(idhotel) {
-        return new Promise(function (resolve, reject) {
-            Model.find({role: 1, workStation: { $ne: idhotel }}, function (err, users) {
-                if (err) reject(err);
-
-                resolve(users);
             }).select("-password");
         });
     }
@@ -252,8 +238,9 @@ function userService(Model) {
     }
 
     function checkIfUserEmployee(id){
+        console.log(id);
         return new Promise(function (resolve, reject) {
-            Model.find({ $and: [{_id: id, role: 1}]}, function (err, user) {
+            Model.findOne({$and: [{"_id": id}, {"role": 1}]}, function (err, user) {
                 if (err) reject(err);
 
                 if(user==null || user.length==0 || user.role!=1){
