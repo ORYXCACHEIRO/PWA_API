@@ -148,6 +148,44 @@ function usersRouter() {
 
     });
 
+    router.route('/reviews/:userid').get(function (req, res, next) {
+
+        let id = req.params.userid;
+        reviews.findRevsByUserIdLimit(id, req.paginationUsers).then((avs) => {
+            res.status(200);
+            res.send(avs);
+            res.end();
+            next();
+        }).catch((err) => {
+            //console.log(err);
+            err.status = err.status || 500;
+            res.status(401);
+            res.send({message: "error finding reviews"});
+            res.end();
+            next();
+        });
+
+    });
+
+    router.route('/reviews/:revid').delete(function (req, res, next) {
+
+        let id = req.params.revid;
+        reviews.removeByRevId(id).then(() => {
+            res.status(200);
+            res.send({message: "review deleted"});
+            res.end();
+            next();
+        }).catch((err) => {
+            //console.log(err);
+            err.status = err.status || 500;
+            res.status(401);
+            res.send({message: "error deleting review"});
+            res.end();
+            next();
+        });
+
+    });
+
     router.route('/count').get(function (req, res, next) {
 
         users.findAll().then((users) => {

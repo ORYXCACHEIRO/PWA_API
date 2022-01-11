@@ -9,7 +9,8 @@ function reviewService(Model) {
         removeByHotelId,
         removeByUserId,
         checkReviews,
-        findAll
+        findAll,
+        findRevsByUserIdLimit
     };
 
 
@@ -99,6 +100,32 @@ function reviewService(Model) {
 
                 resolve(avaliacoes);
             }).select("-__v");
+        });
+    }
+
+    function findRevsByUserIdLimit(value, pagination){
+
+        const {limit, skip} = pagination;
+        //let model = Model(value);
+        return new Promise(function (resolve, reject) {
+            Model.find({ id_user:value }, {}, {skip, limit}, function (err, avaliacoes) {
+                if (err) reject(err);
+
+                resolve(avaliacoes);
+            }).select("-__v");
+
+        }).then( async (avaliacoes) => {
+            const totalAvs = await Model.count();
+
+            return Promise.resolve({
+                avaliacoes: avaliacoes,
+                pagination: {
+                    pageSize: limit,
+                    page: Math.floor(skip/limit),
+                    hasMore: (skip+limit)<totalAvs,
+                    total: totalAvs
+                }
+            });
         });
     }
 

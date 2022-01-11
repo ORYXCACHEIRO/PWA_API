@@ -4,7 +4,6 @@ const users = require('../controllers/user');
 const reviews = require('../controllers/reviews');
 const favorites = require('../controllers/favorites');
 const reservas = require('../controllers/reservations');
-const hotel = require('../controllers/hotel');
 
 const verifyToken = require('../middleware/verifyToken');
 const {onlyClient, onlyEmployee} = require('../middleware/verifyAccess');
