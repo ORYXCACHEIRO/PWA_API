@@ -7,7 +7,8 @@ function favoritesService(Model) {
         removeByHotelId,
         removeByUserId,
         checkIfFavorite,
-        removeOneByHotelId
+        removeOneByHotelId,
+        findByUserIdForTable
     };
 
     function create(values) {
@@ -33,6 +34,31 @@ function favoritesService(Model) {
         });
     }
 
+    function findByUserIdForTable(value, pagination){
+
+        const {limit, skip} = pagination;
+        
+        return new Promise(function (resolve, reject) {
+            Model.find({ id_user:value }, {}, {skip, limit}, function (err, favorites) {
+                if (err) reject(err);
+
+                resolve(favorites);
+            });
+        }).then( async (favorites) => {
+            const totalFavs = await Model.count();
+
+            return Promise.resolve({
+                favorites: favorites,
+                pagination: {
+                    pageSize: limit,
+                    page: Math.floor(skip/limit),
+                    hasMore: (skip+limit)<totalFavs,
+                    total: totalFavs
+                }
+            });
+        });
+    }
+
     
     function findById(values) {
         return new Promise(function (resolve, reject) {
@@ -47,6 +73,16 @@ function favoritesService(Model) {
     function removeById(id){
         return new Promise(function (resolve, reject) {
             Model.findByIdAndRemove(id, function (err) {
+                if (err) reject(err);
+
+                resolve();
+            });
+        });
+    }
+
+    function removeById(id, idhotel){
+        return new Promise(function (resolve, reject) {
+            Model.findOneAndDelete({$and: [{"id_user": id}, {"id_hotel": idhotel}]}, function (err) {
                 if (err) reject(err);
 
                 resolve();

@@ -16,7 +16,8 @@ function hotelService(Model) {
         removeHotelComs,
         removeHotelComsAll,
         searchHotelbyName,
-        findByWorkStationsId
+        findByWorkStationsId,
+        findByFavId
     };
 
     //---------------------Comodities---------------------------
@@ -145,6 +146,38 @@ function hotelService(Model) {
         return new Promise(function (resolve, reject) {
             Model.find({_id: {$in : arrayIds}}, {}, {skip, limit}, function (err, hoteis) {
                 if (err) reject(err);
+
+                resolve(hoteis);
+            }).select("-__v");
+
+        }).then( async (hoteis) => {
+            const totalHotels = await Model.count();
+
+            return Promise.resolve({
+                hotels: hoteis,
+                pagination: {
+                    pageSize: limit,
+                    page: Math.floor(skip/limit),
+                    hasMore: (skip+limit)<totalHotels,
+                    total: totalHotels
+                }
+            });
+        });
+    }
+
+    function findByFavId(array, pagination) {
+
+        let arrayIds = [];
+
+        for(let i =0; i<array.length;i++){
+            arrayIds.push(String(array[i].id_hotel));
+        }
+
+        const {limit, skip} = pagination;
+
+        return new Promise(function (resolve, reject) {
+            Model.find({_id: {$in : arrayIds}}, {}, {skip, limit}, function (err, hoteis) {
+                if (err) reject(err);               
 
                 resolve(hoteis);
             }).select("-__v");

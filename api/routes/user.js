@@ -202,6 +202,44 @@ function usersRouter() {
 
     });
 
+    router.route('/favs/:userid').get(function (req, res, next) {
+
+        let id = req.params.userid;
+
+        favorites.findByUserId(id).then((favs) => hotel.findByFavId(favs, req.paginationUsers)).then((hotels) => {
+            res.send(hotels);
+            res.status(200);
+            res.end();
+            next();
+        }).catch((err) => {
+            //console.log(err);
+            res.status(400);
+            res.end();
+            next();
+        });
+
+    });
+
+    router.route('/favs/:userid').delete(function (req, res, next) {
+
+        let id = req.params.userid;
+        let body = req.body;
+
+        favorites.removeById(id, body.id_hotel).then(() => {
+            res.send({message: "favorite deleted"});
+            res.status(200);
+            res.end();
+            next();
+        }).catch((err) => {
+            //console.log(err);
+            res.status(400);
+            res.send({message: "error deleting favorite"});
+            res.end();
+            next();
+        });
+
+    });
+
     router.route('/:userid').get(function (req, res, next) {
         
         let id = req.params.userid;
