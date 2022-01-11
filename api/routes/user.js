@@ -4,10 +4,12 @@ const users = require('../controllers/user');
 const reviews = require('../controllers/reviews');
 const hotel = require('../controllers/hotel');
 const favorites = require('../controllers/favorites');
+const reservations = require('../controllers/reservations');
 
 const verifyToken = require('../middleware/verifyToken');
 const {onlyAdmin} = require('../middleware/verifyAccess');
 const paginationn = require('../middleware/pagination/paginationUsers');
+const req = require('express/lib/request');
 
 function usersRouter() {
     let router = express();
@@ -140,7 +142,25 @@ function usersRouter() {
             res.end();
             next();
         }).catch((err) => {
-            console.log(err);
+            //console.log(err);
+            res.status(400);
+            res.end();
+            next();
+        });
+
+    });
+
+    router.route('/reservations/:userid').get(function (req, res, next) {
+
+        let id = req.params.userid;
+
+        reservations.findByUserIdForTable(id, req.paginationUsers).then((revs) => {
+            res.send(revs);
+            res.status(200);
+            res.end();
+            next();
+        }).catch((err) => {
+            //console.log(err);
             res.status(400);
             res.end();
             next();

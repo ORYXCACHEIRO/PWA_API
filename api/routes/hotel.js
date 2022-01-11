@@ -82,7 +82,26 @@ function hotelRouter() {
     router.route('/recomended').get(function (req, res, next) {
 
         hotel.findAllRecomended().then((hotel) => {
+            res.status(200);
             res.send(hotel);
+            res.end();
+            next();
+        }).catch((err) => {
+            //console.log(err);
+            res.status(400);
+            res.send({message: "room not found"});
+            res.end();
+            next();
+        });
+
+    });
+
+    router.route('/room/:roomid').get(function (req, res, next) {
+
+        let id = req.params.roomid;
+
+        rooms.findById(id).then((room) => {
+            res.send(room);
             res.status(200);
             res.end();
             next();

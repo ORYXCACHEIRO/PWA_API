@@ -10,7 +10,8 @@ function reservationService(Model) {
         updateById,
         checkAvalability,
         checkAvalabilityOnUpdate,
-        findByUserId
+        findByUserId,
+        findByUserIdForTable
     }
 
     function findByUserId(value){
@@ -20,6 +21,32 @@ function reservationService(Model) {
 
                 resolve(reserv);
             }).select("-__v");
+        });
+    }
+
+    function findByUserIdForTable(value, pagination){
+
+        const {limit, skip} = pagination;
+
+        return new Promise(function (resolve, reject) {
+            Model.find({ id_user:value }, {}, {skip, limit}, function (err, reserv) {
+                if (err) reject(err);
+
+                resolve(reserv);
+            }).select("-__v");
+
+        }).then( async (reserv) => {
+            const totalRes = await Model.count();
+
+            return Promise.resolve({
+                reserv: reserv,
+                pagination: {
+                    pageSize: limit,
+                    page: Math.floor(skip/limit),
+                    hasMore: (skip+limit)<totalRes,
+                    total: totalRes
+                }
+            });
         });
     }
 
