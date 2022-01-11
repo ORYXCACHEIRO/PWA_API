@@ -96,24 +96,6 @@ function hotelRouter() {
 
     });
 
-    router.route('/room/:roomid').get(function (req, res, next) {
-
-        let id = req.params.roomid;
-
-        rooms.findById(id).then((room) => {
-            res.send(room);
-            res.status(200);
-            res.end();
-            next();
-        }).catch((err) => {
-            //console.log(err);
-            res.status(400);
-            res.end();
-            next();
-        });
-
-    });
-
     router.route('/all-reviews').get(verifyToken, onlyAdmin, function (req, res, next) {
 
         reviews.findAll().then((avs) => {
