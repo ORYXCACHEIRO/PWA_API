@@ -212,6 +212,8 @@ function reservationRouter() {
         let idroom = req.params.roomid;
         let idres = req.params.res_id;
 
+        console.log("adelio")
+
         if ((typeof idhotel == 'string' && idhotel.trim() !== "") && (typeof idroom == 'string' && idroom.trim() !== "") && (typeof idres == 'string' && idres.trim() !== "")) {
 
            rooms.findByRoomAndHotel(idroom, idhotel).then(() => reservations.removeById(idres)).then((reserv) => {
@@ -220,7 +222,7 @@ function reservationRouter() {
                 res.end();
                 next();
             }).catch((err) => {
-                //console.log(err);
+                console.log(err);
                 err.status = err.status || 500;
                 res.status(401);
                 res.end();

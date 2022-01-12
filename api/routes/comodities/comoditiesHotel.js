@@ -140,7 +140,35 @@ function comsRouter() {
 
     });
 
+
+    router.route('/:com').get(function (req, res, next) { 
+
+        if(req.params.com && typeof req.params.com=="string"){
+            
+            let id = req.params.com;
+
+            comodities.findComById(id).then((com) => {
+                res.status(200);
+                res.send(com);
+                res.end();
+                next();
+            }).catch((err) => {
+                //console.log(err);
+                err.status = err.status || 500;
+                res.status(401);
+                res.end();
+                next();
+            });
+
+        }
+
+    });
+
     return router;
+
+
+
+
 
 }
 
