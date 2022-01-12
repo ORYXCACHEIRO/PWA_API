@@ -10,6 +10,8 @@ function comodidadesService(Model) {
         updateCom,
         removeById,
         removeComsFromHotel,
+        findComByIdTable,
+        findAllTable
     };
 
     //type 0 - hotel, 1 - quarto
@@ -20,7 +22,20 @@ function comodidadesService(Model) {
         return hotel.removeHotelComsAll(value);
     }
 
-    function findAll(pagination) {
+    function findAll() {
+
+        return new Promise(function (resolve, reject) {
+
+            Model.find({}, function (err, comodidades) {
+                if (err) reject(err);
+
+                resolve(comodidades);
+            });
+
+        });
+    }
+
+    function findAllTable(pagination) {
 
         const {limit, skip} = pagination;
 
@@ -59,6 +74,48 @@ function comodidadesService(Model) {
 
                 resolve(comodidades);
             }).select("-__v");
+        });
+    }
+
+    function findComByIdTable(value, pagination){
+        //let model = Model(value);
+        let arrayIds = [];
+        console.log(value)
+
+        if(value!=null){
+
+            for(let i =0; i<value.length;i++){
+                arrayIds.push(String(value[i].comodity));
+            }
+
+        }
+        
+
+        const {limit, skip} = pagination;
+
+        return new Promise(function (resolve, reject) {
+            Model.find({_id: {$in: arrayIds} }, {}, {skip, limit}, function (err, comodidades) {
+                if (err) reject(err);
+
+                if(comodidades==null){
+                    reject('This isnt a comodity or its type is incorrect');
+                }
+
+                resolve(comodidades);
+            }).select("-__v");
+
+        }).then( async (comodidades) => {
+            const totalHotels = await Model.count();
+
+            return Promise.resolve({
+                comodidades: comodidades,
+                pagination: {
+                    pageSize: limit,
+                    page: Math.floor(skip/limit),
+                    hasMore: (skip+limit)<totalHotels,
+                    total: totalHotels
+                }
+            });
         });
     }
 

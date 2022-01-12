@@ -7,6 +7,7 @@ const rooms = require('../controllers/rooms');
 const users = require('../controllers/user');
 const reservations = require('../controllers/reservations');
 const favorites = require('../controllers/favorites');
+const pagination = require('../middleware/pagination/paginationUsers');
 
 //routes
 const roomAPI = require('../routes/rooms');
@@ -23,11 +24,12 @@ function hotelRouter() {
 
     router.use(express.json({ limit: '100mb' }));
     router.use(express.urlencoded({ limit: '100mb', extended: true }));
+    router.use(pagination);
 
     
     router.route('/').get(function (req, res, next) {
 
-        hotel.findAll().then((hotel) => {
+        hotel.findAll(req.paginationUsers).then((hotel) => {
             res.send(hotel);
             res.status(200);
             res.end();
@@ -35,6 +37,7 @@ function hotelRouter() {
         }).catch((err) => {
             //console.log(err);
             res.status(400);
+            res.send({message: "error getting hotels"});
             res.end();
             next();
         });
@@ -53,8 +56,6 @@ function hotelRouter() {
             && (typeof body.city_gmaps == 'string' && body.city_gmaps.trim() !== "")
             && (typeof body.main_image == 'string' && body.main_image.trim() !== "")
             && (typeof body.about_hotel == 'string' && body.about_hotel.trim() !== "")
-            && typeof body.comodaties == 'object'
-            && typeof body.languages == 'object'
             && (typeof body.state == 'number' && (body.state == 0 || body.state == 1))
         ) {
 
@@ -158,25 +159,37 @@ function hotelRouter() {
 
     }).put(verifyToken, limitedAccess, function (req, res, next) {
 
+        console.log("aaaaaaaaaa")
         let id = req.params.hotelid;
         let body = req.body;
 
-        if ((typeof id == 'string' && id.trim() !== "")) {
+        if ((typeof id == 'string' && id.trim() !== "") && (typeof body.name == 'string' && body.name.trim() !== "")
+        && (typeof body.description == 'string' && body.description.trim() !== "")
+        && (typeof parseInt(body.category) == 'number' && parseInt(body.category) >= 0 && parseInt(body.category) <= 5)
+        && (typeof body.adress == 'string' && body.adress.trim() !== "")
+        && (typeof body.postalc == 'string' && body.postalc.trim() !== "")
+        && (typeof body.city == 'string' && body.city.trim() !== "")
+        && (typeof body.city_gmaps == 'string' && body.city_gmaps.trim() !== "")
+        && (typeof body.main_image == 'string' && body.main_image.trim() !== "")
+        && (typeof body.about_hotel == 'string' && body.about_hotel.trim() !== "")
+        && (typeof parseInt(body.state) == 'number' && (parseInt(body.state) == 0 || parseInt(body.state) == 1))) {
 
-            hotel.updateById(id, body).then((hotel) => {
+            hotel.updateById(id, body).then(() => {
                 res.status(200);
-                res.send(hotel);
+                res.send({message: "hotel updated"});
                 res.end();
                 next();
             }).catch((err) => {
                 //console.log(err);
                 err.status = err.status || 500;
                 res.status(400);
+                res.send({message: "error updating hotel"});
                 res.end();
                 next();
             });
 
         } else {
+            console.log("bbbbbbbbbbb")
             res.status(400);
             res.end();
             next();

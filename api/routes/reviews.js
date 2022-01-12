@@ -4,13 +4,14 @@ const reviews = require('../controllers/reviews');
 
 const verifyToken = require('../middleware/verifyToken');
 const {limitedAccess, onlyClient} = require('../middleware/verifyAccess');
+const pagination = require('../middleware/pagination/paginationUsers');
 
 function reviewRouter() {
     let router = express.Router({mergeParams: true});
 
     router.use(express.json({ limit: '100mb' }));
     router.use(express.urlencoded({ limit: '100mb', extended: true }));
-
+    router.use(pagination);
 
     router.route('/').get(function (req, res, next) {
 
@@ -93,6 +94,32 @@ function reviewRouter() {
         }
 
     });
+
+    router.route('/reviews-table').get(function (req, res, next) {
+
+        if (req.params.hotelid && typeof req.params.hotelid == "string") {
+
+            let id = req.params.hotelid;
+
+            reviews.findRevsByHotelId(id, req.paginationUsers).then((avs) => {
+                res.send(avs);
+                res.status(200);
+                res.end();
+                next();
+            }).catch((err) => {
+                //console.log(err);
+                res.status(401);
+                res.end();
+                next();
+            });
+
+        } else {
+            res.status(401);
+            res.end();
+            next();
+        }
+
+    })
 
     router.route('/:reviewId').delete(verifyToken, limitedAccess, function (req, res, next) {
 

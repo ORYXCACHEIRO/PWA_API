@@ -11,8 +11,8 @@ let hotelSchema = new Schema({
     city: { type: String, required: true },
     //iframe
     city_gmaps: { type:String, required: true },
-    //caminho para a imagem
-    main_image: { type: String, required: true},
+    //caminho para a imagem para já vazio por nao haver upload da mesma
+    main_image: { type: String, default: "aaaaaaaaaaaaaaa"},
     about_hotel: { type: String, required: true},
     //valor que decide se o hotel é visivel ou nao no frontend 0 - nao visivel, 1 - visivel
     comodities: { type: Array, default: []},

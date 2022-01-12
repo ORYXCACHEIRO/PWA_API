@@ -2,7 +2,7 @@ const express = require('express');
 const comodities = require('../../controllers/comodities');
 
 const verifyToken = require('../../middleware/verifyToken');
-const {onlyAdmin} = require('../../middleware/verifyAccess');
+const {onlyAdmin, limitedAccess} = require('../../middleware/verifyAccess');
 const pagination = require('../../middleware/pagination/paginationLangs');
 
 function comoRouter() {
@@ -12,12 +12,11 @@ function comoRouter() {
     router.use(express.urlencoded({ limit: '100mb', extended: true }));
 
     router.use(verifyToken);
-    router.use(onlyAdmin);
     router.use(pagination);
 
-    router.route('/').get(function (req, res, next) { 
+    router.route('/').get(limitedAccess, function (req, res, next) { 
 
-        comodities.findAll(req.paginationLangs).then((comodidades) => {
+        comodities.findAll().then((comodidades) => {
             res.status(200);
             res.send(comodidades);
             res.end();
@@ -30,7 +29,7 @@ function comoRouter() {
             next();
         });
 
-    }).post(function (req, res, next) { 
+    }).post(onlyAdmin, function (req, res, next) { 
 
         let body = req.body;
         console.log(parseInt(body.free))
@@ -60,7 +59,24 @@ function comoRouter() {
 
     });
 
-    router.route('/:com').get(function (req, res, next) { 
+    router.route('/table').get(onlyAdmin, function (req, res, next) { 
+
+        comodities.findAllTable(req.paginationLangs).then((comodidades) => {
+            res.status(200);
+            res.send(comodidades);
+            res.end();
+            next();
+        }).catch((err) => {
+            //console.log(err);
+            err.status = err.status || 500;
+            res.status(401);
+            res.end();
+            next();
+        });
+
+    })
+
+    router.route('/:com').get(onlyAdmin, function (req, res, next) { 
 
         if(req.params.com && typeof req.params.com=="string"){
             
@@ -81,7 +97,7 @@ function comoRouter() {
 
         }
 
-    }).put(function (req, res, next) { 
+    }).put(onlyAdmin, function (req, res, next) { 
 
         let body = req.body;
 
@@ -110,7 +126,7 @@ function comoRouter() {
             next();
         }
     
-    }).delete(function (req, res, next) { 
+    }).delete(onlyAdmin, function (req, res, next) { 
         
         let idcom = req.params.com;
 

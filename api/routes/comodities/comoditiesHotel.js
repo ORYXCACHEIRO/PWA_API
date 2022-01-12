@@ -2,6 +2,7 @@ const express = require('express');
 
 const comodities = require('../../controllers/comodities');
 const hotel = require('../../controllers/hotel');
+const pagination = require('../../middleware/pagination/paginationUsers');
 
 const verifyToken = require('../../middleware/verifyToken');
 const {limitedAccess} = require('../../middleware/verifyAccess');
@@ -11,6 +12,7 @@ function comsRouter() {
 
     router.use(express.json({ limit: '100mb' }));
     router.use(express.urlencoded({ limit: '100mb', extended: true }));
+    router.use(pagination);
 
     router.route('/').get(function (req, res, next) {
 
@@ -42,23 +44,16 @@ function comsRouter() {
         let id = req.params.hotelid;
         let body = req.body;
 
-        
-
         if (typeof id == 'string' && id.trim() !== "" && (body.comodity && typeof body.comodity == 'string' && body.comodity.trim() !== "")) {
-            console.log(body.comodity)
-            comodities.findComById(body.comodity).then(() => hotel.findHotelComs(id)).then((coms) => {
-                console.log(coms.comodities)
-                if (coms.comodities) {
+
+            comodities.findComById(body.comodity).then(() => hotel.CheckHotelComs(body.comodity, id)).then((coms) => {
+                if (coms!=null) {
                     res.status(401);
                     res.send("Comodity/s is already present at the Hotel");
                     res.end();
                     next();
                 } else {
-                    console.log("adelio")
-
                     hotel.updateHotelComs(id, body.comodity).then((hotel) => {
-                        console.log(id)
-                        console.log(body.comodity)
                         res.status(200);
                         res.send(hotel)
                         res.end();
@@ -73,6 +68,34 @@ function comsRouter() {
 
                 }
 
+            }).catch((err) => {
+                console.log(err);
+                err.status = err.status || 500;
+                res.status(401);
+                res.end();
+                next();
+            });
+
+        } else {
+            res.status(401);
+            res.end();
+            next();
+        }
+
+    });
+
+    router.route('/table').get(function (req, res, next) {
+
+        let id = req.params.hotelid;
+
+        if (typeof id == 'string' && id.trim() !== "") {
+
+            hotel.findAllHotelComs(id).then((coms) => comodities.findComByIdTable(coms, req.paginationUsers)).then((coms) => {
+                console.log(coms)
+                res.status(200);
+                res.send(coms)
+                res.end();
+                next();
             }).catch((err) => {
                 console.log(err);
                 err.status = err.status || 500;

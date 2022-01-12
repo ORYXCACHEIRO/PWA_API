@@ -11,28 +11,40 @@ function hotelService(Model) {
         updateHotelLangs,
         removeHotelLang,
         removeHotelLangsAll,
-        findHotelComs,
+        CheckHotelComs,
         updateHotelComs,
         removeHotelComs,
         removeHotelComsAll,
         searchHotelbyName,
         findByWorkStationsId,
-        findByFavId
+        findByFavId,
+        findAllHotelComs
     };
 
     //---------------------Comodities---------------------------
 
     //TODO fazer um check se io que está a inserir é uma comodidade existente e se é do tipo de hotel
 
-    function findHotelComs(id) {
+    function CheckHotelComs(com, id) {
+        console.log("ID: " + id);
         return new Promise(function (resolve, reject) {
-            Model.find({id: id}, 'comodities', function (err, coms) {
+            Model.findOne({"comodities.comodity": com, _id: id}, function (err, coms) {
                 if (err) reject(err);
+
                 resolve(coms);
-            }).select("-_id");
+            }).select("");
         });
     }
 
+    function  findAllHotelComs(id) {
+        return new Promise(function (resolve, reject) {
+            Model.findOne({_id: id}, function (err, coms) {
+                if (err) reject(err);
+
+                resolve(coms.comodities);
+            }).select("");
+        });
+    }
 
 
     function updateHotelComs(id, value) {
