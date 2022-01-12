@@ -8,7 +8,7 @@ let reservationsSchema = new Schema({
     id_room: { type: String, required: true },
     numberAdults: { type: Number, required: true },
     numberChildren: { type: Number, required: true },
-    total_price: {type: Number, required: true}
+    total_price: {type: Number, required: false}
 });
 
 let reservations = mongoose.model('reservations', reservationsSchema);

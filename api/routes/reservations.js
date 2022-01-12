@@ -45,6 +45,8 @@ function reservationRouter() {
         let idroom = req.params.roomid;
         let body = req.body;
 
+
+
         if ((typeof idhotel == 'string' && idhotel.trim() !== "") && (typeof idroom == 'string' && idroom.trim() !== "")) {
 
             rooms.findByRoomAndHotel(idroom, idhotel).then((room) => {
@@ -55,8 +57,9 @@ function reservationRouter() {
                 let beginDate =  new Date(body.begin_date) || null;
                 let endDate = new Date(body.end_date) || null;
 
-                if(beginDate==null || endDate==null || (beginDate>endDate) || body.numberAdults && body.numberAdults>room.maxAdult || body.numberChildren && body.numberChildren>room.maxChildren || !body.id_user || body.numberAdults==0){
+                if(beginDate==null || endDate==null || (beginDate>endDate) || body.numberAdults && body.numberAdults>room.maxAdult || !body.id_user || body.numberAdults==0 ){
                     res.status(401);
+                
                     res.send('Reservation is invalid');
                     res.end();
                     next();
@@ -71,7 +74,7 @@ function reservationRouter() {
                     res.end();
                     next();
                 }).catch((err) => {
-                    //console.log(err);
+                    console.log(err);
                     err.status = err.status || 500;
                     res.status(401);
                     res.end();

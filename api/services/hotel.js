@@ -26,7 +26,7 @@ function hotelService(Model) {
 
     function findHotelComs(id) {
         return new Promise(function (resolve, reject) {
-            Model.find(id, 'comodities', function (err, coms) {
+            Model.find({id: id}, 'comodities', function (err, coms) {
                 if (err) reject(err);
                 resolve(coms);
             }).select("-_id");

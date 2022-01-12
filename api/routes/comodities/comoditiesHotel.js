@@ -42,24 +42,29 @@ function comsRouter() {
         let id = req.params.hotelid;
         let body = req.body;
 
+        
+
         if (typeof id == 'string' && id.trim() !== "" && (body.comodity && typeof body.comodity == 'string' && body.comodity.trim() !== "")) {
-
+            console.log(body.comodity)
             comodities.findComById(body.comodity).then(() => hotel.findHotelComs(id)).then((coms) => {
-
-                if (coms.comodities.filter(function (e) { return e.comodity === body.comodity; }).length > 0) {
+                console.log(coms.comodities)
+                if (coms.comodities) {
                     res.status(401);
                     res.send("Comodity/s is already present at the Hotel");
                     res.end();
                     next();
                 } else {
+                    console.log("adelio")
 
                     hotel.updateHotelComs(id, body.comodity).then((hotel) => {
+                        console.log(id)
+                        console.log(body.comodity)
                         res.status(200);
                         res.send(hotel)
                         res.end();
                         next();
                     }).catch((err) => {
-                        //console.log(err);
+                        console.log(err);
                         err.status = err.status || 500;
                         res.status(401);
                         res.end();
