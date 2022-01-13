@@ -9,7 +9,8 @@ function idiomaService(Model) {
         removeById,
         removeLangsFromHotel,
         updateLang,
-        findAllForTable
+        findAllForTable,
+        findAllForHotelTable
     };
 
     function removeLangsFromHotel(value){
@@ -27,7 +28,7 @@ function idiomaService(Model) {
         });
     }
 
-    function findAllForTable(value, pagination) {
+    function findAllForHotelTable(value, pagination) {
 
         const {limit, skip} = pagination;
 
@@ -56,6 +57,33 @@ function idiomaService(Model) {
 
         }).then( async (languages) => {
             const totalLangs = count; 
+
+            return Promise.resolve({
+                langs: languages,
+                pagination: {
+                    pageSize: limit,
+                    page: Math.floor(skip/limit),
+                    hasMore: (skip+limit)<totalLangs,
+                    total: totalLangs
+                }
+            });
+        });
+        
+    }
+
+    function findAllForTable(pagination) {
+
+        const {limit, skip} = pagination;
+
+        return new Promise(function (resolve, reject) {
+            Model.find({}, {}, {skip, limit}, function (err, languages) {
+                if (err) reject(err);
+
+                resolve(languages);
+            }).select('-__v');
+
+        }).then( async (languages) => {
+            const totalLangs = await Model.count();
 
             return Promise.resolve({
                 langs: languages,

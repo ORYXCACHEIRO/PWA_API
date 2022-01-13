@@ -95,7 +95,7 @@ function langsRouter() {
 
         if (typeof id == 'string' && id.trim() !== "") {
 
-            hotel.findHotelLangs(id).then((lang) => langs.findAllForTable(lang, req.paginationUsers)).then((languages) => {
+            hotel.findHotelLangs(id).then((lang) => langs.findAllForHotelTable(lang, req.paginationUsers)).then((languages) => {
                 res.status(200);
                 res.send(languages);
                 res.end();
