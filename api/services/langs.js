@@ -8,25 +8,54 @@ function idiomaService(Model) {
         findById,
         removeById,
         removeLangsFromHotel,
-        updateLang
+        updateLang,
+        findAllForTable
     };
 
     function removeLangsFromHotel(value){
         return hotel.removeHotelLangsAll(value);
     }
 
-    function findAll(pagination) {
-
-        const {limit, skip} = pagination;
+    function findAll() {
 
         return new Promise(function (resolve, reject) {
-            Model.find({}, {}, {skip, limit}, function (err, languages) {
+            Model.find({}, function (err, languages) {
                 if (err) reject(err);
 
                 resolve(languages);
             }).select('-__v');
+        });
+    }
+
+    function findAllForTable(value, pagination) {
+
+        const {limit, skip} = pagination;
+
+        let arrayIds = [];
+
+        if(value!=null){
+
+            for(let i =0; i<value.length;i++){
+                arrayIds.push(String(value[i].language));
+            }
+
+        }
+
+        var count = 0;
+
+        return new Promise(function (resolve, reject) {
+            Model.find({_id: {$in: arrayIds} }, {}, {skip, limit}, function (err, languages) {
+                if (err) reject(err);
+
+                if(languages!=null){
+                    count = languages.length;
+                }
+
+                resolve(languages);
+            }).select('-__v');
+
         }).then( async (languages) => {
-            const totalLangs = await Model.count();
+            const totalLangs = count; 
 
             return Promise.resolve({
                 langs: languages,
@@ -38,6 +67,7 @@ function idiomaService(Model) {
                 }
             });
         });
+        
     }
 
     function findById(value){

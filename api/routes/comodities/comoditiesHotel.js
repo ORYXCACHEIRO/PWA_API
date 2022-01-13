@@ -118,21 +118,23 @@ function comsRouter() {
 
         if ((typeof idhotel == 'string' && idhotel.trim() !== "") && (typeof idcom == 'string' && idcom.trim() !== "")) {
 
-            hotel.removeHotelComs(idhotel, idcom).then((coms) => {
+            hotel.removeHotelComs(idhotel, idcom).then(() => {
                 res.status(200);
-                res.send(coms);
+                res.send({message: "comodity removed"});
                 res.end();
                 next();
             }).catch((err) => {
                 //console.log(err);
                 err.status = err.status || 500;
                 res.status(401);
+                res.send({message: "error removing comodity"});
                 res.end();
                 next();
             });
 
         } else {
             res.status(401);
+            res.send({message: "error removing comodity"});
             res.end();
             next();
         }

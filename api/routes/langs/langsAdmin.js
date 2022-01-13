@@ -2,7 +2,7 @@ const express = require('express');
 const langs = require('../../controllers/langs');
 
 const verifyToken = require('../../middleware/verifyToken');
-const {onlyAdmin} = require('../../middleware/verifyAccess');
+const {onlyAdmin, limitedAccess} = require('../../middleware/verifyAccess');
 const pagination = require('../../middleware/pagination/paginationLangs');
 
 function idiomaRouter() {
@@ -12,12 +12,11 @@ function idiomaRouter() {
     router.use(express.urlencoded({ limit: '100mb', extended: true }));
 
     router.use(verifyToken);
-    router.use(onlyAdmin);
     router.use(pagination);
 
-    router.route('/').get(function (req, res, next) {
+    router.route('/').get(limitedAccess, function (req, res, next) {
 
-        langs.findAll(req.paginationLangs).then((idiomas) => {
+        langs.findAll().then((idiomas) => {
             res.status(200);
             res.send(idiomas);
             res.end();
@@ -30,7 +29,7 @@ function idiomaRouter() {
             next();
         });
 
-    }).post(function (req, res, next) {
+    }).post(onlyAdmin, function (req, res, next) {
 
         let body = req.body;
 
@@ -58,7 +57,24 @@ function idiomaRouter() {
 
     });
 
-    router.route('/:idiom').get(function (req, res, next) { 
+    router.route('/table').get(onlyAdmin, function (req, res, next) {
+
+        langs.findAllForTable(req.paginationLangs).then((idiomas) => {
+            res.status(200);
+            res.send(idiomas);
+            res.end();
+            next();
+        }).catch((err) => {
+            console.log(err);
+            res.status(401);
+            res.send({message: "error getting languages"});
+            res.end();
+            next();
+        });
+
+    });
+
+    router.route('/:idiom').get(onlyAdmin, function (req, res, next) { 
 
         if(req.params.idiom && typeof req.params.idiom=="string"){
             
@@ -76,7 +92,7 @@ function idiomaRouter() {
 
         }
 
-    }).put(function (req, res, next) { 
+    }).put(onlyAdmin, function (req, res, next) { 
 
         let body = req.body;
         let id = req.params.idiom;
@@ -95,7 +111,7 @@ function idiomaRouter() {
         });
             
 
-    }).delete(function (req, res, next) { 
+    }).delete(onlyAdmin, function (req, res, next) { 
 
         let id = req.params.idiom;
 

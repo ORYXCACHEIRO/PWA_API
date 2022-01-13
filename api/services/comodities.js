@@ -80,7 +80,6 @@ function comodidadesService(Model) {
     function findComByIdTable(value, pagination){
         //let model = Model(value);
         let arrayIds = [];
-        console.log(value)
 
         if(value!=null){
 
@@ -90,6 +89,7 @@ function comodidadesService(Model) {
 
         }
         
+        var count = 0;
 
         const {limit, skip} = pagination;
 
@@ -101,11 +101,13 @@ function comodidadesService(Model) {
                     reject('This isnt a comodity or its type is incorrect');
                 }
 
+                count = comodidades.length;
+
                 resolve(comodidades);
             }).select("-__v");
 
         }).then( async (comodidades) => {
-            const totalHotels = await Model.count();
+            const totalHotels = count;
 
             return Promise.resolve({
                 comodidades: comodidades,

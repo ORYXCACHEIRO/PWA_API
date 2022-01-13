@@ -2,6 +2,7 @@ const express = require('express');
 
 const langs = require('../../controllers/langs');
 const hotel = require('../../controllers/hotel');
+const pagination = require('../../middleware/pagination/paginationUsers');
 
 const verifyToken = require('../../middleware/verifyToken');
 const {limitedAccess} = require('../../middleware/verifyAccess');
@@ -11,6 +12,7 @@ function langsRouter() {
 
     router.use(express.json({ limit: '100mb' }));
     router.use(express.urlencoded({ limit: '100mb', extended: true }));
+    router.use(pagination);
 
     router.route('/').get(function (req, res, next) {
 
@@ -44,9 +46,11 @@ function langsRouter() {
 
         if (typeof id == 'string' && id.trim() !== "" && (body.language && typeof body.language == 'string' && body.language.trim() !== ""))  {
 
-            langs.findById(body.language).then(() => hotel.findHotelLangs(id)).then((langss) => {
+            langs.findById(body.language).then(() => hotel.CheckHotelLangs(body.language, id)).then((langss) => {
 
-                if (langss.languages.filter(function (e) { return e.language === body.language; }).length > 0) {
+                console.log(langss)
+
+                if (langss!=null) {
                     res.status(401);
                     res.send("Language/s is already present at the Hotel");
                     res.end();
@@ -70,6 +74,34 @@ function langsRouter() {
 
             }).catch((err) => {
                 console.log(err);
+                err.status = err.status || 500;
+                res.status(401);
+                res.end();
+                next();
+            });
+
+        } else {
+            console.log("aaaaaaaaaaaaaaaaaa")
+            res.status(401);
+            res.end();
+            next();
+        }
+
+    });
+
+    router.route('/table').get(function (req, res, next) {
+
+        let id = req.params.hotelid;
+
+        if (typeof id == 'string' && id.trim() !== "") {
+
+            hotel.findHotelLangs(id).then((lang) => langs.findAllForTable(lang, req.paginationUsers)).then((languages) => {
+                res.status(200);
+                res.send(languages);
+                res.end();
+                next();
+            }).catch((err) => {
+                //console.log(err);
                 err.status = err.status || 500;
                 res.status(401);
                 res.end();

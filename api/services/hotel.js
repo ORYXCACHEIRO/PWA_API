@@ -18,7 +18,9 @@ function hotelService(Model) {
         searchHotelbyName,
         findByWorkStationsId,
         findByFavId,
-        findAllHotelComs
+        findAllHotelComs,
+        findHotelLangsTable,
+        CheckHotelLangs
     };
 
     //---------------------Comodities---------------------------
@@ -56,7 +58,7 @@ function hotelService(Model) {
         });
     }
 
-    //remove hotel em especifico
+    //remove comodity de hotel em especifico
     function removeHotelComs(id, value) {
         return new Promise(function (resolve, reject) {
             Model.findByIdAndUpdate(id, { $pull: { comodities: { comodity: value } } }, { new: true }, function (err, hotel) {
@@ -94,12 +96,48 @@ function hotelService(Model) {
 
     //--------------------Languages------------------------------
 
+    function CheckHotelLangs(lang, id) {
+        return new Promise(function (resolve, reject) {
+            Model.findOne({"languages.language": lang, _id: id}, function (err, lang) {
+                if (err) reject(err);
+
+                resolve(lang);
+            }).select("");
+        });
+    }
+
     function findHotelLangs(id) {
         return new Promise(function (resolve, reject) {
-            Model.findById(id, 'languages', function (err, langs) {
+            Model.findOne({_id: id}, function (err, coms) {
                 if (err) reject(err);
-                resolve(langs);
-            }).select("-_id");
+
+                resolve(coms.languages);
+            }).select("");
+        });
+    }
+
+    function findHotelLangsTable(id, pagination) {
+
+        const {limit, skip} = pagination;
+
+        return new Promise(function (resolve, reject) {
+            Model.findById(id, {}, {skip, limit}, function (err, langs) {
+                if (err) reject(err);
+                resolve(langs.languages);
+            }).select("");
+
+        }).then( async (langs) => {
+            const totalHotels = await Model.count();
+
+            return Promise.resolve({
+                languages: langs,
+                pagination: {
+                    pageSize: limit,
+                    page: Math.floor(skip/limit),
+                    hasMore: (skip+limit)<totalHotels,
+                    total: totalHotels
+                }
+            });
         });
     }
 
