@@ -200,23 +200,33 @@ function hotelService(Model) {
 
     function findByWorkStationsId(array, pagination) {
 
+        console.log(array)
+
         let arrayIds = [];
 
         for(let i =0; i<array.length;i++){
             arrayIds.push(String(array[i].hotel));
         }
+        
+        console.log(arrayIds);
 
         const {limit, skip} = pagination;
+
+        let count = 0;
 
         return new Promise(function (resolve, reject) {
             Model.find({_id: {$in : arrayIds}}, {}, {skip, limit}, function (err, hoteis) {
                 if (err) reject(err);
 
+                if(hoteis!=null){
+                   count = hoteis.length;
+                }
+
                 resolve(hoteis);
             }).select("-__v");
 
         }).then( async (hoteis) => {
-            const totalHotels = await Model.count();
+            const totalHotels = count;
 
             return Promise.resolve({
                 hotels: hoteis,

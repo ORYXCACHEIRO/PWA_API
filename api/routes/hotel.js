@@ -17,7 +17,7 @@ const langsHotelAPI = require('../routes/langs/langsHotel');
 const galleryHotelAPI = require('../routes/gallery/galleryHotel');
 
 const verifyToken = require('../middleware/verifyToken');
-const {onlyAdmin, limitedAccess, onlyClient} = require('../middleware/verifyAccess');
+const {onlyAdmin, limitedAccess, onlyClient, onlyEmployee} = require('../middleware/verifyAccess');
 
 function hotelRouter() {
     let router = express();
@@ -132,6 +132,24 @@ function hotelRouter() {
 
     });
 
+    router.route('/workstations').get(verifyToken, onlyEmployee, function (req, res, next) {
+
+        users.findAllWorkStations(req.user_id).then((hotels) => hotel.findByWorkStationsId(hotels, req.paginationUsers)).then((hotels) => {
+            //console.log(ress);
+            res.status(200);
+            res.send(hotels);
+            res.end();
+            next();
+        }).catch((err) => {
+            //console.log(err);
+            res.send(err);
+            res.status(401);
+            res.end();
+            next();
+        });
+
+    });
+
     router.route('/:hotelid').get(function (req, res, next) {
 
         let id = req.params.hotelid;
@@ -159,7 +177,6 @@ function hotelRouter() {
 
     }).put(verifyToken, limitedAccess, function (req, res, next) {
 
-        console.log("aaaaaaaaaa")
         let id = req.params.hotelid;
         let body = req.body;
 
@@ -180,7 +197,7 @@ function hotelRouter() {
                 res.end();
                 next();
             }).catch((err) => {
-                //console.log(err);
+                console.log(err);
                 err.status = err.status || 500;
                 res.status(400);
                 res.send({message: "error updating hotel"});
@@ -189,7 +206,6 @@ function hotelRouter() {
             });
 
         } else {
-            console.log("bbbbbbbbbbb")
             res.status(400);
             res.end();
             next();

@@ -91,7 +91,7 @@ function userService(Model) {
                 if (err) reject(err);
 
                 resolve(users.workStation);
-            }).select("-password");
+            }).select();
         });
     }
 
