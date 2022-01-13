@@ -134,13 +134,29 @@ function hotelService(Model) {
     }
 
     //-----------------------Hotel--------------------------
-    function findAll() {
+    function findAll(pagination) {
+
+        const {limit, skip} = pagination;
+
         return new Promise(function (resolve, reject) {
-            Model.find({}, function (err, hoteis) {
+            Model.find({}, {}, {skip, limit}, function (err, hoteis) {
                 if (err) reject(err);
 
                 resolve(hoteis);
             }).select("-__v");
+
+        }).then( async (hoteis) => {
+            const totalHotels = await Model.count();
+
+            return Promise.resolve({
+                hotels: hoteis,
+                pagination: {
+                    pageSize: limit,
+                    page: Math.floor(skip/limit),
+                    hasMore: (skip+limit)<totalHotels,
+                    total: totalHotels
+                }
+            });
         });
     }
 

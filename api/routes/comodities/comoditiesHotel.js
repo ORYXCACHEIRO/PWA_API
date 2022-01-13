@@ -21,7 +21,6 @@ function comsRouter() {
         if (typeof id == 'string' && id.trim() !== "") {
 
             hotel.findAllHotelComs(id).then((coms) => {
-                console.log(coms)
                 res.status(200);
                 res.send(coms)
                 res.end();
