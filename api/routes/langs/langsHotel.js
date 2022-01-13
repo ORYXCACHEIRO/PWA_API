@@ -144,6 +144,26 @@ function langsRouter() {
 
     });
 
+    router.route('/:idiom').get(function (req, res, next) { 
+
+        if(req.params.idiom && typeof req.params.idiom=="string"){
+            
+            let id = req.params.idiom;
+
+            langs.findById(id).then((idi) => {
+                res.send(idi);
+                res.end();
+                next();
+            }).catch((err) => {
+                console.log(err);
+                res.end();
+                next();
+            });
+
+        }
+
+    });
+
 
     return router;
 }

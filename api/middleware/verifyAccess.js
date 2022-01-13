@@ -4,6 +4,7 @@ const limitedAccess = (req, res, next) => {
 
     //client
     if(req.user_role==0){
+        console.log("ade")
         //console.log("access not granted");
         return res.status(401).end();
     }
@@ -11,7 +12,7 @@ const limitedAccess = (req, res, next) => {
     //employee
     if(req.user_role==1 && req.params.hotelid){
         user.findAllWorkStations(req.user_id).then((work) => {
-
+           
             //console.log(work);
 
             if(work.length==0){
@@ -49,10 +50,11 @@ const limitedAccess = (req, res, next) => {
 
 const limitedAccessWithClient = (req, res, next) => {
 
-
+  
 
   //client
     if(req.user_role==0){
+        console.log("ade2")
         return next();
     }
 
