@@ -89,7 +89,7 @@ function langsRouter() {
 
     });
 
-    router.route('/table').get(function (req, res, next) {
+    router.route('/table').get(verifyToken, limitedAccess, function (req, res, next) {
 
         let id = req.params.hotelid;
 
@@ -151,11 +151,14 @@ function langsRouter() {
             let id = req.params.idiom;
 
             langs.findById(id).then((idi) => {
+                res.status(200);
                 res.send(idi);
                 res.end();
                 next();
             }).catch((err) => {
                 console.log(err);
+                res.status(401);
+                res.send({message: "error finding language"});
                 res.end();
                 next();
             });
