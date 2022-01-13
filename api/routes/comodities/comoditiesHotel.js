@@ -20,7 +20,8 @@ function comsRouter() {
 
         if (typeof id == 'string' && id.trim() !== "") {
 
-            hotel.findHotelComs(id).then((coms) => {
+            hotel.findAllHotelComs(id).then((coms) => {
+                console.log(coms)
                 res.status(200);
                 res.send(coms)
                 res.end();
@@ -91,7 +92,6 @@ function comsRouter() {
         if (typeof id == 'string' && id.trim() !== "") {
 
             hotel.findAllHotelComs(id).then((coms) => comodities.findComByIdTable(coms, req.paginationUsers)).then((coms) => {
-                console.log(coms)
                 res.status(200);
                 res.send(coms)
                 res.end();

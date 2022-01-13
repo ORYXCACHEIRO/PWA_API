@@ -26,7 +26,6 @@ function hotelService(Model) {
     //TODO fazer um check se io que está a inserir é uma comodidade existente e se é do tipo de hotel
 
     function CheckHotelComs(com, id) {
-        console.log("ID: " + id);
         return new Promise(function (resolve, reject) {
             Model.findOne({"comodities.comodity": com, _id: id}, function (err, coms) {
                 if (err) reject(err);
