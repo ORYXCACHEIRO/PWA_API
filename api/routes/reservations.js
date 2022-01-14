@@ -13,7 +13,7 @@ function reservationRouter() {
     router.use(express.json({ limit: '100mb' }));
     router.use(express.urlencoded({ limit: '100mb', extended: true }));
 
-    router.route('/').get(verifyToken, limitedAccess, function (req, res, next) { 
+    router.route('/').get(verifyToken, function (req, res, next) { 
         
         let idhotel = req.params.hotelid;
         let idroom = req.params.roomid;
@@ -26,7 +26,7 @@ function reservationRouter() {
                 res.end();
                 next();
             }).catch((err) => {
-                //console.log(err);
+                console.log(err);
                 err.status = err.status || 500;
                 res.status(401);
                 res.end();
@@ -34,12 +34,13 @@ function reservationRouter() {
             });
 
         } else {
+            console.log("adesss")
             res.status(401);
             res.end();
             next();
         }
 
-    }).post(verifyToken, limitedAccessWithClient, function (req, res, next) { 
+    }).post(verifyToken, function (req, res, next) { 
 
         let idhotel = req.params.hotelid;
         let idroom = req.params.roomid;
@@ -211,8 +212,6 @@ function reservationRouter() {
         let idhotel = req.params.hotelid;
         let idroom = req.params.roomid;
         let idres = req.params.res_id;
-
-        console.log("adelio")
 
         if ((typeof idhotel == 'string' && idhotel.trim() !== "") && (typeof idroom == 'string' && idroom.trim() !== "") && (typeof idres == 'string' && idres.trim() !== "")) {
 

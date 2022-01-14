@@ -4,7 +4,6 @@ const limitedAccess = (req, res, next) => {
 
     //client
     if(req.user_role==0){
-        console.log("ade")
         //console.log("access not granted");
         return res.status(401).end();
     }
@@ -54,7 +53,6 @@ const limitedAccessWithClient = (req, res, next) => {
 
   //client
     if(req.user_role==0){
-        console.log("ade2")
         return next();
     }
 
