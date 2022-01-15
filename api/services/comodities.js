@@ -88,6 +88,9 @@ function comodidadesService(Model) {
             }
 
         }
+
+        console.log(value);
+        console.log(arrayIds);
         
         var count = 0;
 

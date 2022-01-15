@@ -2,6 +2,7 @@ const express = require('express');
 
 const rooms = require('../../controllers/rooms');
 const comodities = require('../../controllers/comodities');
+const pagination = require('../../middleware/pagination/paginationUsers');
 
 const verifyToken = require('../../middleware/verifyToken');
 const {limitedAccess} = require('../../middleware/verifyAccess');
@@ -11,7 +12,7 @@ function comsRouter() {
 
     router.use(express.json({ limit: '100mb' }));
     router.use(express.urlencoded({ limit: '100mb', extended: true }));
-
+    router.use(pagination);
 
     router.route('/').get(function (req, res, next) { 
         
@@ -72,6 +73,34 @@ function comsRouter() {
 
             }).catch((err) => {
                 console.log(err);
+                err.status = err.status || 500;
+                res.status(401);
+                res.end();
+                next();
+            });
+
+        } else {
+            res.status(401);
+            res.end();
+            next();
+        }
+
+    });
+
+    router.route('/table').get(function (req, res, next) { 
+        
+        let idhotel = req.params.hotelid;
+        let idroom = req.params.roomid;
+
+        if ((typeof idhotel == 'string' && idhotel.trim() !== "") && (typeof idroom == 'string' && idroom.trim() !== "")) {
+
+            rooms.findRoomComs(idroom).then((coms) => comodities.findComByIdTable(coms, req.paginationUsers)).then((coms) => {
+                res.status(200);
+                res.send(coms);
+                res.end();
+                next();
+            }).catch((err) => {
+                //console.log(err);
                 err.status = err.status || 500;
                 res.status(401);
                 res.end();

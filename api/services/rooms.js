@@ -27,11 +27,11 @@ function quartoService(Model) {
 
     function findRoomComs(id){
         return new Promise(function (resolve, reject) {
-            Model.findById(id, 'comodities', function (err, room) {
+            Model.findById(id, function (err, room) {
                 if (err) reject(err);
 
-                resolve(room);
-            }).select("-_id");
+                resolve(room.comodities);
+            }).select();
         });
     }
 
