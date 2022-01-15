@@ -101,14 +101,33 @@ function quartoService(Model) {
         });
     }
 
-    function findByHotelId(id){
+    function findByHotelId(id, pagination){
         //let model = Model(value);
+        var count = 0;
+
+        const {limit, skip} = pagination;
+
         return new Promise(function (resolve, reject) {
-            Model.find({id_hotel: id}, function (err, rooms) {
+            Model.find({id_hotel: id}, {}, {skip, limit}, function (err, rooms) {
                 if (err) reject(err);
+
+                count = rooms.length;
 
                 resolve(rooms);
             }).select("-__v");
+
+        }).then( async (rooms) => {
+            const totalRooms = count || 0;
+
+            return Promise.resolve({
+                rooms: rooms,
+                pagination: {
+                    pageSize: limit,
+                    page: Math.floor(skip/limit),
+                    hasMore: (skip+limit)<totalRooms,
+                    total: totalRooms
+                }
+            });
         });
     }
 
