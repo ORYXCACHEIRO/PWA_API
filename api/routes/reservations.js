@@ -3,15 +3,17 @@ const express = require('express');
 const reservations = require('../controllers/reservations');
 const rooms = require('../controllers/rooms');
 const users = require('../controllers/user');
+const pagination = require('../middleware/pagination/paginationUsers');
 
 const verifyToken = require('../middleware/verifyToken');
-const {limitedAccess, limitedAccessWithClient} = require('../middleware/verifyAccess');
+const {limitedAccess, limitedAccessWithClient,  onlyClient} = require('../middleware/verifyAccess');
 
 function reservationRouter() {
     let router = express.Router({mergeParams: true});
 
     router.use(express.json({ limit: '100mb' }));
     router.use(express.urlencoded({ limit: '100mb', extended: true }));
+    router.use(pagination);
 
     router.route('/').get(verifyToken, function (req, res, next) { 
         
@@ -20,11 +22,13 @@ function reservationRouter() {
 
         if ((typeof idhotel == 'string' && idhotel.trim() !== "") && (typeof idroom == 'string' && idroom.trim() !== "")) {
 
-            rooms.findByRoomAndHotel(idroom, idhotel).then(() => reservations.findAllByRoomId(idroom)).then((reservs) => {
+            rooms.findByRoomAndHotel(idroom, idhotel).then(() => reservations.findAllByRoomId(idroom, req.paginationUsers)).then((reservs) => {
+
                 res.status(200);
                 res.send(reservs);
                 res.end();
                 next();
+                
             }).catch((err) => {
                 console.log(err);
                 err.status = err.status || 500;

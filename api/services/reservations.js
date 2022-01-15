@@ -60,13 +60,29 @@ function reservationService(Model) {
         });
     }
 
-    function findAllByRoomId(id) {
+    function findAllByRoomId(id, pagination) {
+
+        const {limit, skip} = pagination;
+
         return new Promise(function (resolve, reject) {
-            Model.find({id_room: id}, function (err, hoteis) {
+            Model.find({id_room: id}, {}, {skip, limit}, function (err, hoteis) {
                 if (err) reject(err);
 
                 resolve(hoteis);
             }).select("-__v");
+
+        }).then( async (reserv) => {
+            const totalRes = await Model.count();
+
+            return Promise.resolve({
+                reservs: reserv,
+                pagination: {
+                    pageSize: limit,
+                    page: Math.floor(skip/limit),
+                    hasMore: (skip+limit)<totalRes,
+                    total: totalRes
+                }
+            });
         });
     }
 
