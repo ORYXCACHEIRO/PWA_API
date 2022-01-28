@@ -4,6 +4,7 @@ function quartoService(Model) {
         create,
         findById,
         findByHotelId,
+        findByHotelIdTable,
         removeById,
         updateById,
         removeAllHotelRooms,
@@ -101,7 +102,20 @@ function quartoService(Model) {
         });
     }
 
-    function findByHotelId(id, pagination){
+    function findByHotelId(id){
+        //let model = Model(value);
+
+        return new Promise(function (resolve, reject) {
+            Model.find({id_hotel: id}, function (err, rooms) {
+                if (err) reject(err);
+
+                resolve(rooms);
+            }).select("-__v");
+
+        });
+    }
+
+    function findByHotelIdTable(id, pagination){
         //let model = Model(value);
         var count = 0;
 

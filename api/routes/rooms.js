@@ -28,7 +28,7 @@ function roomRouter() {
 
         if (typeof id == 'string' && id.trim() !== "") {
             
-            rooms.findByHotelId(id, req.paginationUsers).then((room) => {
+            rooms.findByHotelId(id).then((room) => {
                 res.status(200);
                 res.send(room);
                 res.end();
@@ -71,6 +71,34 @@ function roomRouter() {
             });
 
         } else {
+            res.status(401);
+            res.end();
+            next();
+        }
+
+    });
+
+    router.route('/table').get(function (req, res, next) {
+
+        let id = req.params.hotelid;
+
+        if (typeof id == 'string' && id.trim() !== "") {
+            
+            rooms.findByHotelIdTable(id, req.paginationUsers).then((room) => {
+                res.status(200);
+                res.send(room);
+                res.end();
+                next();
+            }).catch((err) => {
+                console.log(err);
+                err.status = err.status || 500;
+                res.status(401);
+                res.end();
+                next();
+            });
+
+        } else {
+            //console.log("shbghsgdhsgb")
             res.status(401);
             res.end();
             next();
